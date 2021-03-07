@@ -64,6 +64,7 @@ Vec3d operator*  (const Vec3d &first, const Vec3d &second);
 Vec3d operator/  (const Vec3d &first, const Vec3d &second);
 
 Vec3d operator*  (const Vec3d &first, const double k);
+Vec3d operator*  (const double k, const Vec3d &first);
 Vec3d operator/  (const Vec3d &first, const double k);
 
 Vec3d operator+= (Vec3d &first, const Vec3d &second);
@@ -87,5 +88,8 @@ Vec3d rotz(const Vec3d vec, double ang);
 
 Vec3d rotate(const Vec3d vec, double dx, double dy, double dz);
 Vec3d rotate(const Vec3d vec, const Vec3d &rotation);
+
+Vec3d reflect(const Vec3d vec, Vec3d normal);
+Vec3d refract(const Vec3d vec, const Vec3d &normal, const double eta_from_over_eta_to);
 
 #endif // GENERAL_VEC3D

@@ -93,6 +93,10 @@ Vec3d operator*(const Vec3d &first, const double k) {
     return {first.x * k, first.y * k, first.z * k};
 }
 
+Vec3d operator*(const double k, const Vec3d &first) {
+    return {first.x * k, first.y * k, first.z * k};
+}
+
 Vec3d operator*=(Vec3d &first, const double k) {
     first.x *= k;
     first.y *= k;
@@ -177,4 +181,19 @@ Vec3d rotate(const Vec3d vec, double dx, double dy, double dz) {
 
 Vec3d rotate(const Vec3d vec, const Vec3d rotation) {
     return rotz(roty(rotx(vec, rotation.x), rotation.y), rotation.z);
+}
+
+Vec3d reflect(const Vec3d vec, Vec3d normal) {
+    normal = normal.normal();
+    return vec - 2 * vec.dot(normal) * normal;
+}
+
+Vec3d refract(const Vec3d vec, const Vec3d &normal, const double eta_from_over_eta_to) {
+    Vec3d uv = vec.normal();
+    Vec3d n = normal.normal();
+
+    auto cos_theta = fmin(-uv.dot(n), 1.0);
+    Vec3d r_out_perp =  eta_from_over_eta_to * (uv + cos_theta * n);
+    Vec3d r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.len_squared())) * n;
+    return r_out_perp + r_out_parallel;
 }

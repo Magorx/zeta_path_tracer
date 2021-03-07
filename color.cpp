@@ -48,10 +48,10 @@ Color clamped_rgb(const Color color) {
 		   };
 }
 
-void print_rgb(Color color, FILE *file) {
+void print_rgb(Color color, const double gamma_correction, FILE *file) {
 	color = clamped_rgb(color);
 	color *= 1 / d_MAXRGB;
-	color = pow(color, 0.7);
+	color = pow(color, gamma_correction);
 	color *= d_MAXRGB;
 	fprintf(file, "%d %d %d\n", (int) color.x, (int) color.y, (int) color.z);
 }

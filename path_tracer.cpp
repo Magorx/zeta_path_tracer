@@ -1,10 +1,11 @@
 #include "path_tracer.h"
 
 Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &config, const int cur_trace_depth) {
+	ray.orig += ray.dir * VEC3_EPS;
 	HitRecord hitrec = hittable->hit(ray);
 
 	if (hitrec.dist < 0) {
-		return {110, 110, 200};
+		return config.render.BACKGROUND_COLOR;
 	} else {
 		if (cur_trace_depth == config.render.MAX_TRACE_DEPTH) {
 			return {0, 0, 0};
@@ -33,27 +34,29 @@ Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_
 void render_image(Camera *camera, const Hittable *hittable, const conf_PathTracer &config) {
 	ProgressBar prog_bar(stderr, config.render.SCREEN_HEIGHT * config.render.SCREEN_WIDTH, config.verbos.PROGRESS_BAR_SCALE);
 
-    printf("P3 %d %d\n%d\n", config.render.SCREEN_WIDTH, config.render.SCREEN_HEIGHT, 255);
+    printf("P3 %d %d\n%d\n", config.render.SCREEN_WIDTH, config.render.SCREEN_HEIGHT, i_MAXRGB);
 
     prog_bar.start();
     for (int y = 0; y < config.render.SCREEN_HEIGHT; ++y) {
         for (int x = 0; x < config.render.SCREEN_WIDTH; ++x) {
             prog_bar.tick();
-            // fprintf(stderr, "bip\n");
-            
-           	Color color = accumulate_pixel_color(camera, x, y, hittable, config);
-
-            print_rgb(color);
+            print_rgb(accumulate_pixel_color(camera, x, y, hittable, config), config.render.GAMMA_CORRECTION);
         }
     }
     fprintf(stderr, "doned.\n");
 }
 
-conf_Render::conf_Render(const int screen_width, const int screen_height, const int max_tracing_depth, const int pixel_sampling):
+conf_Render::conf_Render(const int screen_width, const int screen_height,
+						 const int max_tracing_depth,
+						 const int pixel_sampling,
+						 const double gamma_correction,
+						 const Vec3d background_color):
 SCREEN_WIDTH(screen_width),
 SCREEN_HEIGHT(screen_height),
 MAX_TRACE_DEPTH(max_tracing_depth),
-PIXEL_SAMPLING(pixel_sampling)
+PIXEL_SAMPLING(pixel_sampling),
+GAMMA_CORRECTION(gamma_correction),
+BACKGROUND_COLOR(background_color)
 {}
 
 conf_Verbosity::conf_Verbosity(const int percent_step):

@@ -14,3 +14,47 @@ bool m_Lambertian::scatter(const Ray &, const HitRecord &hitrec, Color &attenuat
     attenuation = albedo;
     return true;
 }
+
+m_Metal::m_Metal(const Color &albedo_, const double fuzziness_):
+albedo(albedo_),
+fuzziness(fuzziness_)
+{}
+
+bool m_Metal::scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
+	Vec3d scatter_direction = reflect(ray.dir, hitrec.n) + fuzziness * Vec3d::random_in_unit_sphere();
+    scattered = Ray(hitrec.p, scatter_direction);
+    attenuation = albedo;
+    return true;
+}
+
+m_Dielectric::m_Dielectric(const Color &albedo_, const double refrac_coef_, const double roughness_):
+albedo(albedo_),
+refrac_coef(refrac_coef_),
+roughness(roughness_)
+{}
+
+bool m_Dielectric::scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
+	attenuation = albedo;
+	double rc = hitrec.front_hit ? (1 / refrac_coef) : refrac_coef;
+
+	double cos_theta = fmin(-(ray.dir.dot(hitrec.n)) / ray.dir.len(), 1.0);
+	double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
+
+	bool cannot_refract = rc * sin_theta > 1.0;
+	Vec3d scatter_direction;
+	if (cannot_refract || reflectance(cos_theta, rc) > vec3d_randdouble() || (roughness > 0 && vec3d_randdouble() < roughness)) {
+		scatter_direction = reflect(ray.dir, hitrec.n);
+	} else {
+		scatter_direction = refract(ray.dir, hitrec.n, rc);
+	}
+
+	scattered = Ray(hitrec.p, scatter_direction);
+
+    return true;
+}
+
+double m_Dielectric::reflectance(double cosine, double ref_idx) { // Schlick Approximation from RayTracingInOneWeekend
+    double r0 = (1 - ref_idx) / (1 + ref_idx);
+    r0 = r0 * r0;
+    return r0 + (1 - r0)*pow((1 - cosine), 5);
+}

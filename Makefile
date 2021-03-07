@@ -22,13 +22,10 @@ run: all
 
 view: run
 	convert image.ppm image.png
-	eog image.png
+	eog -f image.png
 
-pather: main.o ray.o vec3d.o color.o camera.o hit_record.o collection_materials.o collection_hittables.o hittable.o path_tracer.o hittable_list.o
-	$(CPP) $(CFLAGS) main.o vec3d.o ray.o color.o camera.o hit_record.o collection_materials.o collection_hittables.o hittable.o path_tracer.o hittable_list.o -o pather
-
-main.o: main.cpp progress_bar.h
-	$(CPP) $(CFLAGS) main.cpp -c
+pather: main.cpp ray.o vec3d.o color.o camera.o hit_record.o collection_materials.o collection_hittables.o hittable.o path_tracer.o hittable_list.o
+	$(CPP) $(CFLAGS) main.cpp vec3d.o ray.o color.o camera.o hit_record.o collection_materials.o collection_hittables.o hittable.o path_tracer.o hittable_list.o -o pather
 
 ray.o: ray.cpp ray.h
 	$(CPP) $(CFLAGS) ray.cpp -c

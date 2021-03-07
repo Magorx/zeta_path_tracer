@@ -22,8 +22,14 @@ struct conf_Render {
 	const int SCREEN_HEIGHT;
 	const int MAX_TRACE_DEPTH;
 	const int PIXEL_SAMPLING;
+	const double GAMMA_CORRECTION;
+	const Vec3d BACKGROUND_COLOR;
 
-	conf_Render(const int screen_width, const int screen_height, const int max_tracing_depth, const int pixel_sampling);
+	conf_Render(const int screen_width, const int screen_height,
+				const int max_tracing_depth,
+				const int pixel_sampling,
+				const double gamma_correction,
+				const Vec3d background_color);
 };
 
 struct conf_Verbosity {

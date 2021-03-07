@@ -22,6 +22,6 @@ bool is_valid_color(Color color);
 
 Color clamped_rgb(const Color color);
 
-void print_rgb(Color color, FILE *file = stdout);
+void print_rgb(Color color, const double gamma_correction = 0.5, FILE *file = stdout);
 
 #endif // COLOR
