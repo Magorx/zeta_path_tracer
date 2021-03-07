@@ -7,6 +7,7 @@
 #include "progress_bar.h"
 #include "ray.h"
 #include "hittable.h"
+#include "hittable_list.h"
 #include "hit_record.h"
 // #include "model.h"
 // #include "light.h"
@@ -19,7 +20,7 @@
 struct conf_Render {
 	const int SCREEN_WIDTH;
 	const int SCREEN_HEIGHT;
-	const int MAX_TRACING_DEPTH;
+	const int MAX_TRACE_DEPTH;
 	const int PIXEL_SAMPLING;
 
 	conf_Render(const int screen_width, const int screen_height, const int max_tracing_depth, const int pixel_sampling);
@@ -40,7 +41,7 @@ struct conf_PathTracer {
 };
 
 // Intersection test_ray(Ray &ray, const vector<Hittable*> &objects, const Hittable *to_ignore);
-Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &config);
+Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &config, const int cur_trace_depth = 1);
 
 Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_y, 
 							 const Hittable *hittable, const conf_PathTracer &config);

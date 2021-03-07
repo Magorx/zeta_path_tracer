@@ -1,5 +1,10 @@
 #include "color.h"
 
+const int 	 i_MAXRGB = 255;
+const double d_MAXRGB = 255.0;
+const int 	 i_MINRGB = 0;
+const double d_MINRGB = 0.0;
+
 Color randcolor(const size_t module) {
 	return {(double) (rand() % module), (double) (rand() % module), (double) (rand() % module)};
 }
@@ -45,5 +50,8 @@ Color clamped_rgb(const Color color) {
 
 void print_rgb(Color color, FILE *file) {
 	color = clamped_rgb(color);
+	color *= 1 / d_MAXRGB;
+	color = pow(color, 0.7);
+	color *= d_MAXRGB;
 	fprintf(file, "%d %d %d\n", (int) color.x, (int) color.y, (int) color.z);
 }

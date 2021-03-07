@@ -3,7 +3,6 @@
 
 #include "vec3d.h"
 
-
 class Material;
 
 struct HitRecord {
@@ -24,5 +23,7 @@ struct HitRecord {
 
 bool operator==(const HitRecord &first, const HitRecord &second);
 bool operator< (const HitRecord &first, const HitRecord &second);
+
+extern const HitRecord HITREC_NONE;
 
 #endif // INTERSECTION

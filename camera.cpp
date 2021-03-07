@@ -11,8 +11,8 @@ Camera::Camera(const Vec3d origin, Vec3d direction, double distance, double widt
     res_w = width * res_coef;
     res_h = height * res_coef;
 
-    ort_w = Vec3d(-dir.y, dir.x, dir.z).normal();
-    ort_h = ort_w.cross(dir).normal();
+    ort_h = {0, 0, 1};
+    ort_w = -dir.cross(ort_h).normal();
     left_upper = orig + direction * dist + ort_w * width * 0.5 + ort_h * height * 0.5;
 
     ort_w *= -1;

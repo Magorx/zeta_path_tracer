@@ -1,9 +1,11 @@
 #include "hit_record.h"
 
+const HitRecord HITREC_NONE({0, 0, 0}, -1, {0, 0, 0}, nullptr);
+
 HitRecord::HitRecord(const Vec3d point, double distance, const Vec3d normal, Material* maretial) :
 p   (point),
 dist(distance),
-n   (normal),
+n   (normal.normal()),
 mat (maretial)
 {}
 

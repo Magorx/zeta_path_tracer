@@ -16,11 +16,10 @@ class ProgressBar {
 	}
 
 	void on_tick() {
-		cur_tick++;
-		if (capacity * step_scale * cur_step <= cur_tick && abs(cur_tick * 100 / capacity - 100.0) > 0.0001) {
+		if ((double) capacity * step_scale * cur_step <= cur_tick && abs(cur_tick * 100 / capacity - 100.0) > 0.0001) {
 			fprintf(file_ptr, "[PRG] % 3d%%         |     |\n", cur_tick * 100 / capacity);
 		}
-		cur_step = ((double) cur_tick / capacity / step_scale) + 1;
+		cur_step = ((double) cur_tick / (double) capacity / step_scale) + 1;
 	}
 
 	void on_stop() {

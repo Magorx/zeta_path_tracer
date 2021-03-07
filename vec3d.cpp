@@ -112,6 +112,14 @@ bool operator==(const Vec3d &first, const Vec3d &second) {
     return (first.x - second.x) < VEC3_EPS  && (first.y - second.y) < VEC3_EPS && (first.z -second.z) < VEC3_EPS;
 }
 
+Vec3d sqrt(const Vec3d &first) {
+    return {sqrt(first.x), sqrt(first.y), sqrt(first.z)};
+}
+
+Vec3d pow (const Vec3d &first, const double power) {
+    return {pow(first.x, power), pow(first.y, power), pow(first.z, power)};
+}
+
 bool operator<(const Vec3d &first, const Vec3d &second) {
     return first.x < second.x  && first.y < second.y && first.z < second.z;
 }

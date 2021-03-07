@@ -12,7 +12,7 @@ const double VEC3_MAX_RANDOM_TRIES_CNT = 50;
 
 long vec3d_randlong();
 
-double vec3d_randdouble(double dmin = 0, double dmax = 1);
+double vec3d_randdouble(double dmin = 0.0, double dmax = 1.0);
 
 //=============================================================================
 //<KCTF> Vec2_header ==========================================================
@@ -45,8 +45,8 @@ struct Vec3d {
     }
 
     inline static Vec3d random_in_unit_sphere() {
-        Vec3d rv = Vec3d::random(-1,1);
-        for (int i = 0; i < VEC3_MAX_RANDOM_TRIES_CNT && rv.len_squared() > 1; ++i, rv = Vec3d::random(-1, -1));
+        Vec3d rv = Vec3d::random(-1, 1);
+        for (int i = 0; i < VEC3_MAX_RANDOM_TRIES_CNT && rv.len_squared() > 1; ++i, rv = Vec3d::random(-1, 1));
         return rv;
     }
 
@@ -72,6 +72,9 @@ Vec3d operator*= (Vec3d &first, const double k);
 
 bool operator==     (const Vec3d &first, const Vec3d &second);
 bool operator<      (const Vec3d &first, const Vec3d &second);
+
+Vec3d sqrt(const Vec3d &first);
+Vec3d pow (const Vec3d &first, const double power);
 
 std::ostream& operator<<(std::ostream& output_stream, const Vec3d &vector);
 std::istream& operator>>(std::istream& input_stream, Vec3d &vector);

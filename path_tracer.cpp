@@ -1,11 +1,22 @@
 #include "path_tracer.h"
 
-Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &config) {
+Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &config, const int cur_trace_depth) {
 	HitRecord hitrec = hittable->hit(ray);
+
 	if (hitrec.dist < 0) {
-		return {20, 20, 20};
+		return {110, 110, 200};
 	} else {
-		return Vec3d(255, 255, 255) * -hitrec.n;
+		if (cur_trace_depth == config.render.MAX_TRACE_DEPTH) {
+			return {0, 0, 0};
+		}
+
+		Ray scattered_ray;
+		Color attenuation;
+		if (hitrec.mat->scatter(ray, hitrec, attenuation, scattered_ray)) {
+			return attenuation * trace_ray(scattered_ray, hittable, config, cur_trace_depth + 1) / d_MAXRGB;
+		}
+
+		return {0, 0, 0};
 	}
 }
 
@@ -28,18 +39,20 @@ void render_image(Camera *camera, const Hittable *hittable, const conf_PathTrace
     for (int y = 0; y < config.render.SCREEN_HEIGHT; ++y) {
         for (int x = 0; x < config.render.SCREEN_WIDTH; ++x) {
             prog_bar.tick();
+            // fprintf(stderr, "bip\n");
             
            	Color color = accumulate_pixel_color(camera, x, y, hittable, config);
 
             print_rgb(color);
         }
     }
+    fprintf(stderr, "doned.\n");
 }
 
 conf_Render::conf_Render(const int screen_width, const int screen_height, const int max_tracing_depth, const int pixel_sampling):
 SCREEN_WIDTH(screen_width),
 SCREEN_HEIGHT(screen_height),
-MAX_TRACING_DEPTH(max_tracing_depth),
+MAX_TRACE_DEPTH(max_tracing_depth),
 PIXEL_SAMPLING(pixel_sampling)
 {}
 
