@@ -12,7 +12,7 @@ extern const double d_MINRGB;
 using Color = Vec3d;
 using Point = Vec3d;
 
-Color randcolor(const size_t module = 256);
+Color randcolor(const int min = 0, const int max = 255);
 
 Color rand_color_shift(const size_t module = 2);
 Color rand_shifted_color(Color color, const size_t module = 2);

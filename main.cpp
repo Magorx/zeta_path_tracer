@@ -1,6 +1,7 @@
 #include "path_tracer.h"
 #include "collection_hittables.h"
 #include "collection_materials.h"
+#include "collection_lights.h"
 
 // settings ===================================================================
 
@@ -8,11 +9,11 @@ const int 	 PERCENT_STEP     = 10;
 
 const int 	 SCREEN_WIDTH     = 256;
 const int 	 SCREEN_HEIGHT    = 256;
-const double RESOLUTION_COEF  = 1;
-const int 	 MAX_TRACE_DEPTH  = 50;
-const int 	 PIXEL_SAMPLING   = 100;
-const double GAMMA_CORRECTION = 0.5;
-const Vec3d  BACKGROUND_COLOR = {230, 230, 230};
+const double RESOLUTION_COEF  = 4;
+const int 	 MAX_TRACE_DEPTH  = 10;
+const int 	 PIXEL_SAMPLING   = 1000;
+const double GAMMA_CORRECTION = 0.45;
+const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
 
 // ============================================================================
 
@@ -43,11 +44,11 @@ int main() {
     h_Sphere *s3 = new h_Sphere({50, 0, 1}, 5, matr3);
 */
     Material *matr_flr = new m_Lambertian({30, 220, 70});
-    h_Sphere *flr = new h_Sphere({0, 0, -10000}, 10000-3.75, matr_flr);
+    h_Sphere *flr = new h_Sphere({0, 0, -10000}, 10000, matr_flr);
 
-    Camera *cam = new Camera({0, 0, 20}, {1, 0, -0.5}, conf_render.SCREEN_WIDTH * 2, conf_render.SCREEN_WIDTH, conf_render.SCREEN_HEIGHT, 1);
+    Camera *cam = new Camera({0, 0, 20}, {1, 0, -0.46}, conf_render.SCREEN_WIDTH * 2, conf_render.SCREEN_WIDTH, conf_render.SCREEN_HEIGHT, 1);
 
-    HittableList scene = scene_gen(200, {40, 0, 0});
+    HittableList scene = scene_gen(50, {40, 0, 3});
 /*
     scene.insert(s0);
     scene.insert(s1);
@@ -65,17 +66,22 @@ HittableList scene_gen(int sphere_cnt, Vec3d delta) {
 	HittableList scene;
 
 	Material *matr = new m_Lambertian({0, 0, 0});
-	scene.insert(new h_Sphere(delta, 3, matr));
+	matr->set_emitter(new l_Diffuse(Vec3d(255, 255, 255) * 5));
+	scene.insert(new h_Sphere(delta + Vec3d(0, 0, 5), 1, matr));
+
+	matr = new m_Dielectric({200, 100, 255}, 1.3);
+	//matr->set_emitter(new l_Diffuse(Vec3d(255, 255, 255) * 5));
+	scene.insert(new h_Sphere(delta + Vec3d(-4, 0, -0.95), 1.4, matr));
 
 	for (int i = 0; i < sphere_cnt; ++i) {
 		Material *matr;
 		long roll = i % 3 + 1;
 		if (roll == 1) {
-			matr = new m_Lambertian(randcolor());
+			matr = new m_Lambertian(randcolor(100, 255));
 		} else if (roll == 2) {
-			matr = new m_Dielectric(randcolor(), 1.15);
+			matr = new m_Dielectric(randcolor(100, 255), 1.15);
 		} else {
-			matr = new m_Metal(randcolor(), vec3d_randdouble());
+			matr = new m_Metal(randcolor(100, 255), vec3d_randdouble());
 		}
 
 		//h_Sphere *sph = new h_Sphere(delta + Vec3d(vec3d_randdouble(0, 100), vec3d_randdouble(-25, +25), vec3d_randdouble(-1, 1)),

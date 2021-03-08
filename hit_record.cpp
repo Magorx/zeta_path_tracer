@@ -6,14 +6,18 @@ HitRecord::HitRecord():
 p(VEC3D_ZERO),
 dist(0),
 n(VEC3D_ZERO),
-mat(nullptr)
+mat(nullptr),
+surf_x(0),
+surf_y(0)
 {}
 
 HitRecord::HitRecord(const Vec3d point, double distance, const Vec3d normal, Material* maretial, const Vec3d ray_dir) :
 p   (point),
 dist(distance),
 n   (normal.normal()),
-mat (maretial)
+mat (maretial),
+surf_x(0),
+surf_y(0)
 {
 	set_normal_orientation(ray_dir);
 }

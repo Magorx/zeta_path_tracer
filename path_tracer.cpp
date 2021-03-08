@@ -13,11 +13,12 @@ Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &confi
 
 		Ray scattered_ray;
 		Color attenuation;
+		Color emmited = hitrec.mat->emit(hitrec.surf_x, hitrec.surf_y, hitrec.p);
 		if (hitrec.mat->scatter(ray, hitrec, attenuation, scattered_ray)) {
-			return attenuation * trace_ray(scattered_ray, hittable, config, cur_trace_depth + 1) / d_MAXRGB;
+			return emmited + attenuation * trace_ray(scattered_ray, hittable, config, cur_trace_depth + 1) / d_MAXRGB;
+		} else {
+			return emmited;
 		}
-
-		return {0, 0, 0};
 	}
 }
 

@@ -20,12 +20,16 @@ all: $(CUR_PROG)
 run: all
 	./$(CUR_PROG) > image.ppm
 
-view: run
+convert:
 	convert image.ppm image.png
+
+_view:
 	eog -f image.png
 
-pather: main.cpp ray.o vec3d.o color.o camera.o hit_record.o collection_materials.o collection_hittables.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o
-	$(CPP) $(CFLAGS) main.cpp vec3d.o ray.o color.o camera.o hit_record.o collection_materials.o collection_hittables.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o -o pather
+view: run convert _view
+
+pather: main.cpp ray.o vec3d.o color.o camera.o hit_record.o collection_materials.o collection_hittables.o collection_lights.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o material.o light.o
+	$(CPP) $(CFLAGS) main.cpp vec3d.o ray.o color.o camera.o hit_record.o collection_materials.o collection_hittables.o collection_lights.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o material.o light.o -o pather
 
 ray.o: ray.cpp ray.h
 	$(CPP) $(CFLAGS) ray.cpp -c
@@ -45,11 +49,20 @@ hit_record.o: hit_record.cpp hit_record.h
 collection_materials.o: collection_materials.cpp collection_materials.h
 	$(CPP) $(CFLAGS) collection_materials.cpp -c
 
+collection_lights.o: collection_lights.cpp collection_lights.h
+	$(CPP) $(CFLAGS) collection_lights.cpp -c
+
 collection_hittables.o: collection_hittables.cpp collection_hittables.h
 	$(CPP) $(CFLAGS) collection_hittables.cpp -c
 
 hittable.o: hittable.cpp hittable.h
 	$(CPP) $(CFLAGS) hittable.cpp -c
+
+material.o: material.cpp material.h
+	$(CPP) $(CFLAGS) material.cpp -c
+
+light.o: light.cpp light.h
+	$(CPP) $(CFLAGS) light.cpp -c
 
 path_tracer.o: path_tracer.cpp path_tracer.h
 	$(CPP) $(CFLAGS) path_tracer.cpp -c

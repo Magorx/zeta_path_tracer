@@ -5,8 +5,8 @@ const double d_MAXRGB = 255.0;
 const int 	 i_MINRGB = 0;
 const double d_MINRGB = 0.0;
 
-Color randcolor(const size_t module) {
-	return {(double) (rand() % module), (double) (rand() % module), (double) (rand() % module)};
+Color randcolor(const int min, const int max) {
+	return {(double) ((rand() % max) + min), (double) ((rand() % max) + min), (double) ((rand() % max) + min)};
 }
 
 Color rand_color_shift(const size_t module) {

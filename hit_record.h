@@ -12,6 +12,9 @@ struct HitRecord {
     Material *mat;
     bool front_hit;
 
+    double surf_x;
+    double surf_y;
+
     HitRecord();
     HitRecord(const Vec3d point, double distance, const Vec3d normal, Material* material, const Vec3d ray_dir);
 
