@@ -8,9 +8,9 @@ const int 	 PERCENT_STEP     = 10;
 
 const int 	 SCREEN_WIDTH     = 256;
 const int 	 SCREEN_HEIGHT    = 256;
-const double RESOLUTION_COEF  = 4;
+const double RESOLUTION_COEF  = 1;
 const int 	 MAX_TRACE_DEPTH  = 50;
-const int 	 PIXEL_SAMPLING   = 1;
+const int 	 PIXEL_SAMPLING   = 100;
 const double GAMMA_CORRECTION = 0.5;
 const Vec3d  BACKGROUND_COLOR = {230, 230, 230};
 
@@ -45,9 +45,9 @@ int main() {
     Material *matr_flr = new m_Lambertian({30, 220, 70});
     h_Sphere *flr = new h_Sphere({0, 0, -10000}, 10000-3.75, matr_flr);
 
-    Camera *cam = new Camera({-5, 0, 20}, {1, 0, -0.4}, conf_render.SCREEN_WIDTH * 2, conf_render.SCREEN_WIDTH, conf_render.SCREEN_HEIGHT, 1);
+    Camera *cam = new Camera({0, 0, 20}, {1, 0, -0.5}, conf_render.SCREEN_WIDTH * 2, conf_render.SCREEN_WIDTH, conf_render.SCREEN_HEIGHT, 1);
 
-    HittableList scene = scene_gen(100, {30, 0, 0});
+    HittableList scene = scene_gen(200, {40, 0, 0});
 /*
     scene.insert(s0);
     scene.insert(s1);
@@ -58,15 +58,18 @@ int main() {
     scene.insert(flr);
     BVH_Node bvh(scene);
 
-    render_image(cam, &scene, conf_pt);
+    render_image(cam, &bvh, conf_pt);
 }
 
 HittableList scene_gen(int sphere_cnt, Vec3d delta) {
 	HittableList scene;
 
+	Material *matr = new m_Lambertian({0, 0, 0});
+	scene.insert(new h_Sphere(delta, 3, matr));
+
 	for (int i = 0; i < sphere_cnt; ++i) {
 		Material *matr;
-		long roll = vec3d_randlong() % 3 + 1;
+		long roll = i % 3 + 1;
 		if (roll == 1) {
 			matr = new m_Lambertian(randcolor());
 		} else if (roll == 2) {
@@ -75,8 +78,28 @@ HittableList scene_gen(int sphere_cnt, Vec3d delta) {
 			matr = new m_Metal(randcolor(), vec3d_randdouble());
 		}
 
-		h_Sphere *sph = new h_Sphere(delta + Vec3d(vec3d_randdouble(0, 100), vec3d_randdouble(-35, +35), vec3d_randdouble(-1, 1)),
-									 vec3d_randdouble(1, 5), matr);
+		//h_Sphere *sph = new h_Sphere(delta + Vec3d(vec3d_randdouble(0, 100), vec3d_randdouble(-25, +25), vec3d_randdouble(-1, 1)),
+		//							 vec3d_randdouble(1, 5), matr);
+
+		h_Sphere *sph = nullptr;
+		roll = i % 8;
+		if (roll == 0) {
+			sph = new h_Sphere(delta + Vec3d(i, i, 0) / 2.5, (i % 3 + 2) / 2, matr);
+		} else if (roll == 1) {
+			sph = new h_Sphere(delta + Vec3d(i, -i, 0) / 2.5, (i % 3 + 2) / 2, matr);
+		} else if (roll == 2) {
+			sph = new h_Sphere(delta + Vec3d(-i, i, 0) / 2.5, (i % 3 + 2) / 2, matr);
+		} else if (roll == 3){
+			sph = new h_Sphere(delta + Vec3d(-i, -i, 0) / 2.5, (i % 3 + 2) / 2, matr);
+		} else if (roll == 4) {
+			sph = new h_Sphere(delta + Vec3d(i, i / 2, 0) / 2.5, (i % 3 + 2) / 2, matr);
+		} else if (roll == 5) {
+			sph = new h_Sphere(delta + Vec3d(i, -i / 2, 0) / 2.5, (i % 3 + 2) / 2, matr);
+		} else if (roll == 6) {
+			sph = new h_Sphere(delta + Vec3d(-i / 2, i, 0) / 2.5, (i % 3 + 2) / 2, matr);
+		} else {
+			sph = new h_Sphere(delta + Vec3d(-i / 2, -i, 0) / 2.5, (i % 3 + 2) / 2, matr);
+		}
 		scene.insert(sph);
 	}
 

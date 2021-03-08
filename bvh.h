@@ -20,6 +20,7 @@ public:
 	virtual bool bounding_box(AABB &box) const override;
 };
 
+double BVH_Node_by_axis_estimation(HittableList &hitlist, size_t from, size_t to, const int axis);
 
 
 #endif // BVH_H

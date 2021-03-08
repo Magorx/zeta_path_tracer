@@ -36,3 +36,7 @@ AABB surrounding_box(const AABB first, const AABB second) {
 
     return AABB(mn, mx);
 }
+
+double AABB::effective_size() const {
+    return fabs((mx.x - mn.x)) + fabs((mx.y - mn.y)) + fabs((mx.z - mn.z));
+}

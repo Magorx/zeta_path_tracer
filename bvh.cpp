@@ -35,10 +35,22 @@ BVH_Node(hitlist, 0, hitlist.size())
 {}
 
 BVH_Node::BVH_Node(HittableList &hitlist, size_t from, size_t to) {
-	int axis = vec3d_randlong() % 3;
+	int axis = 0;
+	double est_x = BVH_Node_by_axis_estimation(hitlist, from, to, 0);
+	double est_y = BVH_Node_by_axis_estimation(hitlist, from, to, 1);
+	double est_z = BVH_Node_by_axis_estimation(hitlist, from, to, 2);
+
+	if (est_x <= est_y && est_x <= est_z) {
+		axis = 0;
+	} else if (est_y <= est_x && est_y <= est_z) {
+		axis = 1;
+	} else {
+		axis = 2;
+	}
+
 	auto comparator = (axis == 0) ? box_x_compare
-                    : (axis == 1) ? box_y_compare
-                                  : box_z_compare;
+					: (axis == 1) ? box_y_compare
+								  : box_z_compare;
 
 	size_t objects_cnt = to - from;
 	if (objects_cnt == 1) {
@@ -65,6 +77,24 @@ BVH_Node::BVH_Node(HittableList &hitlist, size_t from, size_t to) {
 	}
 
 	box = surrounding_box(box_left, box_right);
+}
+
+double BVH_Node_by_axis_estimation(HittableList &hitlist, size_t from, size_t to, const int axis) {
+	auto comparator = (axis == 0) ? box_x_compare
+                    : (axis == 1) ? box_y_compare
+                                  : box_z_compare;
+
+	size_t objects_cnt = to - from;
+	if (objects_cnt <= 1) {
+		return 0;
+	} else {
+		 std::sort(hitlist.hittables.begin() + from, hitlist.hittables.begin() + to, comparator);
+		 double mid = from + objects_cnt / 2;
+		 AABB left, right;
+		 hitlist.bounding_box(left, from, mid);
+		 hitlist.bounding_box(right, mid , to);
+		 return left.effective_size() + right.effective_size();
+	}
 }
 
 HitRecord BVH_Node::hit(Ray &ray) const {
