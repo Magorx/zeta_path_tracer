@@ -5,6 +5,7 @@
 #include "material.h"
 #include "ray.h"
 #include "hit_record.h"
+#include "aabb.h"
 
 struct Hittable {
     Hittable();
@@ -12,6 +13,7 @@ struct Hittable {
 
     Material *material;
     virtual HitRecord hit(Ray &ray) const = 0;
+    virtual bool bounding_box(AABB &box) const = 0;
 };
 
 #endif // HITTABLE

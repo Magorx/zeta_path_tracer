@@ -12,6 +12,7 @@ struct h_Sphere : public Hittable {
 
     Vec3d normal(const Vec3d &point) const;
     HitRecord hit(Ray &ray) const override;
+    bool bounding_box(AABB &box) const override;
 };
 
 struct Plane : Hittable {
@@ -22,6 +23,7 @@ struct Plane : Hittable {
     Plane(const Vec3d point, const Vec3d normal, Material *material_);
 
     HitRecord hit(Ray &ray) const override;
+    bool bounding_box(AABB &box) const override;
 };
 
 struct Triangle : Hittable {
@@ -37,6 +39,7 @@ struct Triangle : Hittable {
 
     bool is_point_inside(const Vec3d &p);
     HitRecord hit(Ray &ray) const override;
+    bool bounding_box(AABB &box) const override;
 };
 
 #endif // COLLECTION_HITTABLES

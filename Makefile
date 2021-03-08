@@ -24,8 +24,8 @@ view: run
 	convert image.ppm image.png
 	eog -f image.png
 
-pather: main.cpp ray.o vec3d.o color.o camera.o hit_record.o collection_materials.o collection_hittables.o hittable.o path_tracer.o hittable_list.o
-	$(CPP) $(CFLAGS) main.cpp vec3d.o ray.o color.o camera.o hit_record.o collection_materials.o collection_hittables.o hittable.o path_tracer.o hittable_list.o -o pather
+pather: main.cpp ray.o vec3d.o color.o camera.o hit_record.o collection_materials.o collection_hittables.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o
+	$(CPP) $(CFLAGS) main.cpp vec3d.o ray.o color.o camera.o hit_record.o collection_materials.o collection_hittables.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o -o pather
 
 ray.o: ray.cpp ray.h
 	$(CPP) $(CFLAGS) ray.cpp -c
@@ -56,6 +56,12 @@ path_tracer.o: path_tracer.cpp path_tracer.h
 
 hittable_list.o: hittable_list.cpp hittable_list.h
 	$(CPP) $(CFLAGS) hittable_list.cpp -c
+
+aabb.o: aabb.cpp aabb.h
+	$(CPP) $(CFLAGS) aabb.cpp -c
+
+bvh.o: bvh.cpp bvh.h
+	$(CPP) $(CFLAGS) bvh.cpp -c
 
 clear:
 	rm *.o

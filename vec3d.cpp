@@ -1,5 +1,7 @@
 #include "vec3d.h"
 
+const Vec3d VEC3D_ZERO(0, 0, 0);
+
 long vec3d_randlong() {
     long ret = rand();
     ret |= rand() << sizeof(int);
@@ -53,6 +55,19 @@ Vec3d Vec3d::cross(const Vec3d &other) const {
     double res_y = z * other.x - x * other.z;
     double res_z = x * other.y - y * other.x;
     return {res_x, res_y, res_z};
+}
+
+double Vec3d::operator[](const int i) const {
+    switch(i) {
+        case 0:
+            return x;
+        case 1:
+            return y;
+        case 2:
+            return z;
+        default:
+            return 0;
+    }
 }
 
 Vec3d operator+(const Vec3d &first) {

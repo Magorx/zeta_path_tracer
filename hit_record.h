@@ -6,10 +6,10 @@
 class Material;
 
 struct HitRecord {
-    const Vec3d  p;
-    const double dist;
+    Vec3d  p;
+    double dist;
     Vec3d  n;
-    const Material *mat;
+    Material *mat;
     bool front_hit;
 
     HitRecord();

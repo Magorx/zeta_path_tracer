@@ -13,6 +13,7 @@
 // #include "light.h"
 #include "camera.h"
 // #include "scene.h"
+#include "bvh.h"
 
 // extern const double AMBIENT;
 // extern const Vec3d BACKGROUND;

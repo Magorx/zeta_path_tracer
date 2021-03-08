@@ -38,3 +38,10 @@ HitRecord h_Sphere::hit(Ray &ray) const {
     Vec3d point = ray.cast(d);
     return {point, d, this->normal(point), material, ray.dir};
 }
+
+bool h_Sphere::bounding_box(AABB &box) const {
+    Vec3d radvec = Vec3d(radius, radius, radius);
+    box.mn = center - radvec;
+    box.mx = center + radvec;
+    return true;
+}
