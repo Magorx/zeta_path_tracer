@@ -1,5 +1,9 @@
 #include "material.h"
 
+Material::Material():
+emitter(nullptr)
+{}
+
 void Material::set_emitter(Light *emitter_) {
 	emitter = emitter_;
 }

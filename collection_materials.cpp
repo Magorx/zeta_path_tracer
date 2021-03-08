@@ -1,6 +1,7 @@
 #include "collection_materials.h"
 
 m_Lambertian::m_Lambertian(const Color &albedo_):
+Material(),
 albedo(albedo_)
 {}
 
@@ -16,6 +17,7 @@ bool m_Lambertian::scatter(const Ray &, const HitRecord &hitrec, Color &attenuat
 }
 
 m_Metal::m_Metal(const Color &albedo_, const double fuzziness_):
+Material(),
 albedo(albedo_),
 fuzziness(fuzziness_)
 {}
@@ -28,6 +30,7 @@ bool m_Metal::scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuatio
 }
 
 m_Dielectric::m_Dielectric(const Color &albedo_, const double refrac_coef_, const double roughness_):
+Material(),
 albedo(albedo_),
 refrac_coef(refrac_coef_),
 roughness(roughness_)

@@ -10,6 +10,8 @@ struct HitRecord;
 class Material {
 	Light *emitter;
 public:
+	Material();
+
 	void set_emitter(Light *emitter_);
 
     virtual bool scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const = 0;
