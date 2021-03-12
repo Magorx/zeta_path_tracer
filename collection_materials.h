@@ -3,22 +3,27 @@
 
 #include "material.h"
 #include "hit_record.h"
+#include "texture.h"
+
+#include "collection_textures.h"
 
 class m_Lambertian : public Material {
 public:
-	Color albedo;
+	Texture *albedo;
 
 	m_Lambertian(const Color &albedo_);
+	m_Lambertian(Texture *texture_);
 
 	bool scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const override;
 };
 
 class m_Metal : public Material {
 public:
-	Color albedo;
+	Texture *albedo;
 	double fuzziness;
 
 	m_Metal(const Color &albedo_, const double fuzziness_ = 0);
+	m_Metal(Texture *texture_,    const double fuzziness_ = 0);
 
 	bool scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const override;
 };
@@ -28,11 +33,12 @@ private:
 	static double reflectance(double cosine, double ref_idx);
 
 public:
-	Color albedo;
+	Texture *albedo;
 	double refrac_coef;
 	double roughness;
 
 	m_Dielectric(const Color &albedo_, const double refrac_coef_ = 0, const double roughness_ = -1);
+	m_Dielectric(Texture *texture_,    const double refrac_coef_ = 0, const double roughness_ = -1);
 
 	bool scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const override;
 };

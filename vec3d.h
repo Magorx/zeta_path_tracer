@@ -7,6 +7,7 @@
 const double VEC3_EPS = 1e-6;
 const double VEC3_MAX_RANDOM_TRIES_CNT = 50;
 const double VEC3D_INF = 1e9;
+const double VEC3D_PI = 3.1415926535897;
 
 //=============================================================================
 //<KCTF> Random for vector ====================================================
@@ -56,9 +57,14 @@ struct Vec3d {
     inline static Vec3d random_unit() {
         return random_in_unit_sphere().normal();
     }
+
+    inline static double sign(const double x) {
+        return fabs(x) < VEC3_EPS ? 0 : x > 0 ? 1 : -1;
+    }
 };
 
 extern const Vec3d VEC3D_ZERO;
+extern const Vec3d VEC3D_ONE;
 
 Vec3d operator+  (const Vec3d &first);
 Vec3d operator-  (const Vec3d &first);

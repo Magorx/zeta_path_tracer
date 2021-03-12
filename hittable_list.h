@@ -20,7 +20,6 @@ public:
 
 	size_t size() const;
 	Hittable *operator[](const size_t i) const;
-
 };
 
 

@@ -2,7 +2,12 @@
 
 m_Lambertian::m_Lambertian(const Color &albedo_):
 Material(),
-albedo(albedo_)
+albedo(new t_SolidColor(albedo_))
+{}
+
+m_Lambertian::m_Lambertian(Texture *texture_):
+Material(),
+albedo(texture_)
 {}
 
 bool m_Lambertian::scatter(const Ray &, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
@@ -12,32 +17,49 @@ bool m_Lambertian::scatter(const Ray &, const HitRecord &hitrec, Color &attenuat
 	}
 
     scattered = Ray(hitrec.p, scatter_direction);
-    attenuation = albedo;
+    attenuation = albedo->value(hitrec.surf_x, hitrec.surf_y, hitrec.p);
     return true;
 }
 
+//=============================================================================
+
 m_Metal::m_Metal(const Color &albedo_, const double fuzziness_):
 Material(),
-albedo(albedo_),
+albedo(new t_SolidColor(albedo_)),
+fuzziness(fuzziness_)
+{}
+
+m_Metal::m_Metal(Texture *texture_, const double fuzziness_):
+Material(),
+albedo(texture_),
 fuzziness(fuzziness_)
 {}
 
 bool m_Metal::scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
 	Vec3d scatter_direction = reflect(ray.dir, hitrec.n) + fuzziness * Vec3d::random_in_unit_sphere();
     scattered = Ray(hitrec.p, scatter_direction);
-    attenuation = albedo;
+    attenuation = albedo->value(hitrec.surf_x, hitrec.surf_y, hitrec.p);
     return true;
 }
 
+//=============================================================================
+
 m_Dielectric::m_Dielectric(const Color &albedo_, const double refrac_coef_, const double roughness_):
 Material(),
-albedo(albedo_),
+albedo(new t_SolidColor(albedo_)),
+refrac_coef(refrac_coef_),
+roughness(roughness_)
+{}
+
+m_Dielectric::m_Dielectric(Texture *texture_,    const double refrac_coef_, const double roughness_):
+Material(),
+albedo(texture_),
 refrac_coef(refrac_coef_),
 roughness(roughness_)
 {}
 
 bool m_Dielectric::scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
-	attenuation = albedo;
+	attenuation = albedo->value(hitrec.surf_x, hitrec.surf_y, hitrec.p);
 	double rc = hitrec.front_hit ? (1 / refrac_coef) : refrac_coef;
 
 	double cos_theta = fmin(-(ray.dir.dot(hitrec.n)) / ray.dir.len(), 1.0);

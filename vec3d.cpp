@@ -1,6 +1,7 @@
 #include "vec3d.h"
 
 const Vec3d VEC3D_ZERO(0, 0, 0);
+const Vec3d VEC3D_ONE (1, 1, 1);
 
 long vec3d_randlong() {
     long ret = rand();

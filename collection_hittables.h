@@ -13,6 +13,7 @@ struct h_Sphere : public Hittable {
     Vec3d normal(const Vec3d &point) const;
     HitRecord hit(Ray &ray) const override;
     bool bounding_box(AABB &box) const override;
+    bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const override;
 };
 
 struct Plane : Hittable {
@@ -24,6 +25,7 @@ struct Plane : Hittable {
 
     HitRecord hit(Ray &ray) const override;
     bool bounding_box(AABB &box) const override;
+    bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const override;
 };
 
 struct Triangle : Hittable {

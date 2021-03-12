@@ -28,8 +28,8 @@ _view:
 
 view: run convert _view
 
-pather: main.cpp ray.o vec3d.o color.o camera.o hit_record.o collection_materials.o collection_hittables.o collection_lights.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o material.o light.o
-	$(CPP) $(CFLAGS) main.cpp vec3d.o ray.o color.o camera.o hit_record.o collection_materials.o collection_hittables.o collection_lights.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o material.o light.o -o pather
+pather: main.cpp ray.o vec3d.o color.o camera.o hit_record.o collection_textures.o collection_materials.o collection_hittables.o collection_lights.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o material.o light.o
+	$(CPP) $(CFLAGS) main.cpp vec3d.o ray.o color.o camera.o collection_textures.o hit_record.o collection_materials.o collection_hittables.o collection_lights.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o material.o light.o -o pather
 
 ray.o: ray.cpp ray.h
 	$(CPP) $(CFLAGS) ray.cpp -c
@@ -69,6 +69,9 @@ path_tracer.o: path_tracer.cpp path_tracer.h
 
 hittable_list.o: hittable_list.cpp hittable_list.h
 	$(CPP) $(CFLAGS) hittable_list.cpp -c
+
+collection_textures.o: collection_textures.cpp collection_textures.h
+	$(CPP) $(CFLAGS) collection_textures.cpp -c
 
 aabb.o: aabb.cpp aabb.h
 	$(CPP) $(CFLAGS) aabb.cpp -c

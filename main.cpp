@@ -9,11 +9,11 @@ const int 	 PERCENT_STEP     = 10;
 
 const int 	 SCREEN_WIDTH     = 256;
 const int 	 SCREEN_HEIGHT    = 256;
-const double RESOLUTION_COEF  = 4;
+const double RESOLUTION_COEF  = 1;
 const int 	 MAX_TRACE_DEPTH  = 10;
-const int 	 PIXEL_SAMPLING   = 1000;
-const double GAMMA_CORRECTION = 0.45;
-const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
+const int 	 PIXEL_SAMPLING   = 100;
+const double GAMMA_CORRECTION = 0.55;
+const Vec3d  BACKGROUND_COLOR = {100, 100, 100};
 
 // ============================================================================
 
@@ -43,12 +43,13 @@ int main() {
     Material *matr3 = new m_Metal({200, 20, 50}, 0);
     h_Sphere *s3 = new h_Sphere({50, 0, 1}, 5, matr3);
 */
-    Material *matr_flr = new m_Lambertian({30, 220, 70});
+    Texture  *chkd_flr = new t_Checkered({30, 190, 70}, {1.5, 1, 1});
+    Material *matr_flr = new m_Lambertian(chkd_flr);
     h_Sphere *flr = new h_Sphere({0, 0, -10000}, 10000, matr_flr);
 
     Camera *cam = new Camera({0, 0, 20}, {1, 0, -0.46}, conf_render.SCREEN_WIDTH * 2, conf_render.SCREEN_WIDTH, conf_render.SCREEN_HEIGHT, 1);
 
-    HittableList scene = scene_gen(50, {40, 0, 3});
+    HittableList scene = scene_gen(10, {40, 0, 3});
 /*
     scene.insert(s0);
     scene.insert(s1);
@@ -66,7 +67,7 @@ HittableList scene_gen(int sphere_cnt, Vec3d delta) {
 	HittableList scene;
 
 	Material *matr = new m_Lambertian({0, 0, 0});
-	matr->set_emitter(new l_Diffuse(Vec3d(255, 255, 255) * 5));
+	matr->set_emitter(new l_Diffuse(Vec3d(255, 0, 0) * 5));
 	scene.insert(new h_Sphere(delta + Vec3d(0, 0, 5), 1, matr));
 
 	matr = new m_Dielectric({200, 100, 255}, 1.3);
