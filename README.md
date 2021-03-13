@@ -1,2 +1,18 @@
-# path_tracing
-YeaAnotherTracer
+# path_tracing as it is
+
+<img src="showcase/1.jpg" alt="alt text" width="400" height="400">
+<img src="showcase/2.jpg" alt="alt text" width="400" height="400">
+(check out more pictures below)
+
+### How to use
+0. Change settings and scenery in main.cpp
+1. ```make``` to build
+2. ```./pather``` to run
+3. Look for output in 'image.ppm'
+
+# Some results
+<img src="showcase/3.png" alt="alt text" width="600" height="600">
+
+## Links to check out:
+https://github.com/Magorx/ray_marching
+https://github.com/Magorx/cray_tracing

@@ -9,9 +9,9 @@ const int 	 PERCENT_STEP     = 10;
 
 const int 	 SCREEN_WIDTH     = 256;
 const int 	 SCREEN_HEIGHT    = 256;
-const double RESOLUTION_COEF  = 1;
+const double RESOLUTION_COEF  = 2;
 const int 	 MAX_TRACE_DEPTH  = 10;
-const int 	 PIXEL_SAMPLING   = 100;
+const int 	 PIXEL_SAMPLING   = 1000;
 const double GAMMA_CORRECTION = 0.55;
 const Vec3d  BACKGROUND_COLOR = {100, 100, 100};
 
@@ -30,36 +30,20 @@ int main() {
 
     conf_Verbosity conf_verbos(PERCENT_STEP);
     conf_PathTracer conf_pt(conf_render, conf_verbos);
-/*
-    Material *matr0 = new m_Lambertian({30, 20, 240});
-    h_Sphere *s0 = new h_Sphere({38, 1, -2.5}, 1, matr0);
 
-    Material *matr1 = new m_Dielectric({255, 255, 255}, 1.12);
-    h_Sphere *s1 = new h_Sphere({40, -4, 0}, 4, matr1);
-
-    Material *matr2 = new m_Metal({200, 140, 50}, 0.5);
-    h_Sphere *s2 = new h_Sphere({40, 5, 0}, 4, matr2);
-
-    Material *matr3 = new m_Metal({200, 20, 50}, 0);
-    h_Sphere *s3 = new h_Sphere({50, 0, 1}, 5, matr3);
-*/
     Texture  *chkd_flr = new t_Checkered({30, 190, 70}, {1.5, 1, 1});
     Material *matr_flr = new m_Lambertian(chkd_flr);
     h_Sphere *flr = new h_Sphere({0, 0, -10000}, 10000, matr_flr);
 
-    Camera *cam = new Camera({0, 0, 20}, {1, 0, -0.46}, conf_render.SCREEN_WIDTH * 2, conf_render.SCREEN_WIDTH, conf_render.SCREEN_HEIGHT, 1);
+    Camera *cam = new Camera({0, 0, 20}, {1, 0, -0.46}, 
+    						 conf_render.SCREEN_WIDTH * 2,
+    						 conf_render.SCREEN_WIDTH, conf_render.SCREEN_HEIGHT,
+    						 1);
 
     HittableList scene = scene_gen(10, {40, 0, 3});
-/*
-    scene.insert(s0);
-    scene.insert(s1);
-    scene.insert(s2);
-    scene.insert(s3);
-
-*/
     scene.insert(flr);
+    
     BVH_Node bvh(scene);
-
     render_image(cam, &bvh, conf_pt);
 }
 
