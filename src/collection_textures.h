@@ -16,12 +16,14 @@ public:
 
 class t_Checkered : public Texture {
 private:
-	Color color;
+	Texture *first;
+	Texture *second;
 	Vec3d freq;
 
 public:
 	t_Checkered();
-	t_Checkered(const Color &color_, const Vec3d &mod_);
+	t_Checkered(const Color &first_, const Color &second_ = VEC3D_ZERO, const Vec3d &freq_ = VEC3D_ONE);
+	t_Checkered(Texture *first_, Texture *second_, const Vec3d &freq_);
 
 	virtual Color value(double sx, double sy, const Vec3d &p) const override;
 };
