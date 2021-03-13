@@ -1,7 +1,7 @@
 # path_tracing as it is
 
-<img src="showcase/1.png" alt="oops" width="400" height="400">
-<img src="showcase/2.png" alt="oops" width="400" height="400">
+<img src="showcase/1.png" alt="oops" width="300" height="300">
+<img src="showcase/2.png" alt="oops" width="300" height="300">
 (check out more pictures below)
 
 ### How to use
