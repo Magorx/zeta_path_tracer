@@ -2,12 +2,14 @@
 
 m_Lambertian::m_Lambertian(const Color &albedo_):
 Material(),
-albedo(new t_SolidColor(albedo_))
+albedo(new t_SolidColor(albedo_)),
+to_affect_emmiter(1)
 {}
 
 m_Lambertian::m_Lambertian(Texture *texture_):
 Material(),
-albedo(texture_)
+albedo(texture_),
+to_affect_emmiter(1)
 {}
 
 bool m_Lambertian::scatter(const Ray &, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
@@ -21,18 +23,24 @@ bool m_Lambertian::scatter(const Ray &, const HitRecord &hitrec, Color &attenuat
     return true;
 }
 
+void m_Lambertian::affect_emitter(Vec3d &emitted, const double sx, const double sy, const Vec3d &point) const {
+	emitted *= albedo->value(sx, sy, point) / d_MAXRGB;
+}
+
 //=============================================================================
 
 m_Metal::m_Metal(const Color &albedo_, const double fuzziness_):
 Material(),
 albedo(new t_SolidColor(albedo_)),
-fuzziness(fuzziness_)
+fuzziness(fuzziness_),
+to_affect_emmiter(1)
 {}
 
 m_Metal::m_Metal(Texture *texture_, const double fuzziness_):
 Material(),
 albedo(texture_),
-fuzziness(fuzziness_)
+fuzziness(fuzziness_),
+to_affect_emmiter(1)
 {}
 
 bool m_Metal::scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
@@ -42,20 +50,24 @@ bool m_Metal::scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuatio
     return true;
 }
 
+void m_Metal::affect_emitter(Vec3d &, const double, const double, const Vec3d&) const {}
+
 //=============================================================================
 
 m_Dielectric::m_Dielectric(const Color &albedo_, const double refrac_coef_, const double roughness_):
 Material(),
 albedo(new t_SolidColor(albedo_)),
 refrac_coef(refrac_coef_),
-roughness(roughness_)
+roughness(roughness_),
+to_affect_emmiter(1)
 {}
 
 m_Dielectric::m_Dielectric(Texture *texture_,    const double refrac_coef_, const double roughness_):
 Material(),
 albedo(texture_),
 refrac_coef(refrac_coef_),
-roughness(roughness_)
+roughness(roughness_),
+to_affect_emmiter(1)
 {}
 
 bool m_Dielectric::scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
@@ -83,3 +95,5 @@ double m_Dielectric::reflectance(double cosine, double ref_idx) { // Schlick App
     r0 = r0 * r0;
     return r0 + (1 - r0)*pow((1 - cosine), 5);
 }
+
+void m_Dielectric::affect_emitter(Vec3d &, const double, const double, const Vec3d&) const {}

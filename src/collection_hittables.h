@@ -16,6 +16,19 @@ struct h_Sphere : public Hittable {
     bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const override;
 };
 
+struct h_RectXY : public Hittable {
+    Vec3d p0;
+    Vec3d p1;
+
+    h_RectXY();
+    h_RectXY(const Vec3d &p0_, const Vec3d &p1_, Material *material_);
+
+    Vec3d normal(const Vec3d &point) const;
+    HitRecord hit(Ray &ray) const override;
+    bool bounding_box(AABB &box) const override;
+    bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const override;
+};
+
 struct Plane : Hittable {
     Vec3d p;
     Vec3d n;

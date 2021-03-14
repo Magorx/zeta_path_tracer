@@ -59,3 +59,49 @@ bool h_Sphere::get_surface_coords(const Vec3d &point, double &sx, double &sy) co
     sy = theta / VEC3D_PI;
     return true;
 }
+
+//=============================================================================
+
+h_RectXY::h_RectXY():
+Hittable(),
+p0(VEC3D_ZERO),
+p1(VEC3D_ONE)
+{}
+
+h_RectXY::h_RectXY(const Vec3d &p0_, const Vec3d &p1_, Material *material_):
+Hittable(material_),
+p0(Vec3d(std::min(p0_.x, p1_.x), std::min(p0_.y, p1_.y), p0_.z)),
+p1(Vec3d(std::max(p0_.x, p1_.x), std::max(p0_.y, p1_.y), p1_.z)) // we can force p1.z = p0.z, but what for
+{}
+
+HitRecord h_RectXY::hit(Ray &ray) const {
+    HitRecord hitrec({0, 0, 0}, -1, Vec3d(0, 0, 0), material, ray.dir);
+
+    double t = (p0.z - ray.orig.z) / ray.dir.z;
+    double x = ray.orig.x + t * ray.dir.x;
+    double y = ray.orig.y + t * ray.dir.y;
+    // fprintf(stderr, "t = %lg x = %lg y = %lg\n", t, x, y);
+    if (x < p0.x || x > p1.x || y < p0.y || y > p1.y) {
+        // fprintf(stderr, "no\n");
+        return hitrec;
+    }
+
+    get_surface_coords({x, y, 0}, hitrec.surf_x, hitrec.surf_y);
+    hitrec.dist = t;
+    hitrec.n = Vec3d(0, 0, 1);
+    hitrec.set_normal_orientation(ray.dir);
+    hitrec.mat = material;
+    hitrec.p = ray.cast(hitrec.dist);
+    return hitrec;
+}
+
+bool h_RectXY::bounding_box(AABB &box) const {
+    box = AABB(p0 - Vec3d(0, 0, VEC3_EPS), p1 + Vec3d(0, 0, VEC3_EPS));
+    return true;
+}
+
+bool h_RectXY::get_surface_coords(const Vec3d &point, double &sx, double &sy) const {
+    sx = (point.x-p0.x) / (p1.x-p0.x);
+    sy = (point.y-p0.y) / (p1.y-p1.y);
+    return true;
+}

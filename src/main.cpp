@@ -9,11 +9,11 @@ const int 	 PERCENT_STEP     = 10;
 
 const int 	 SCREEN_WIDTH     = 256;
 const int 	 SCREEN_HEIGHT    = 256;
-const double RESOLUTION_COEF  = 1;
+const double RESOLUTION_COEF  = 2;
 const int 	 MAX_TRACE_DEPTH  = 10;
-const int 	 PIXEL_SAMPLING   = 50;
+const int 	 PIXEL_SAMPLING   = 1000;
 const double GAMMA_CORRECTION = 0.55;
-const Vec3d  BACKGROUND_COLOR = {100, 100, 100};
+const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
 
 // ============================================================================
 
@@ -31,7 +31,7 @@ int main() {
     conf_Verbosity conf_verbos(PERCENT_STEP);
     conf_PathTracer conf_pt(conf_render, conf_verbos);
 
-    Texture  *chkd_flr = new t_Checkered({30, 190, 70}, {75, 0, 175}, {2, 1, 2});
+    Texture  *chkd_flr = new t_Checkered({190, 190, 190}, {50, 50, 50}, {1, 1, 1});
     Material *matr_flr = new m_Lambertian(chkd_flr);
     h_Sphere *flr = new h_Sphere({0, 0, -10000}, 10000, matr_flr);
 
@@ -39,14 +39,31 @@ int main() {
     						 conf_render.SCREEN_WIDTH * 2,
     						 conf_render.SCREEN_WIDTH, conf_render.SCREEN_HEIGHT,
     						 1);
-
     HittableList scene = scene_gen(10, {40, 0, 3});
     scene.insert(flr);
 
-    Texture *chk_s = new t_Checkered({100, 200, 255}, {140, 35, 20}, {1, 2, 3});
-    Material *ms1 = new m_Lambertian(chk_s);
-    h_Sphere *s1 = new h_Sphere({60, 0, 6}, 6, ms1);
+    // Texture  *chkd_flr = new t_Checkered({190, 190, 190}, {50, 50, 50}, {1, 1, 1});
+    // Material *matr_flr = new m_Lambertian(chkd_flr);
+    // h_Sphere *flr = new h_Sphere({0, 0, -10000 - 5}, 10000, matr_flr);
+
+    // Camera *cam = new Camera({0, 0, 3}, {1, 0, 0}, 
+    // 						 conf_render.SCREEN_WIDTH * 2,
+    // 						 conf_render.SCREEN_WIDTH, conf_render.SCREEN_HEIGHT,
+    // 						 1);
+    // HittableList scene;
+    // scene.insert(flr);
+
+    Texture *chk_s1 = new t_Checkered({100, 200, 255}, {140, 35, 20}, {0.25, 0.25, 0.25});
+    Material *ms1 = new m_Lambertian(chk_s1);
+    ms1->set_emitter(new l_Diffuse({255, 255, 255}));
+    h_Sphere *s1 = new h_Sphere({60, 0, 5}, 7, ms1);
     scene.insert(s1);
+
+    Texture *chk_r1 = new t_Checkered({200, 100, 255}, {0, 0, 0}, {1, 1, 1});
+    Material *mr1 = new m_Lambertian(chk_r1);
+    // mr1->set_emitter(new l_Diffuse({255, 255, 255}));
+    h_RectXY *rec1 = new h_RectXY({60, 10 / 2, 8}, {40, -10 / 2, 8}, mr1);
+    scene.insert(rec1);
     
     BVH_Node bvh(scene);
     render_image(cam, &bvh, conf_pt);
