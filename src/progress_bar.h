@@ -6,8 +6,8 @@
 class ProgressBar {
 	int cur_tick;
 	int capacity;
-	int    cur_step;
-	double step_scale;
+	int cur_step;
+	int step_ticks;
 	FILE *file_ptr;
 
 	void on_start() {
@@ -16,10 +16,10 @@ class ProgressBar {
 	}
 
 	void on_tick() {
-		if ((double) capacity * step_scale * cur_step <= cur_tick && abs(cur_tick * 100 / capacity - 100.0) > 0.0001) {
+		if (cur_step > step_ticks) {
 			fprintf(file_ptr, "[PRG] % 3d%%         |     |\n", cur_tick * 100 / capacity);
+			cur_step = 0;
 		}
-		cur_step = ((double) cur_tick / (double) capacity / step_scale) + 1;
 	}
 
 	void on_stop() {
@@ -32,7 +32,7 @@ public:
 	cur_tick(0),
 	capacity(capacity_),
 	cur_step(1),
-	step_scale(step_scale_),
+	step_ticks(step_scale_ * capacity_),
 	file_ptr(file_ptr_)
 	{}
 
@@ -57,6 +57,7 @@ public:
 		}
 
 		cur_tick += tick_step;
+		cur_step += tick_step;
 		if (cur_tick < capacity) {
 			on_tick();
 			return true;

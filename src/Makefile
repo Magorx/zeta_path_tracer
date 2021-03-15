@@ -28,8 +28,8 @@ _view:
 
 view: run convert _view
 
-pather: main.cpp ray.o vec3d.o color.o camera.o hit_record.o collection_textures.o collection_materials.o collection_hittables.o collection_lights.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o material.o light.o
-	$(CPP) $(CFLAGS) main.cpp vec3d.o ray.o color.o camera.o collection_textures.o hit_record.o collection_materials.o collection_hittables.o collection_lights.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o material.o light.o -o pather
+pather: main.cpp ray.o vec3d.o color.o camera.o hit_record.o collection_instances.o collection_textures.o collection_materials.o collection_hittables.o collection_lights.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o material.o light.o
+	$(CPP) $(CFLAGS) main.cpp vec3d.o ray.o color.o camera.o collection_instances.o collection_textures.o hit_record.o collection_materials.o collection_hittables.o collection_lights.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o material.o light.o -o pather
 
 ray.o: ray.cpp ray.h
 	$(CPP) $(CFLAGS) ray.cpp -c
@@ -54,6 +54,9 @@ collection_lights.o: collection_lights.cpp collection_lights.h
 
 collection_hittables.o: collection_hittables.cpp collection_hittables.h
 	$(CPP) $(CFLAGS) collection_hittables.cpp -c
+
+collection_instances.o: collection_instances.cpp collection_instances.h
+	$(CPP) $(CFLAGS) collection_instances.cpp -c
 
 hittable.o: hittable.cpp hittable.h
 	$(CPP) $(CFLAGS) hittable.cpp -c

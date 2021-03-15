@@ -1,7 +1,9 @@
+#include "path_tracer_constants.h"
 #include "path_tracer.h"
 #include "collection_hittables.h"
 #include "collection_materials.h"
 #include "collection_lights.h"
+#include "collection_instances.h"
 
 // settings ===================================================================
 
@@ -9,11 +11,11 @@ const int 	 PERCENT_STEP     = 10;
 
 const int 	 SCREEN_WIDTH     = 100;
 const int 	 SCREEN_HEIGHT    = 100;
-const double RESOLUTION_COEF  = 1;
+const double RESOLUTION_COEF  = 256 / SCREEN_HEIGHT;
 const int 	 MAX_TRACE_DEPTH  = 10;
-const int 	 PIXEL_SAMPLING   = 50;
+const int 	 PIXEL_SAMPLING   = 100;
 const double GAMMA_CORRECTION = 0.55;
-const Vec3d  BACKGROUND_COLOR = {50, 50, 50};
+const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
 
 // ============================================================================
 
@@ -84,12 +86,12 @@ int main() {
 HittableList cornell_box_scene() {
 	HittableList scene;
 
-	Material *m_white = new m_Lambertian({255, 0, 255});
+	Material *m_white = new m_Lambertian({255, 255, 255});
 	Material *m_red   = new m_Lambertian({255,   0,   0});
 	Material *m_green = new m_Lambertian({  0, 255,   0});
 
-	Material *m_box_1 = new m_Lambertian({111, 111, 111});
-	Material *m_box_2 = new m_Lambertian({222, 222, 222});
+	Material *m_box_1 = new m_Lambertian({255, 255, 255});
+	Material *m_box_2 = new m_Lambertian({255, 255, 255});
 
 	Light *l_rect_light = new l_Diffuse({255, 255, 255});
 
@@ -101,7 +103,9 @@ HittableList cornell_box_scene() {
 	const double width = 100;
 	const double depth = 100;
 
-	const double light_size_coef = 0.2;
+	const double light_size_coef = 0.3;
+	const double box_coef = 0.1;
+
 	const double l_h = heigh - VEC3_EPS;
 	const double l_w = width * light_size_coef;
 	const double l_d = depth * light_size_coef;
@@ -114,8 +118,16 @@ HittableList cornell_box_scene() {
  	
 	Hittable *rect_light = new h_RectXY({depth / 2 - l_d / 2, width / 2 - l_w / 2, l_h}, {depth / 2 + l_d / 2, width / 2 + l_w / 2, l_h}, m_rect_light);
 
-	Hittable *box_1 = new h_Box({depth * 0.65, width * 0.65, 0}, {depth * 0.85, width * 0.85, heigh * 0.75}, m_box_1);
-	Hittable *box_2 = new h_Box({depth * 0.15, width * 0.15, 0}, {depth * 0.35, width * 0.35, heigh * 0.25}, m_box_2);
+	Hittable *box_1 = new h_Box({ depth * box_coef,  width * box_coef, 0},
+								{-depth * box_coef, -width * box_coef, heigh * 0.75},
+								m_box_1);
+
+	Hittable *box_2 = new h_Box({ depth * box_coef,  width * box_coef, 0},
+								{-depth * box_coef, -width * box_coef, heigh * 0.25},
+								m_box_2);
+
+	Hittable *rot_box_1 = new inst_Translate(new inst_RotY(box_1, Pi/4), {60, 70, 0});
+	Hittable *rot_box_2 = new inst_Translate(new inst_RotZ(box_2, -Pi/3), {30, 25, 0});
 
 	scene.insert(rect_ceil );
 	scene.insert(rect_floor);
@@ -124,8 +136,8 @@ HittableList cornell_box_scene() {
 	scene.insert(rect_rwall);
 	scene.insert(rect_light);
 
-	scene.insert(box_1);
-	scene.insert(box_2);
+	scene.insert(rot_box_1);
+	scene.insert(rot_box_2);
 
 	return scene;
 }

@@ -38,6 +38,7 @@ struct Vec3d {
 
     Vec3d orient(const Vec3d &axis);
 
+    double &operator[](const int i);
     double operator[](const int i) const;
 
     inline static Vec3d random() {
@@ -102,5 +103,8 @@ Vec3d rotate(const Vec3d vec, const Vec3d &rotation);
 
 Vec3d reflect(const Vec3d vec, Vec3d normal);
 Vec3d refract(const Vec3d vec, const Vec3d &normal, const double eta_from_over_eta_to);
+
+double vec3d_deg_to_rad(const double deg);
+double vec3d_rad_to_deg(const double rad);
 
 #endif // GENERAL_VEC3D

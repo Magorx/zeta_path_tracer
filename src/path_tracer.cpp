@@ -45,8 +45,6 @@ void render_image(Camera *camera, const Hittable *hittable, const conf_PathTrace
         }
     }
 
-    Ray r = camera->get_sample_ray(camera->res_w, camera->res_h);
-    fprintf(stderr, "LAST %lg %lg %lg -> %lg %lg %lg\n", r.orig.x, r.orig.y, r.orig.z, r.dir.x, r.dir.y, r.dir.z);
     fprintf(stderr, "doned.\n");
 }
 

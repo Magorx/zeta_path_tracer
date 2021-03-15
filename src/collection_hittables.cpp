@@ -214,7 +214,7 @@ p1(Vec3d(std::max(p0_.x, p1_.x), std::max(p0_.y, p1_.y), std::max(p0_.z, p1_.z))
     sides.insert(new h_RectXZ({p0.x, p1.y, p0.z}, {p1.x, p1.y, p1.z}, material_));
 
     sides.insert(new h_RectXY({p0.x, p0.y, p0.z}, {p1.x, p1.y, p1.z}, material_));
-    sides.insert(new h_RectXY({p0.x, p1.y, p1.z}, {p1.x, p1.y, p1.z}, material_));
+    sides.insert(new h_RectXY({p0.x, p0.y, p1.z}, {p1.x, p1.y, p1.z}, material_));
 }
 
 HitRecord h_Box::hit(Ray &ray) const {

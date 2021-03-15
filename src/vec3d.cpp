@@ -58,6 +58,19 @@ Vec3d Vec3d::cross(const Vec3d &other) const {
     return {res_x, res_y, res_z};
 }
 
+double &Vec3d::operator[](const int i) {
+    switch(i) {
+        case 0:
+            return x;
+        case 1:
+            return y;
+        case 2:
+            return z;
+        default:
+            return x;
+    }
+}
+
 double Vec3d::operator[](const int i) const {
     switch(i) {
         case 0:
@@ -67,7 +80,7 @@ double Vec3d::operator[](const int i) const {
         case 2:
             return z;
         default:
-            return 0;
+            return x;
     }
 }
 
@@ -212,4 +225,12 @@ Vec3d refract(const Vec3d vec, const Vec3d &normal, const double eta_from_over_e
     Vec3d r_out_perp =  eta_from_over_eta_to * (uv + cos_theta * n);
     Vec3d r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.len_squared())) * n;
     return r_out_perp + r_out_parallel;
+}
+
+double vec3d_deg_to_rad(const double deg) {
+    return deg / 180 * VEC3D_PI;
+}
+
+double vec3d_rad_to_deg(const double rad) {
+    return rad / VEC3D_PI * 180;
 }
