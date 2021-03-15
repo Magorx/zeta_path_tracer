@@ -3,13 +3,13 @@
 m_Lambertian::m_Lambertian(const Color &albedo_):
 Material(),
 albedo(new t_SolidColor(albedo_)),
-to_affect_emmiter(1)
+to_affect_emitter(1)
 {}
 
 m_Lambertian::m_Lambertian(Texture *texture_):
 Material(),
 albedo(texture_),
-to_affect_emmiter(1)
+to_affect_emitter(1)
 {}
 
 bool m_Lambertian::scatter(const Ray &, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
@@ -33,14 +33,14 @@ m_Metal::m_Metal(const Color &albedo_, const double fuzziness_):
 Material(),
 albedo(new t_SolidColor(albedo_)),
 fuzziness(fuzziness_),
-to_affect_emmiter(1)
+to_affect_emitter(1)
 {}
 
 m_Metal::m_Metal(Texture *texture_, const double fuzziness_):
 Material(),
 albedo(texture_),
 fuzziness(fuzziness_),
-to_affect_emmiter(1)
+to_affect_emitter(1)
 {}
 
 bool m_Metal::scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
@@ -59,7 +59,7 @@ Material(),
 albedo(new t_SolidColor(albedo_)),
 refrac_coef(refrac_coef_),
 roughness(roughness_),
-to_affect_emmiter(1)
+to_affect_emitter(1)
 {}
 
 m_Dielectric::m_Dielectric(Texture *texture_,    const double refrac_coef_, const double roughness_):
@@ -67,7 +67,7 @@ Material(),
 albedo(texture_),
 refrac_coef(refrac_coef_),
 roughness(roughness_),
-to_affect_emmiter(1)
+to_affect_emitter(1)
 {}
 
 bool m_Dielectric::scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {

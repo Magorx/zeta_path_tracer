@@ -13,7 +13,7 @@ CPP = g++
 
 WARNINGS = -Wall -Wextra -Wno-multichar
 STANDARD = -std=c++17
-CFLAGS = $(STANDARD) $(WARNINGS) -lm -O3
+CFLAGS = $(STANDARD) $(WARNINGS) -lm -O3 -D DEBUG="if(0)"
 
 all: $(CUR_PROG)
 

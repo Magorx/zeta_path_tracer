@@ -33,17 +33,20 @@ Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_
 }
 
 void render_image(Camera *camera, const Hittable *hittable, const conf_PathTracer &config) {
-	ProgressBar prog_bar(stderr, config.render.SCREEN_HEIGHT * config.render.SCREEN_WIDTH, config.verbos.PROGRESS_BAR_SCALE);
+	ProgressBar prog_bar(stderr, camera->res_h * camera->res_w, config.verbos.PROGRESS_BAR_SCALE);
 
     printf("P3 %d %d\n%d\n", config.render.SCREEN_WIDTH, config.render.SCREEN_HEIGHT, i_MAXRGB);
 
     prog_bar.start();
-    for (int y = 0; y < config.render.SCREEN_HEIGHT; ++y) {
-        for (int x = 0; x < config.render.SCREEN_WIDTH; ++x) {
+    for (int y = 0; y < camera->res_h; ++y) {
+        for (int x = 0; x < camera->res_w; ++x) {
             prog_bar.tick();
             print_rgb(accumulate_pixel_color(camera, x, y, hittable, config), config.render.GAMMA_CORRECTION);
         }
     }
+
+    Ray r = camera->get_sample_ray(camera->res_w, camera->res_h);
+    fprintf(stderr, "LAST %lg %lg %lg -> %lg %lg %lg\n", r.orig.x, r.orig.y, r.orig.z, r.dir.x, r.dir.y, r.dir.z);
     fprintf(stderr, "doned.\n");
 }
 

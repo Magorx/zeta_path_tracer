@@ -10,7 +10,7 @@
 class m_Lambertian : public Material {
 public:
 	Texture *albedo;
-	char to_affect_emmiter;
+	char to_affect_emitter;
 
 	m_Lambertian(const Color &albedo_);
 	m_Lambertian(Texture *texture_);
@@ -23,7 +23,7 @@ class m_Metal : public Material {
 public:
 	Texture *albedo;
 	double fuzziness;
-	char to_affect_emmiter;
+	char to_affect_emitter;
 
 	m_Metal(const Color &albedo_, const double fuzziness_ = 0);
 	m_Metal(Texture *texture_,    const double fuzziness_ = 0);
@@ -40,7 +40,7 @@ public:
 	Texture *albedo;
 	double refrac_coef;
 	double roughness;
-	char to_affect_emmiter;
+	char to_affect_emitter;
 
 	m_Dielectric(const Color &albedo_, const double refrac_coef_ = 0, const double roughness_ = -1);
 	m_Dielectric(Texture *texture_,    const double refrac_coef_ = 0, const double roughness_ = -1);
