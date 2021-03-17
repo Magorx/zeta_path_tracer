@@ -11,7 +11,7 @@ GCPP = $(GENERAL_PREFIX)/cpp
 CC = gcc
 CPP = g++
 
-WARNINGS = -Wall -Wextra -Wno-multichar
+WARNINGS = -Wall -Wextra -Wno-multichar -Wno-unused-result
 STANDARD = -std=c++17
 CFLAGS = $(STANDARD) $(WARNINGS) -lm -O3 -D DEBUG="if(0)"
 
@@ -28,8 +28,8 @@ _view:
 
 view: run convert _view
 
-pather: main.cpp ray.o vec3d.o color.o camera.o hit_record.o collection_instances.o collection_textures.o collection_materials.o collection_hittables.o collection_lights.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o material.o light.o
-	$(CPP) $(CFLAGS) main.cpp vec3d.o ray.o color.o camera.o collection_instances.o collection_textures.o hit_record.o collection_materials.o collection_hittables.o collection_lights.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o material.o light.o -o pather
+pather: main.cpp ray.o vec3d.o color.o camera.o hit_record.o collection_instances.o collection_textures.o collection_materials.o collection_hittables.o collection_lights.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o material.o light.o render_task.o
+	$(CPP) $(CFLAGS) main.cpp vec3d.o ray.o color.o camera.o collection_instances.o collection_textures.o hit_record.o collection_materials.o collection_hittables.o collection_lights.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o material.o light.o render_task.o -o pather
 
 ray.o: ray.cpp ray.h
 	$(CPP) $(CFLAGS) ray.cpp -c
@@ -81,6 +81,9 @@ aabb.o: aabb.cpp aabb.h
 
 bvh.o: bvh.cpp bvh.h
 	$(CPP) $(CFLAGS) bvh.cpp -c
+
+render_task.o: render_task.cpp render_task.h
+	$(CPP) $(CFLAGS) render_task.cpp -c
 
 clear:
 	rm *.o

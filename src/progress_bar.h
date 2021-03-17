@@ -8,6 +8,7 @@ class ProgressBar {
 	int capacity;
 	int cur_step;
 	int step_ticks;
+	int verbosity;
 	FILE *file_ptr;
 
 	void on_start() {
@@ -28,11 +29,12 @@ class ProgressBar {
 	}
 
 public:
-	ProgressBar(FILE *file_ptr_, int capacity_ = 100, double step_scale_ = 0.1):
+	ProgressBar(FILE *file_ptr_, int capacity_ = 100, double step_scale_ = 0.1, int verbosity_ = 1):
 	cur_tick(0),
 	capacity(capacity_),
 	cur_step(1),
 	step_ticks(step_scale_ * capacity_),
+	verbosity(verbosity_),
 	file_ptr(file_ptr_)
 	{}
 
@@ -47,7 +49,7 @@ public:
 
 		cur_tick = 0;
 		cur_step = 1;
-		on_start();
+		if (verbosity) on_start();
 		return true;
 	}
 
@@ -59,11 +61,11 @@ public:
 		cur_tick += tick_step;
 		cur_step += tick_step;
 		if (cur_tick < capacity) {
-			on_tick();
+			if (verbosity) on_tick();
 			return true;
 		} else {
 			cur_step = -1;
-			on_stop();
+			if (verbosity) on_stop();
 			return false;
 		}
 	}

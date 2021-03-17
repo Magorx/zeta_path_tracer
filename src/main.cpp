@@ -8,14 +8,15 @@
 // settings ===================================================================
 
 const int 	 PERCENT_STEP     = 10;
+const int 	 VERBOSITY 		  = 1;
 
 const int 	 SCREEN_WIDTH     = 100;
 const int 	 SCREEN_HEIGHT    = 100;
-const double RESOLUTION_COEF  = 256 / SCREEN_HEIGHT;
+const double RESOLUTION_COEF  = 100 / SCREEN_HEIGHT;
 const int 	 MAX_TRACE_DEPTH  = 10;
-const int 	 PIXEL_SAMPLING   = 100;
+const int 	 PIXEL_SAMPLING   = 50;
 const double GAMMA_CORRECTION = 0.55;
-const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
+const Vec3d  BACKGROUND_COLOR = {100, 100, 100};
 
 // ============================================================================
 
@@ -31,7 +32,7 @@ int main() {
 							GAMMA_CORRECTION,
 							BACKGROUND_COLOR);
 
-    conf_Verbosity conf_verbos(PERCENT_STEP);
+    conf_Verbosity conf_verbos(PERCENT_STEP, VERBOSITY);
     conf_PathTracer conf_pt(conf_render, conf_verbos);
 
     // Texture  *chkd_flr = new t_Checkered({190, 190, 190}, {50, 50, 50}, {1, 1, 1});
@@ -68,19 +69,32 @@ int main() {
     // h_Box *rec1 = new h_Box({50, 10 / 2, 8}, {30, -10 / 2, 0}, mr1);
     // scene.insert(rec1);
 
-    HittableList scene = cornell_box_scene();
-    Camera *cam = new Camera({-100, 50, 50}, {1, 0, 0}, 
-    						 100,
-    						 SCREEN_WIDTH, SCREEN_HEIGHT,
-    						 RESOLUTION_COEF);
+    // ========================================================================
 
-    Material *ms1 = new m_Lambertian({255, 255, 255});
-    ms1->set_emitter(new l_Diffuse({255, 0, 0}));
-    h_Sphere *s1 = new h_Sphere({100, 50, 50}, 5, ms1);
-    scene.insert(s1);
+    RenderTask rt(0, 100, 10, 20, 999);
+    rt.save("1.rt");
+    rt.load("1.rt");
+    rt.dump();
+
+    // ========================================================================
+
+    // HittableList scene = cornell_box_scene();
+    // Camera *cam = new Camera({-100, 50, 50}, {1, 0, 0}, 
+    // 						 100,
+    // 						 SCREEN_WIDTH, SCREEN_HEIGHT,
+    // 						 RESOLUTION_COEF);
+
+    // Material *ms1 = new m_Lambertian({255, 255, 255});
+    // ms1->set_emitter(new l_Diffuse({255, 0, 0}));
+    // h_Sphere *s1 = new h_Sphere({100, 50, 50}, 5, ms1);
+    // scene.insert(s1);
     
-    BVH_Node bvh(scene);
-    render_image(cam, &bvh, conf_pt);
+    // BVH_Node bvh(scene);
+    // //render_image(cam, &bvh, conf_pt);
+
+    // Color *img = (Color*) calloc(cam->res_w * cam->res_h, sizeof(Color));
+    // render_into_buffer(cam, &bvh, conf_pt, img);
+    // save_rgb_to_ppm_image((char*) "image.ppm", img, cam->res_w, cam->res_h, GAMMA_CORRECTION);
 }
 
 HittableList cornell_box_scene() {
@@ -126,7 +140,7 @@ HittableList cornell_box_scene() {
 								{-depth * box_coef, -width * box_coef, heigh * 0.25},
 								m_box_2);
 
-	Hittable *rot_box_1 = new inst_Translate(new inst_RotY(box_1, Pi/4), {60, 70, 0});
+	Hittable *rot_box_1 = new inst_Translate(new inst_RotZ(box_1, Pi/4), {60, 70, 0});
 	Hittable *rot_box_2 = new inst_Translate(new inst_RotZ(box_2, -Pi/3), {30, 25, 0});
 
 	scene.insert(rect_ceil );
