@@ -18,7 +18,7 @@ CFLAGS = $(STANDARD) $(WARNINGS) -lm -O3 -D DEBUG="if(0)"
 all: $(CUR_PROG)
 
 run: all
-	./$(CUR_PROG) > image.ppm
+	./$(CUR_PROG)
 
 convert:
 	convert image.ppm image.png

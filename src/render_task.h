@@ -24,6 +24,11 @@ struct RenderTask {
 	void load(const char *filename);
 
 	void dump(FILE *fout = stdout);
+
+	void linear_break(const int parts_cnt, const int random_name_modifier);
 };
+
+void linear_render_task_break(const int width, const int height, const int parts_cnt, const char *rtask_ext = ".rt", 
+							  const int offset_x = 0, const int offset_y = 0);
 
 #endif // RENDER_TASK

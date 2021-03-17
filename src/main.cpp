@@ -5,6 +5,8 @@
 #include "collection_lights.h"
 #include "collection_instances.h"
 
+#include <cstring>
+
 // settings ===================================================================
 
 const int 	 PERCENT_STEP     = 10;
@@ -18,13 +20,16 @@ const int 	 PIXEL_SAMPLING   = 50;
 const double GAMMA_CORRECTION = 0.55;
 const Vec3d  BACKGROUND_COLOR = {100, 100, 100};
 
+long TIMESTAMP = 0;
+
 // ============================================================================
 
 HittableList scene_gen(int sphere_cnt = 1, Vec3d delta = VEC3D_ZERO);
 HittableList cornell_box_scene();
 
-int main() {
+int main(int argc, char* argv[]) {
 	srand(time(NULL));
+	TIMESTAMP = vec3d_randlong() % 10000;
 
 	conf_Render conf_render(SCREEN_WIDTH * RESOLUTION_COEF, SCREEN_HEIGHT * RESOLUTION_COEF,
 							MAX_TRACE_DEPTH,
@@ -71,26 +76,42 @@ int main() {
 
     // ========================================================================
 
-    RenderTask rt(0, 100, 10, 20, 999);
-    rt.save("1.rt");
-    rt.load("1.rt");
-    rt.dump();
+    HittableList scene = cornell_box_scene();
+    Camera *cam = new Camera({-100, 50, 50}, {1, 0, 0}, 
+    						 100,
+    						 SCREEN_WIDTH, SCREEN_HEIGHT,
+    						 RESOLUTION_COEF);
 
-    // ========================================================================
-
-    // HittableList scene = cornell_box_scene();
-    // Camera *cam = new Camera({-100, 50, 50}, {1, 0, 0}, 
-    // 						 100,
-    // 						 SCREEN_WIDTH, SCREEN_HEIGHT,
-    // 						 RESOLUTION_COEF);
-
-    // Material *ms1 = new m_Lambertian({255, 255, 255});
-    // ms1->set_emitter(new l_Diffuse({255, 0, 0}));
-    // h_Sphere *s1 = new h_Sphere({100, 50, 50}, 5, ms1);
-    // scene.insert(s1);
+    Material *ms1 = new m_Lambertian({255, 255, 255});
+    ms1->set_emitter(new l_Diffuse({255, 0, 0}));
+    h_Sphere *s1 = new h_Sphere({100, 50, 50}, 5, ms1);
+    scene.insert(s1);
     
-    // BVH_Node bvh(scene);
-    // //render_image(cam, &bvh, conf_pt);
+    BVH_Node bvh(scene);
+    //render_image(cam, &bvh, conf_pt);
+
+    const char *rt_filename = nullptr;
+    int kernel_cnt = 4;
+    char strdump[50];
+    printf("argc: %d\n", argc);
+    if (argc > 1) {
+    	if (argc >= 3 && strcmp(argv[1], "-k") == 0) {
+    		sscanf(argv[2], "%d", &kernel_cnt);
+    	}
+    	if (argc >= 5 && strcmp(argv[3], "-rt") == 0) {
+    		rt_filename = argv[4];
+    	}
+    }
+
+    if (!rt_filename) {
+
+    }
+
+    printf("kernels: %d\n", kernel_cnt);
+    printf("rt_filename: %s\n", rt_filename);
+
+    RenderTask rt(0, 512, 256, 384, 999);
+    rt.linear_break(kernel_cnt, TIMESTAMP);
 
     // Color *img = (Color*) calloc(cam->res_w * cam->res_h, sizeof(Color));
     // render_into_buffer(cam, &bvh, conf_pt, img);

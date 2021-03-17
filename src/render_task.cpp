@@ -59,3 +59,35 @@ void RenderTask::load(const char *filename) {
 
 	fclose(fin);
 }
+
+void RenderTask::linear_break(const int parts_cnt, const int random_name_modifier) {
+	is_valid();
+
+	char rtask_ext[50] = {};
+	sprintf(rtask_ext, "_%d.rt", random_name_modifier);
+
+	int width  = max_x - min_x;
+	int height = max_y - min_y;
+
+	printf("h %d w %d\n", height, width);
+
+	linear_render_task_break(width, height, parts_cnt, rtask_ext, min_x, min_y);
+}
+
+void linear_render_task_break(const int width, const int height, const int parts_cnt, const char *rtask_ext,
+							  const int offset_x, const int offset_y) {
+	char rtask_file_name[50] = {};
+
+	int rt_height_cnt = height / parts_cnt;
+	int rt_width_cnt = width;
+
+	for (int i = 0; i < parts_cnt - 1; ++i) {
+		sprintf(rtask_file_name, "%d%s", i, rtask_ext);
+		RenderTask rt(offset_x, offset_x + rt_width_cnt, offset_y + i * rt_height_cnt, offset_y + (i + 1) * rt_height_cnt, i);
+		rt.save(rtask_file_name);
+	}
+
+	sprintf(rtask_file_name, "%d%s", parts_cnt - 1, rtask_ext);
+	RenderTask rt(offset_x, offset_x + rt_width_cnt, offset_y + (parts_cnt - 1) * rt_height_cnt, offset_y + height, parts_cnt - 1);
+	rt.save(rtask_file_name);
+}
