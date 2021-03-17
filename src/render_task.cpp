@@ -85,8 +85,6 @@ void RenderTask::linear_split(const int parts_cnt, const int random_name_modifie
 	int width  = max_x - min_x;
 	int height = max_y - min_y;
 
-	printf("h %d w %d\n", height, width);
-
 	linear_render_task_split(width, height, parts_cnt, rtask_ext, min_x, min_y);
 }
 

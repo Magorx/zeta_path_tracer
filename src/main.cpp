@@ -6,6 +6,7 @@
 #include "collection_instances.h"
 
 #include <cstring>
+#include <unistd.h>
 
 // settings ===================================================================
 
@@ -14,7 +15,7 @@ const int 	 VERBOSITY 		  = 1;
 
 const int 	 SCREEN_WIDTH     = 100;
 const int 	 SCREEN_HEIGHT    = 100;
-const double RESOLUTION_COEF  = 256 / SCREEN_HEIGHT;
+const double RESOLUTION_COEF  = 100 / SCREEN_HEIGHT;
 const int 	 MAX_TRACE_DEPTH  = 10;
 const int 	 PIXEL_SAMPLING   = 100;
 const double GAMMA_CORRECTION = 0.55;
@@ -41,14 +42,30 @@ int main(int argc, char* argv[]) {
     conf_SystemInfo conf_sysinf(TIMESTAMP, 1, nullptr);
     conf_PathTracer conf_pt(conf_render, conf_verbos, conf_sysinf);
 
-    printf("argc: %d\n", argc);
-    if (argc > 1) {
-    	if (argc >= 3 && strcmp(argv[1], "-k") == 0) {
-    		sscanf(argv[2], "%d", &conf_pt.sysinf.kernel_cnt);
+
+    // reading command line
+    extern char *optarg;
+    while (true) {
+    	switch(getopt(argc, argv, "k:t:")) {
+    		case '?':
+    		case 'h':
+    		default:
+    			printf("run ./pather -k #threads-count -t #render-task-file\n");
+    			printf("use -t only if you understand what it does\n");
+    			break;
+
+    		case -1:
+    			break;
+
+    		case 'k':
+    			sscanf(optarg, "%d", &conf_pt.sysinf.kernel_cnt);
+    			continue;
+
+    		case 't':
+    			conf_pt.sysinf.rtask_filename = strdup(optarg);
+    			continue;
     	}
-    	if (argc >= 5 && strcmp(argv[3], "-rt") == 0) {
-    		conf_pt.sysinf.rtask_filename = argv[4];
-    	}
+    	break;
     }
  
     printf("kernels: %d\n", conf_pt.sysinf.kernel_cnt);

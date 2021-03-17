@@ -19,6 +19,7 @@ all: $(CUR_PROG)
 
 run: all
 	./$(CUR_PROG) -k 4
+	rm *.rt
 
 convert:
 	convert image.ppm image.png

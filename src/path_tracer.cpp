@@ -52,15 +52,15 @@ void render_rtask(Camera *camera, const Hittable *hittable, const conf_PathTrace
 		return;
 	}
 
-	ProgressBar prog_bar(stderr, camera->res_h * camera->res_w, config.verbos.PROGRESS_BAR_SCALE, config.verbos.VERBOSITY);
+	int height = rtask.height();
+    int width  = rtask.width();
+
+	ProgressBar prog_bar(stderr, height * width, config.verbos.PROGRESS_BAR_SCALE, config.verbos.VERBOSITY);
 
 	int min_x = std::max(rtask.min_x, 0);
 	int min_y = std::max(rtask.min_y, 0);
     int max_y = std::min(rtask.max_y, camera->res_h);
     int max_x = std::min(rtask.max_x, camera->res_w);
-    
-    // int height = max_y - min_y;
-    int width  = rtask.width();
 
     prog_bar.start();
     for (int y = min_y; y < max_y; ++y) {
@@ -104,7 +104,6 @@ void render_from_rtask_file(Camera *camera, const Hittable *hittable, const conf
 		char rt_name[50];
 		for (int i = 0; i < kernel_cnt; ++i) {
 			sprintf(rt_name, "%d_%d.rt", i, config.sysinf.timestamp);
-			printf("name: %s\n", rt_name);
 			
 			RenderTask rtask;
 			rtask.load(rt_name);
@@ -117,7 +116,6 @@ void render_from_rtask_file(Camera *camera, const Hittable *hittable, const conf
 		int task_buffer_offset = rtasks[0].width() * rtasks[0].height();
 		for (int i = 0; i < config.sysinf.kernel_cnt; ++i) {
 			threads[i] = new std::thread(render_rtask, camera, hittable, config, rtasks[i], image_buffer + i * task_buffer_offset);
-			printf("%d\n", i * task_buffer_offset);
 		}
 
 		for (int i = 0; i < kernel_cnt; ++i) {
