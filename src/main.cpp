@@ -38,7 +38,21 @@ int main(int argc, char* argv[]) {
 							BACKGROUND_COLOR);
 
     conf_Verbosity conf_verbos(PERCENT_STEP, VERBOSITY);
-    conf_PathTracer conf_pt(conf_render, conf_verbos);
+    conf_SystemInfo conf_sysinf(TIMESTAMP, 1, nullptr);
+    conf_PathTracer conf_pt(conf_render, conf_verbos, conf_sysinf);
+
+    printf("argc: %d\n", argc);
+    if (argc > 1) {
+    	if (argc >= 3 && strcmp(argv[1], "-k") == 0) {
+    		sscanf(argv[2], "%d", &conf_pt.sysinf.kernel_cnt);
+    	}
+    	if (argc >= 5 && strcmp(argv[3], "-rt") == 0) {
+    		conf_pt.sysinf.rtask_filename = argv[4];
+    	}
+    }
+ 
+    printf("kernels: %d\n", conf_pt.sysinf.kernel_cnt);
+    printf("rt_filename: %s\n", conf_pt.sysinf.rtask_filename);
 
     // Texture  *chkd_flr = new t_Checkered({190, 190, 190}, {50, 50, 50}, {1, 1, 1});
     // Material *matr_flr = new m_Lambertian(chkd_flr);
@@ -88,34 +102,7 @@ int main(int argc, char* argv[]) {
     scene.insert(s1);
     
     BVH_Node bvh(scene);
-    //render_image(cam, &bvh, conf_pt);
-
-    const char *rt_filename = nullptr;
-    int kernel_cnt = 4;
-    char strdump[50];
-    printf("argc: %d\n", argc);
-    if (argc > 1) {
-    	if (argc >= 3 && strcmp(argv[1], "-k") == 0) {
-    		sscanf(argv[2], "%d", &kernel_cnt);
-    	}
-    	if (argc >= 5 && strcmp(argv[3], "-rt") == 0) {
-    		rt_filename = argv[4];
-    	}
-    }
-
-    if (!rt_filename) {
-
-    }
-
-    printf("kernels: %d\n", kernel_cnt);
-    printf("rt_filename: %s\n", rt_filename);
-
-    RenderTask rt(0, 512, 256, 384, 999);
-    rt.linear_break(kernel_cnt, TIMESTAMP);
-
-    // Color *img = (Color*) calloc(cam->res_w * cam->res_h, sizeof(Color));
-    // render_into_buffer(cam, &bvh, conf_pt, img);
-    // save_rgb_to_ppm_image((char*) "image.ppm", img, cam->res_w, cam->res_h, GAMMA_CORRECTION);
+    render_from_rtask_file(cam, &bvh, conf_pt);
 }
 
 HittableList cornell_box_scene() {

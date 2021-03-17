@@ -8,6 +8,14 @@ min_y(min_y_),
 max_y(max_y_)
 {}
 
+int RenderTask::width() const {
+	return std::abs(max_x - min_x);
+}
+
+int RenderTask::height() const {
+	return std::abs(max_y - min_y);
+}
+
 void RenderTask::dump(FILE *fout) {
 	fprintf(fout, "RTask[ % 5d ]\n", id);
 	fprintf(fout, "min_x[ % 5d ]_max_x_[ % 5d ]\n", min_x, max_x);

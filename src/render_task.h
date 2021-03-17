@@ -18,6 +18,9 @@ struct RenderTask {
 			   const int max_y_,
 			   const int id_ = 0);
 
+	int width()  const;
+	int height() const;
+
 	bool is_valid(const int strict_mode = 0);
 
 	void save(const char *filename);

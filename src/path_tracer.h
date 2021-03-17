@@ -2,6 +2,8 @@
 #define PATH_TRACER
 
 #include <cstdio>
+#include <vector>
+
 #include "vec3d.h"
 #include "color.h"
 #include "progress_bar.h"
@@ -35,16 +37,27 @@ struct conf_Verbosity {
 	const int PERCENT_STEP;
 	const double PROGRESS_BAR_SCALE;
 	int VERBOSITY;
+	
 
 	conf_Verbosity(const int percent_step, const int verbosity);
+};
+
+struct conf_SystemInfo {
+	int  timestamp;
+	int  kernel_cnt;
+	const char *rtask_filename;
+
+	conf_SystemInfo(const int timestamp_, const int kernel_cnt_, const char *rtask_filename_);
 };
 
 struct conf_PathTracer {
 	const conf_Render 	  render;
 	const conf_Verbosity  verbos;
+	conf_SystemInfo sysinf;
 
-	conf_PathTracer(const conf_Render 	 &render_config,
-					const conf_Verbosity &verbos_config);
+	conf_PathTracer(const conf_Render 	  &render_config,
+					const conf_Verbosity  &verbos_config,
+					const conf_SystemInfo &sysinf_config);
 };
 
 // Intersection test_ray(Ray &ray, const vector<Hittable*> &objects, const Hittable *to_ignore);
@@ -56,5 +69,7 @@ Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_
 void render_image       (Camera *camera, const Hittable *hittable, const conf_PathTracer &config);
 void render_into_buffer (Camera *camera, const Hittable *hittable, const conf_PathTracer &config, Color *buffer);
 void render_rtask       (Camera *camera, const Hittable *hittable, const conf_PathTracer &config, const RenderTask rtask, Color *buffer);
+
+void render_from_rtask_file(Camera *camera, const Hittable *hittable, const conf_PathTracer &config);
 
 #endif // PATH_TRACER

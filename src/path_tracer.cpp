@@ -85,6 +85,22 @@ void render_into_buffer(Camera *camera, const Hittable *hittable, const conf_Pat
     }
 }
 
+void render_from_rtask_file(Camera *camera, const Hittable *hittable, const conf_PathTracer &config) {
+	RenderTask full_rtask(0, camera->res_w, 0, camera->res_h, 0);
+	if (config.sysinf.rtask_filename) {
+		full_rtask.load(config.sysinf.rtask_filename);
+	}
+
+	Color *image_buffer = (Color*) calloc(full_rtask.width() * full_rtask.height(), sizeof(Color));
+
+	if (config.sysinf.kernel_cnt == 1) {
+		render_rtask(camera, hittable, config, full_rtask, image_buffer);
+		save_rgb_to_ppm_image("image.ppm", image_buffer, full_rtask.width(), full_rtask.height(), config.render.GAMMA_CORRECTION);
+	} else {
+		
+	}
+}
+
 conf_Render::conf_Render(const int screen_width, const int screen_height,
 						 const int max_tracing_depth,
 						 const int pixel_sampling,
@@ -104,8 +120,16 @@ PROGRESS_BAR_SCALE((1.0 * percent_step) / 100.0),
 VERBOSITY(verbosity)
 {}
 
-conf_PathTracer::conf_PathTracer(const conf_Render &render_config,
-								 const conf_Verbosity &verbos_config):
+conf_SystemInfo::conf_SystemInfo(const int timestamp_, const int kernel_cnt_, const char *rtask_filename_):
+timestamp(timestamp_),
+kernel_cnt(kernel_cnt_),
+rtask_filename(rtask_filename_)
+{}
+
+conf_PathTracer::conf_PathTracer(const conf_Render     &render_config,
+								 const conf_Verbosity  &verbos_config,
+								 const conf_SystemInfo &sysinf_config):
 render(render_config),
-verbos(verbos_config)
+verbos(verbos_config),
+sysinf(sysinf_config)
 {}
