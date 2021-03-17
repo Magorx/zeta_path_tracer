@@ -11,7 +11,8 @@ struct RenderTask {
 	int max_x;
 	int min_y;
 	int max_y;
-	
+
+	RenderTask();	
 	RenderTask(const int min_x_, 
 			   const int max_x_,
 			   const int min_y_,
@@ -28,10 +29,10 @@ struct RenderTask {
 
 	void dump(FILE *fout = stdout);
 
-	void linear_break(const int parts_cnt, const int random_name_modifier);
+	void linear_split(const int parts_cnt, const int random_name_modifier);
 };
 
-void linear_render_task_break(const int width, const int height, const int parts_cnt, const char *rtask_ext = ".rt", 
+void linear_render_task_split(const int width, const int height, const int parts_cnt, const char *rtask_ext = ".rt", 
 							  const int offset_x = 0, const int offset_y = 0);
 
 #endif // RENDER_TASK

@@ -18,7 +18,7 @@ CFLAGS = $(STANDARD) $(WARNINGS) -lm -O3 -D DEBUG="if(0)"
 all: $(CUR_PROG)
 
 run: all
-	./$(CUR_PROG)
+	./$(CUR_PROG) -k 4
 
 convert:
 	convert image.ppm image.png
@@ -29,7 +29,7 @@ _view:
 view: run convert _view
 
 pather: main.cpp ray.o vec3d.o color.o camera.o hit_record.o collection_instances.o collection_textures.o collection_materials.o collection_hittables.o collection_lights.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o material.o light.o render_task.o
-	$(CPP) $(CFLAGS) main.cpp vec3d.o ray.o color.o camera.o collection_instances.o collection_textures.o hit_record.o collection_materials.o collection_hittables.o collection_lights.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o material.o light.o render_task.o -o pather
+	$(CPP) $(CFLAGS) main.cpp vec3d.o ray.o color.o camera.o collection_instances.o collection_textures.o hit_record.o collection_materials.o collection_hittables.o collection_lights.o hittable.o path_tracer.o hittable_list.o aabb.o bvh.o material.o light.o render_task.o -pthread -o pather
 
 ray.o: ray.cpp ray.h
 	$(CPP) $(CFLAGS) ray.cpp -c

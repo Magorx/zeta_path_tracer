@@ -14,9 +14,9 @@ const int 	 VERBOSITY 		  = 1;
 
 const int 	 SCREEN_WIDTH     = 100;
 const int 	 SCREEN_HEIGHT    = 100;
-const double RESOLUTION_COEF  = 100 / SCREEN_HEIGHT;
+const double RESOLUTION_COEF  = 256 / SCREEN_HEIGHT;
 const int 	 MAX_TRACE_DEPTH  = 10;
-const int 	 PIXEL_SAMPLING   = 50;
+const int 	 PIXEL_SAMPLING   = 100;
 const double GAMMA_CORRECTION = 0.55;
 const Vec3d  BACKGROUND_COLOR = {100, 100, 100};
 
@@ -100,7 +100,7 @@ int main(int argc, char* argv[]) {
     ms1->set_emitter(new l_Diffuse({255, 0, 0}));
     h_Sphere *s1 = new h_Sphere({100, 50, 50}, 5, ms1);
     scene.insert(s1);
-    
+
     BVH_Node bvh(scene);
     render_from_rtask_file(cam, &bvh, conf_pt);
 }

@@ -1,5 +1,14 @@
 #include "render_task.h"
 
+RenderTask::RenderTask():
+id(0),
+min_x(0),
+max_x(0),
+min_y(0),
+max_y(0)
+{}
+
+
 RenderTask::RenderTask(const int min_x_, const int max_x_, const int min_y_, const int max_y_, const int id_):
 id(id_),
 min_x(min_x_),
@@ -60,15 +69,14 @@ void RenderTask::load(const char *filename) {
 
 	fscanf(fin, "%s %d %s", strdump, &id, strdump);
 	fscanf(fin, "%s %d %s", strdump, &min_x, strdump);
-	fscanf(fin, "%s %d %s", strdump, &max_x, strdump);
+	fscanf(fin, "%d %s", &max_x, strdump);
 	fscanf(fin, "%s %d %s", strdump, &min_y, strdump);
-	fscanf(fin, "%s %d %s", strdump, &max_y, strdump);
-	dump();
+	fscanf(fin, "%d %s", &max_y, strdump);
 
 	fclose(fin);
 }
 
-void RenderTask::linear_break(const int parts_cnt, const int random_name_modifier) {
+void RenderTask::linear_split(const int parts_cnt, const int random_name_modifier) {
 	is_valid();
 
 	char rtask_ext[50] = {};
@@ -79,10 +87,10 @@ void RenderTask::linear_break(const int parts_cnt, const int random_name_modifie
 
 	printf("h %d w %d\n", height, width);
 
-	linear_render_task_break(width, height, parts_cnt, rtask_ext, min_x, min_y);
+	linear_render_task_split(width, height, parts_cnt, rtask_ext, min_x, min_y);
 }
 
-void linear_render_task_break(const int width, const int height, const int parts_cnt, const char *rtask_ext,
+void linear_render_task_split(const int width, const int height, const int parts_cnt, const char *rtask_ext,
 							  const int offset_x, const int offset_y) {
 	char rtask_file_name[50] = {};
 

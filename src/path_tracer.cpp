@@ -60,14 +60,14 @@ void render_rtask(Camera *camera, const Hittable *hittable, const conf_PathTrace
     int max_x = std::min(rtask.max_x, camera->res_w);
     
     // int height = max_y - min_y;
-    int width  = max_x - min_x;
+    int width  = rtask.width();
 
     prog_bar.start();
     for (int y = min_y; y < max_y; ++y) {
         for (int x = min_x; x < max_x; ++x) {
             prog_bar.tick();
             Color px_color = accumulate_pixel_color(camera, x, y, hittable, config);
-            buffer[width * y + x] = px_color;
+            buffer[width * (y - min_y) + x] = px_color;
         }
     }
 }
@@ -97,7 +97,36 @@ void render_from_rtask_file(Camera *camera, const Hittable *hittable, const conf
 		render_rtask(camera, hittable, config, full_rtask, image_buffer);
 		save_rgb_to_ppm_image("image.ppm", image_buffer, full_rtask.width(), full_rtask.height(), config.render.GAMMA_CORRECTION);
 	} else {
-		
+		int kernel_cnt = config.sysinf.kernel_cnt;
+		full_rtask.linear_split(kernel_cnt, config.sysinf.timestamp);
+
+		std::vector<RenderTask> rtasks;
+		char rt_name[50];
+		for (int i = 0; i < kernel_cnt; ++i) {
+			sprintf(rt_name, "%d_%d.rt", i, config.sysinf.timestamp);
+			printf("name: %s\n", rt_name);
+			
+			RenderTask rtask;
+			rtask.load(rt_name);
+			rtask.dump();
+			rtasks.push_back(rtask);
+		}
+
+		std::thread **threads = (std::thread**) calloc(config.sysinf.kernel_cnt, sizeof(std::thread*));
+
+		int task_buffer_offset = rtasks[0].width() * rtasks[0].height();
+		for (int i = 0; i < config.sysinf.kernel_cnt; ++i) {
+			threads[i] = new std::thread(render_rtask, camera, hittable, config, rtasks[i], image_buffer + i * task_buffer_offset);
+			printf("%d\n", i * task_buffer_offset);
+		}
+
+		for (int i = 0; i < kernel_cnt; ++i) {
+			threads[i]->join();
+			delete threads[i];
+		}
+		free(threads);
+
+		save_rgb_to_ppm_image("image.ppm", image_buffer, full_rtask.width(), full_rtask.height(), config.render.GAMMA_CORRECTION);
 	}
 }
 

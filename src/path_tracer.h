@@ -13,7 +13,9 @@
 #include "hit_record.h"
 #include "camera.h"
 #include "bvh.h"
+
 #include "render_task.h"
+#include <thread>
 
 // extern const double AMBIENT;
 // extern const Vec3d BACKGROUND;
