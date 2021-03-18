@@ -40,12 +40,9 @@ struct conf_Render {
 };
 
 struct conf_Verbosity {
-	const int PERCENT_STEP;
-	const double PROGRESS_BAR_SCALE;
 	int VERBOSITY;
-	
 
-	conf_Verbosity(const int percent_step, const int verbosity);
+	conf_Verbosity(const int verbosity);
 };
 
 struct conf_SystemInfo {

@@ -154,9 +154,7 @@ GAMMA_CORRECTION(gamma_correction),
 BACKGROUND_COLOR(background_color)
 {}
 
-conf_Verbosity::conf_Verbosity(const int percent_step, const int verbosity):
-PERCENT_STEP(percent_step),
-PROGRESS_BAR_SCALE((1.0 * percent_step) / 100.0),
+conf_Verbosity::conf_Verbosity(const int verbosity):
 VERBOSITY(verbosity)
 {}
 

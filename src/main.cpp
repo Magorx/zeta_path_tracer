@@ -5,7 +5,6 @@
 
 // settings ===================================================================
 
-const int 	 PERCENT_STEP     = 10;
 const int 	 VERBOSITY 		  = 2;
 
 const int 	 SCREEN_WIDTH     = 100;
@@ -32,7 +31,7 @@ int main(int argc, char* argv[]) {
 							GAMMA_CORRECTION,
 							BACKGROUND_COLOR);
 
-    conf_Verbosity  conf_verbos(PERCENT_STEP, VERBOSITY);
+    conf_Verbosity  conf_verbos(VERBOSITY);
     conf_SystemInfo conf_sysinf(randomstamp, 1, nullptr);
     conf_PathTracer conf_pt(conf_render, conf_verbos, conf_sysinf);
 

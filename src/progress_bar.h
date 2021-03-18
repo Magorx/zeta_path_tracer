@@ -28,7 +28,7 @@ class ProgressBar {
 
 		fprintf(file_ptr, "[PRG] [");
 		int i = 0;
-		for (; i < 10 && i < ((double) cur_tick / capacity) * 10; ++i) {
+		for (; i < 10 && i < ((double) cur_tick / capacity) * 10 - 1; ++i) {
 			fprintf(file_ptr, "=");
 		}
 		if (i < 10) {
