@@ -18,7 +18,7 @@ CFLAGS = $(STANDARD) $(WARNINGS) -lm -O3 -D DEBUG="if(0)"
 all: $(CUR_PROG)
 
 run: all
-	./$(CUR_PROG) -k 4
+	./$(CUR_PROG) -k 2
 	rm *.rt
 
 convert:

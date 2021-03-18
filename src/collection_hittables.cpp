@@ -17,7 +17,7 @@ Vec3d h_Sphere::normal(const Vec3d &point) const {
 }
 
 HitRecord h_Sphere::hit(Ray &ray) const {
-    HitRecord hitrec({0, 0, 0}, -1, Vec3d(0, 0, 0), material, ray.dir);
+    HitRecord hitrec({0, 0, 0}, -1, {0, 0, 0}, material, ray.dir);
 
     Vec3d c_o = ray.orig - center;
     double disc = radius * radius - (c_o.dot(c_o) - ray.dir.dot(c_o) * ray.dir.dot(c_o));
@@ -75,7 +75,7 @@ p1(Vec3d(std::max(p0_.x, p1_.x), std::max(p0_.y, p1_.y), p1_.z)) // we can force
 {}
 
 HitRecord h_RectXY::hit(Ray &ray) const {
-    HitRecord hitrec({0, 0, 0}, -1, Vec3d(0, 0, 0), material, ray.dir);
+    HitRecord hitrec({0, 0, 0}, -1, {0, 0, 0}, material, ray.dir);
 
     double t = (p0.z - ray.orig.z) / ray.dir.z;
     double x = ray.orig.x + t * ray.dir.x;
@@ -121,7 +121,7 @@ p1(Vec3d(std::max(p0_.x, p1_.x), p1_.y, std::max(p0_.z, p1_.z))) // we can force
 {}
 
 HitRecord h_RectXZ::hit(Ray &ray) const {
-    HitRecord hitrec({0, 0, 0}, -1, Vec3d(0, 0, 0), material, ray.dir);
+    HitRecord hitrec({0, 0, 0}, -1, {0, 0, 0}, material, ray.dir);
 
     double t = (p0.y - ray.orig.y) / ray.dir.y;
     double x = ray.orig.x + t * ray.dir.x;
@@ -165,7 +165,7 @@ p1(Vec3d(p1_.x, std::max(p0_.y, p1_.y), std::max(p0_.z, p1_.z))) // we can force
 {}
 
 HitRecord h_RectYZ::hit(Ray &ray) const {
-    HitRecord hitrec({0, 0, 0}, -1, Vec3d(0, 0, 0), material, ray.dir);
+    HitRecord hitrec({0, 0, 0}, -1, {0, 0, 0}, material, ray.dir);
 
     double t = (p0.x - ray.orig.x) / ray.dir.x;
     double y = ray.orig.y + t * ray.dir.y;
@@ -228,4 +228,116 @@ bool h_Box::bounding_box(AABB &box) const {
 
 bool h_Box::get_surface_coords(const Vec3d &, double &, double &) const {
     return false;
+}
+
+//=============================================================================
+
+Triangle::Triangle():
+Hittable(),
+p0(0, 0, 0),
+p1(1, 0, 0),
+p2(0, 1, 0)
+{}
+
+Triangle::Triangle(const Vec3d &point_0, const Vec3d &point_1, const Vec3d &point_2, Material *material_):
+Hittable(material_),
+p0(point_0),
+p1(point_1),
+p2(point_2)
+{}
+
+HitRecord Triangle::hit(Ray &ray) const {
+    Vec3d edge1, edge2, h, s, q;
+    double a, f, u, v;
+    HitRecord hitrec({0, 0, 0}, -1, {0, 0, 0}, material, ray.dir);
+
+    edge1 = p1 - p0;
+    edge2 = p2 - p0;
+    h = ray.dir.cross(edge2);
+    a = edge1.dot(h);
+    if (a > -VEC3_EPS && a < VEC3_EPS)
+        return hitrec;    // This ray is parallel to this triangle.
+    f = 1.0 / a;
+    s = ray.orig - p0;
+    u = f * s.dot(h);
+    if (u < 0.0 || u > 1.0)
+        return hitrec;
+    q = s.cross(edge1);
+    v = f * ray.dir.dot(q);
+    if (v < 0.0 || u + v > 1.0)
+        return hitrec;
+    // At this stage we can compute t to find out where the intersection point is on the line.
+    float t = f * edge2.dot(q);
+    if (t > VEC3_EPS) // ray intersection
+    {
+        hitrec.p = ray.cast(t);
+        hitrec.dist = t;
+        hitrec.mat = material;
+        hitrec.n = edge1.cross(edge2).normal();
+        hitrec.set_normal_orientation(ray.dir);
+        hitrec.front_hit = true;
+        hitrec.surf_x = 0;
+        hitrec.surf_y = 0;
+        return hitrec;
+    }
+    else // This means that there is a line intersection but not a ray intersection.
+        return hitrec;
+}
+
+bool Triangle::bounding_box(AABB &box) const {
+    box =  AABB({std::min(p0.x, std::min(p1.x, p2.x)),
+                 std::min(p0.y, std::min(p1.y, p2.y)),
+                 std::min(p0.z, std::min(p1.z, p2.z))},
+                {
+                 std::max(p0.x, std::max(p1.x, p2.x)),
+                 std::max(p0.y, std::max(p1.y, p2.y)),
+                 std::max(p0.z, std::max(p1.z, p2.z))
+                });
+    return true;
+}
+
+//=============================================================================
+
+Model::Model(const char *filename, std::vector<Material*> matrs, const Vec3d &offset, const Vec3d &scale) {
+    load(filename, matrs, offset, scale);
+}
+
+bool Model::load(const char *filename, std::vector<Material*> matrs, const Vec3d &offset, const Vec3d &scale) {
+    if (!filename) {
+        fprintf(stderr, "[ERR] model::load filename[nullptr]\n");
+        return false;
+    }
+    
+    FILE *fin = fopen(filename, "r");
+    if (!fin) {
+        fprintf(stderr, "[ERR] model::load can't open [%s]\n", filename);
+        return false;
+    }
+
+    std::vector<Vec3d> points;
+    char line_type;
+    while (fscanf(fin, "%c", &line_type) == 1) {
+        if (isspace(line_type)) continue;
+
+        if (line_type == 'p') {
+            double x, y, z;
+            fscanf(fin, "%lg %lg %lg", &x, &y, &z);
+            points.push_back(offset + Vec3d(x, y ,z) * scale);
+        } else if (line_type == 'e') {
+            size_t x, y, z, matr;
+            fscanf(fin, "%lu %lu %lu %lu", &x, &y, &z, &matr);
+            --x;
+            --y;
+            --z;
+            if (x >= points.size() || y >= points.size() || z >= points.size()) {
+                fprintf(stderr, "[ERR] model::load point index overflow\n");
+                return false;
+            }
+
+            hittables.push_back(new Triangle(points[x], points[y], points[z], matrs[matr]));
+        }
+    }
+
+    fclose(fin);
+    return true;
 }

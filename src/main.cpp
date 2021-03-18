@@ -9,11 +9,11 @@ const int 	 VERBOSITY 		  = 2;
 
 const int 	 SCREEN_WIDTH     = 100;
 const int 	 SCREEN_HEIGHT    = 100;
-const double RESOLUTION_COEF  = 100 / SCREEN_HEIGHT;
+const double RESOLUTION_COEF  = 512 / SCREEN_HEIGHT;
 const int 	 MAX_TRACE_DEPTH  = 10;
-const int 	 PIXEL_SAMPLING   = 100;
+const int 	 PIXEL_SAMPLING   = 3000;
 const double GAMMA_CORRECTION = 0.55;
-const Vec3d  BACKGROUND_COLOR = {100, 100, 100};
+const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
 
 // ============================================================================
 
@@ -122,13 +122,14 @@ HittableList *cornell_box_objects() {
 	Material *m_white = new m_Lambertian({255, 255, 255});
 	Material *m_red   = new m_Lambertian({255,   0,   0});
 	Material *m_green = new m_Lambertian({  0, 255,   0});
+	Material *m_blue = new m_Lambertian({  100, 100,   255});
 
 	Material *m_box_1 = new m_Lambertian({255, 255, 255});
 	Material *m_box_2 = new m_Lambertian({255, 255, 255});
 
 	Light *l_rect_light = new l_Diffuse({255, 255, 255});
 
-	m_Lambertian *m_rect_light = new m_Lambertian({255, 255, 255});
+	m_Lambertian *m_rect_light = new m_Lambertian(Vec3d(255, 255, 255) * 2);
 	m_rect_light->set_emitter(l_rect_light);
 	m_rect_light->to_affect_emitter = 0;
 
@@ -136,7 +137,7 @@ HittableList *cornell_box_objects() {
 	const double width = 100;
 	const double depth = 100;
 
-	const double light_size_coef = 0.3;
+	const double light_size_coef = 1;
 	const double box_coef = 0.1;
 
 	const double l_h = heigh - VEC3_EPS;
@@ -146,8 +147,8 @@ HittableList *cornell_box_objects() {
 	Hittable *rect_ceil  = new h_RectXY({    0,     0, heigh}, {depth, width, heigh}, m_white);
 	Hittable *rect_floor = new h_RectXY({    0,     0,     0}, {depth, width, heigh}, m_white);
 	Hittable *rect_fwall = new h_RectYZ({depth,     0,     0}, {depth, width, heigh}, m_white);
-	Hittable *rect_lwall = new h_RectXZ({    0,     0,     0}, {depth,     0, heigh}, m_red  );
-	Hittable *rect_rwall = new h_RectXZ({    0, width,     0}, {depth, width, heigh}, m_green);
+	Hittable *rect_rwall = new h_RectXZ({    0,     0,     0}, {depth,     0, heigh}, m_red  );
+	Hittable *rect_lwall = new h_RectXZ({    0, width,     0}, {depth, width, heigh}, m_green);
  	
 	Hittable *rect_light = new h_RectXY({depth / 2 - l_d / 2, width / 2 - l_w / 2, l_h}, {depth / 2 + l_d / 2, width / 2 + l_w / 2, l_h}, m_rect_light);
 
@@ -162,15 +163,21 @@ HittableList *cornell_box_objects() {
 	Hittable *rot_box_1 = new inst_Translate(new inst_RotZ(box_1, Pi/4), {60, 70, 0});
 	Hittable *rot_box_2 = new inst_Translate(new inst_RotZ(box_2, -Pi/3), {30, 25, 0});
 
-	scene->insert(rect_ceil );
-	scene->insert(rect_floor);
-	scene->insert(rect_fwall);
-	scene->insert(rect_lwall);
-	scene->insert(rect_rwall);
+	// scene->insert(rect_ceil );
+	// scene->insert(rect_floor);
+	// scene->insert(rect_fwall);
+	// scene->insert(rect_lwall);
+	// scene->insert(rect_rwall);
 	scene->insert(rect_light);
 
-	scene->insert(rot_box_1);
-	scene->insert(rot_box_2);
+	// scene->insert(rot_box_1);
+	// scene->insert(rot_box_2);
+
+	Hittable *model = new Model("ship.mdl", {m_green, m_blue, m_red}, {0, 0, 0}, Vec3d(1, 1, 1) * 16);
+	model = new inst_RotY(model, Pi / 4);
+	model = new inst_RotZ(model, Pi / 8);
+	model = new inst_Translate(model, {60, 50, 25});
+	scene->insert(model);
 
 	return scene;
 }
