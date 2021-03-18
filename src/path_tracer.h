@@ -5,13 +5,17 @@
 #include <vector>
 
 #include "vec3d.h"
-#include "color.h"
-#include "progress_bar.h"
 #include "ray.h"
+#include "color.h"
+
+#include "progress_bar.h"
+
 #include "hittable.h"
 #include "hittable_list.h"
 #include "hit_record.h"
-#include "camera.h"
+
+#include "scene.h"
+
 #include "bvh.h"
 
 #include "render_task.h"
@@ -68,10 +72,10 @@ Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &confi
 Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_y, 
 							 const Hittable *hittable, const conf_PathTracer &config);
 
-void render_image       (Camera *camera, const Hittable *hittable, const conf_PathTracer &config);
-void render_into_buffer (Camera *camera, const Hittable *hittable, const conf_PathTracer &config, Color *buffer);
-void render_rtask       (Camera *camera, const Hittable *hittable, const conf_PathTracer &config, const RenderTask rtask, Color *buffer);
+void render_image       (Scene *scene, const conf_PathTracer &config);
+void render_into_buffer (Scene *scene, const conf_PathTracer &config, Color *buffer);
+void render_rtask       (Scene *scene, const conf_PathTracer &config, const RenderTask rtask, Color *buffer, const int verbouse = 1);
 
-void render_from_rtask_file(Camera *camera, const Hittable *hittable, const conf_PathTracer &config);
+void render_from_rtask_file(Scene *scene, const conf_PathTracer &config);
 
 #endif // PATH_TRACER

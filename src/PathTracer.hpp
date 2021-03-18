@@ -1,0 +1,6 @@
+#include "path_tracer_constants.h"
+#include "path_tracer.h"
+#include "collection_hittables.h"
+#include "collection_materials.h"
+#include "collection_lights.h"
+#include "collection_instances.h"

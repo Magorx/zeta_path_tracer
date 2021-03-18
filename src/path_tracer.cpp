@@ -32,21 +32,25 @@ Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_
 	return accumulator / config.render.PIXEL_SAMPLING;
 }
 
-void render_image(Camera *camera, const Hittable *hittable, const conf_PathTracer &config) {
-	ProgressBar prog_bar(stderr, camera->res_h * camera->res_w, config.verbos.PROGRESS_BAR_SCALE, config.verbos.VERBOSITY);
+void render_image(Scene *scene, const conf_PathTracer &config) {
+	ProgressBar prog_bar(stderr, 
+						 scene->camera->res_h * scene->camera->res_w,
+						 config.verbos.VERBOSITY);
 
     printf("P3 %d %d\n%d\n", config.render.SCREEN_WIDTH, config.render.SCREEN_HEIGHT, i_MAXRGB);
 
     prog_bar.start();
-    for (int y = 0; y < camera->res_h; ++y) {
-        for (int x = 0; x < camera->res_w; ++x) {
+    int res_h = scene->camera->res_h;
+    int res_w = scene->camera->res_w;
+    for (int y = 0; y < res_h; ++y) {
+        for (int x = 0; x < res_w; ++x) {
             prog_bar.tick();
-            print_rgb(accumulate_pixel_color(camera, x, y, hittable, config), config.render.GAMMA_CORRECTION);
+            print_rgb(accumulate_pixel_color(scene->camera, x, y, scene->objects, config), config.render.GAMMA_CORRECTION);
         }
     }
 }
 
-void render_rtask(Camera *camera, const Hittable *hittable, const conf_PathTracer &config, RenderTask rtask, Color *buffer) {
+void render_rtask(Scene *scene, const conf_PathTracer &config, RenderTask rtask, Color *buffer, const int verbouse) {
 	if (!rtask.is_valid()) {
 		fprintf(stderr, "[ERR] RTask is broken\n");
 		return;
@@ -55,38 +59,41 @@ void render_rtask(Camera *camera, const Hittable *hittable, const conf_PathTrace
 	int height = rtask.height();
     int width  = rtask.width();
 
-	ProgressBar prog_bar(stderr, height * width, config.verbos.PROGRESS_BAR_SCALE, config.verbos.VERBOSITY);
+	ProgressBar prog_bar(stderr, height * width, config.verbos.VERBOSITY && verbouse);
 
 	int min_x = std::max(rtask.min_x, 0);
 	int min_y = std::max(rtask.min_y, 0);
-    int max_y = std::min(rtask.max_y, camera->res_h);
-    int max_x = std::min(rtask.max_x, camera->res_w);
+    int max_y = std::min(rtask.max_y, scene->camera->res_h);
+    int max_x = std::min(rtask.max_x, scene->camera->res_w);
 
     prog_bar.start();
     for (int y = min_y; y < max_y; ++y) {
         for (int x = min_x; x < max_x; ++x) {
             prog_bar.tick();
-            Color px_color = accumulate_pixel_color(camera, x, y, hittable, config);
+            Color px_color = accumulate_pixel_color(scene->camera, x, y, scene->objects, config);
             buffer[width * (y - min_y) + x] = px_color;
         }
     }
 }
 
-void render_into_buffer(Camera *camera, const Hittable *hittable, const conf_PathTracer &config, Color *buffer) {
-	ProgressBar prog_bar(stderr, camera->res_h * camera->res_w, config.verbos.PROGRESS_BAR_SCALE, config.verbos.VERBOSITY);
+void render_into_buffer(Scene *scene, const conf_PathTracer &config, Color *buffer) {
+	ProgressBar prog_bar(stderr, scene->camera->res_h * scene->camera->res_w,
+						 config.verbos.VERBOSITY);
 
     prog_bar.start();
-    for (int y = 0; y < camera->res_h; ++y) {
-        for (int x = 0; x < camera->res_w; ++x) {
+    int res_h = scene->camera->res_h;
+    int res_w = scene->camera->res_w;
+    for (int y = 0; y < res_h; ++y) {
+        for (int x = 0; x < res_w; ++x) {
             prog_bar.tick();
-            Color px_color = accumulate_pixel_color(camera, x, y, hittable, config);
-            buffer[camera->res_w * y + x] = px_color;
+            Color px_color = accumulate_pixel_color(scene->camera, x, y, scene->objects, config);
+            buffer[res_w * y + x] = px_color;
         }
     }
 }
 
-void render_from_rtask_file(Camera *camera, const Hittable *hittable, const conf_PathTracer &config) {
-	RenderTask full_rtask(0, camera->res_w, 0, camera->res_h, 0);
+void render_from_rtask_file(Scene *scene, const conf_PathTracer &config) {
+	RenderTask full_rtask(0, scene->camera->res_w, 0, scene->camera->res_h, 0);
 	if (config.sysinf.rtask_filename) {
 		full_rtask.load(config.sysinf.rtask_filename);
 	}
@@ -94,11 +101,13 @@ void render_from_rtask_file(Camera *camera, const Hittable *hittable, const conf
 	Color *image_buffer = (Color*) calloc(full_rtask.width() * full_rtask.height(), sizeof(Color));
 
 	if (config.sysinf.kernel_cnt == 1) {
-		render_rtask(camera, hittable, config, full_rtask, image_buffer);
+		render_rtask(scene, config, full_rtask, image_buffer);
 		save_rgb_to_ppm_image("image.ppm", image_buffer, full_rtask.width(), full_rtask.height(), config.render.GAMMA_CORRECTION);
 	} else {
 		int kernel_cnt = config.sysinf.kernel_cnt;
 		full_rtask.linear_split(kernel_cnt, config.sysinf.timestamp);
+
+		if (config.verbos.VERBOSITY >= 2) printf("={ RenderTasks }=====\n");
 
 		std::vector<RenderTask> rtasks;
 		char rt_name[50];
@@ -107,15 +116,19 @@ void render_from_rtask_file(Camera *camera, const Hittable *hittable, const conf
 			
 			RenderTask rtask;
 			rtask.load(rt_name);
-			rtask.dump();
+			if (config.verbos.VERBOSITY >= 2) {
+				rtask.dump();
+				if (i != kernel_cnt - 1) printf("-----\n");
+			}
 			rtasks.push_back(rtask);
 		}
 
-		std::thread **threads = (std::thread**) calloc(config.sysinf.kernel_cnt, sizeof(std::thread*));
+		if (config.verbos.VERBOSITY >= 2) printf("=====================\n");
 
 		int task_buffer_offset = rtasks[0].width() * rtasks[0].height();
+		std::thread **threads = (std::thread**) calloc(config.sysinf.kernel_cnt, sizeof(std::thread*));
 		for (int i = 0; i < config.sysinf.kernel_cnt; ++i) {
-			threads[i] = new std::thread(render_rtask, camera, hittable, config, rtasks[i], image_buffer + i * task_buffer_offset);
+			threads[i] = new std::thread(render_rtask, scene, config, rtasks[i], image_buffer + i * task_buffer_offset, !i);
 		}
 
 		for (int i = 0; i < kernel_cnt; ++i) {

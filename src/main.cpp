@@ -1,9 +1,4 @@
-#include "path_tracer_constants.h"
-#include "path_tracer.h"
-#include "collection_hittables.h"
-#include "collection_materials.h"
-#include "collection_lights.h"
-#include "collection_instances.h"
+#include "PathTracer.hpp"
 
 #include <cstring>
 #include <unistd.h>
@@ -11,7 +6,7 @@
 // settings ===================================================================
 
 const int 	 PERCENT_STEP     = 10;
-const int 	 VERBOSITY 		  = 1;
+const int 	 VERBOSITY 		  = 2;
 
 const int 	 SCREEN_WIDTH     = 100;
 const int 	 SCREEN_HEIGHT    = 100;
@@ -21,16 +16,15 @@ const int 	 PIXEL_SAMPLING   = 100;
 const double GAMMA_CORRECTION = 0.55;
 const Vec3d  BACKGROUND_COLOR = {100, 100, 100};
 
-long TIMESTAMP = 0;
-
 // ============================================================================
 
 HittableList scene_gen(int sphere_cnt = 1, Vec3d delta = VEC3D_ZERO);
-HittableList cornell_box_scene();
+HittableList *cornell_box_objects();
+Scene *cornell_box_scene();
 
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
-	TIMESTAMP = vec3d_randlong() % 10000;
+	long randomstamp = vec3d_randlong() % 10000;
 
 	conf_Render conf_render(SCREEN_WIDTH * RESOLUTION_COEF, SCREEN_HEIGHT * RESOLUTION_COEF,
 							MAX_TRACE_DEPTH,
@@ -38,15 +32,14 @@ int main(int argc, char* argv[]) {
 							GAMMA_CORRECTION,
 							BACKGROUND_COLOR);
 
-    conf_Verbosity conf_verbos(PERCENT_STEP, VERBOSITY);
-    conf_SystemInfo conf_sysinf(TIMESTAMP, 1, nullptr);
+    conf_Verbosity  conf_verbos(PERCENT_STEP, VERBOSITY);
+    conf_SystemInfo conf_sysinf(randomstamp, 1, nullptr);
     conf_PathTracer conf_pt(conf_render, conf_verbos, conf_sysinf);
-
 
     // reading command line
     extern char *optarg;
     while (true) {
-    	switch(getopt(argc, argv, "k:t:")) {
+    	switch(getopt(argc, argv, "k:t:v:")) {
     		case '?':
     		case 'h':
     		default:
@@ -68,8 +61,13 @@ int main(int argc, char* argv[]) {
     	break;
     }
  
-    printf("kernels: %d\n", conf_pt.sysinf.kernel_cnt);
-    printf("rt_filename: %s\n", conf_pt.sysinf.rtask_filename);
+    if (VERBOSITY) printf("threads    : %d\n", conf_pt.sysinf.kernel_cnt);
+    if (VERBOSITY) printf("rt_filename: %s\n", conf_pt.sysinf.rtask_filename);
+
+    Scene *scene = cornell_box_scene();
+    render_from_rtask_file(scene, conf_pt);
+
+   	// ========================================================================
 
     // Texture  *chkd_flr = new t_Checkered({190, 190, 190}, {50, 50, 50}, {1, 1, 1});
     // Material *matr_flr = new m_Lambertian(chkd_flr);
@@ -106,24 +104,21 @@ int main(int argc, char* argv[]) {
     // scene.insert(rec1);
 
     // ========================================================================
-
-    HittableList scene = cornell_box_scene();
-    Camera *cam = new Camera({-100, 50, 50}, {1, 0, 0}, 
-    						 100,
-    						 SCREEN_WIDTH, SCREEN_HEIGHT,
-    						 RESOLUTION_COEF);
-
-    Material *ms1 = new m_Lambertian({255, 255, 255});
-    ms1->set_emitter(new l_Diffuse({255, 0, 0}));
-    h_Sphere *s1 = new h_Sphere({100, 50, 50}, 5, ms1);
-    scene.insert(s1);
-
-    BVH_Node bvh(scene);
-    render_from_rtask_file(cam, &bvh, conf_pt);
 }
 
-HittableList cornell_box_scene() {
-	HittableList scene;
+Scene *cornell_box_scene() {
+	Camera *camera = new Camera({-100, 50, 50}, {1, 0, 0}, 
+    							100,
+    							SCREEN_WIDTH, SCREEN_HEIGHT,
+    							RESOLUTION_COEF);
+	HittableList *objects = cornell_box_objects();
+	
+	Scene *scene = new Scene(camera, new BVH_Node(*objects));
+	return scene;
+}
+
+HittableList *cornell_box_objects() {
+	HittableList *scene = new HittableList;
 
 	Material *m_white = new m_Lambertian({255, 255, 255});
 	Material *m_red   = new m_Lambertian({255,   0,   0});
@@ -168,15 +163,15 @@ HittableList cornell_box_scene() {
 	Hittable *rot_box_1 = new inst_Translate(new inst_RotZ(box_1, Pi/4), {60, 70, 0});
 	Hittable *rot_box_2 = new inst_Translate(new inst_RotZ(box_2, -Pi/3), {30, 25, 0});
 
-	scene.insert(rect_ceil );
-	scene.insert(rect_floor);
-	scene.insert(rect_fwall);
-	scene.insert(rect_lwall);
-	scene.insert(rect_rwall);
-	scene.insert(rect_light);
+	scene->insert(rect_ceil );
+	scene->insert(rect_floor);
+	scene->insert(rect_fwall);
+	scene->insert(rect_lwall);
+	scene->insert(rect_rwall);
+	scene->insert(rect_light);
 
-	scene.insert(rot_box_1);
-	scene.insert(rot_box_2);
+	scene->insert(rot_box_1);
+	scene->insert(rot_box_2);
 
 	return scene;
 }

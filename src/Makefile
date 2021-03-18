@@ -68,7 +68,7 @@ material.o: material.cpp material.h
 light.o: light.cpp light.h
 	$(CPP) $(CFLAGS) light.cpp -c
 
-path_tracer.o: path_tracer.cpp path_tracer.h
+path_tracer.o: path_tracer.cpp path_tracer.h progress_bar.h
 	$(CPP) $(CFLAGS) path_tracer.cpp -c
 
 hittable_list.o: hittable_list.cpp hittable_list.h
