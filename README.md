@@ -1,8 +1,7 @@
 # path_tracing as it is
 
-<img src="showcase/1.png" alt="oops" width="600" height="600">
-<img src="showcase/2.png" alt="oops" width="600" height="600">
-<img src="showcase/4.png" alt="oops" width="600" height="600">
+<img src="showcase/cornell_box.png" alt="oops" width="600" height="600">
+
 (check out more pictures below)
 
 ### How to use
@@ -12,7 +11,10 @@
 3. Look for output in 'image.ppm'
 
 # Some results
+<img src="showcase/1.png" alt="oops" width="600" height="600">
+<img src="showcase/2.png" alt="oops" width="600" height="600">
 <img src="showcase/3.png" alt="oops" width="600" height="600">
+<img src="showcase/4.png" alt="oops" width="600" height="600">
 
 ## Links to check out:
 https://github.com/Magorx/ray_marching
