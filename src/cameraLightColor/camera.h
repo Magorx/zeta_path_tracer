@@ -1,8 +1,8 @@
 #ifndef CAMERA
 #define CAMERA
 
-#include "vec3d.h"
-#include "ray.h"
+#include "utils/vec3d.h"
+#include "utils/ray.h"
 
 struct Camera {
     Vec3d orig;

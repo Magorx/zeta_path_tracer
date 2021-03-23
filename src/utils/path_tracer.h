@@ -6,15 +6,15 @@
 
 #include "vec3d.h"
 #include "ray.h"
-#include "color.h"
+#include "color/color.h"
 
 #include "progress_bar.h"
 
-#include "hittable.h"
-#include "hittable_list.h"
-#include "hit_record.h"
+#include "hits/hittable.h"
+#include "hits/hittable_list.h"
+#include "hits/hit_record.h"
 
-#include "scene.h"
+#include "cameraLightColor/scene.h"
 
 #include "bvh.h"
 

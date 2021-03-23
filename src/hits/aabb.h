@@ -1,8 +1,8 @@
 #ifndef AABB_H
 #define AABB_H
 
-#include "vec3d.h"
-#include "ray.h"
+#include "utils/vec3d.h"
+#include "utils/ray.h"
 
 class AABB {
 public:

@@ -1,8 +1,8 @@
 #ifndef COLLECTION_LIGHTS
 #define COLLECTION_LIGHTS
 
-#include "light.h"
-#include "color.h"
+#include "cameraLightColor/light.h"
+#include "color/color.h"
 
 class l_Diffuse : public Light {
 public:

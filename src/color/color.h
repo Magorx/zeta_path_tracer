@@ -1,7 +1,7 @@
 #ifndef COLOR
 #define COLOR
 
-#include "vec3d.h"
+#include "utils/vec3d.h"
 #include <cstdio>
 
 extern const int 	i_MAXRGB;

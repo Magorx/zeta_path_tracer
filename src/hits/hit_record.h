@@ -1,7 +1,7 @@
 #ifndef INTERSECTION
 #define INTERSECTION
 
-#include "vec3d.h"
+#include "utils/vec3d.h"
 
 class Material;
 

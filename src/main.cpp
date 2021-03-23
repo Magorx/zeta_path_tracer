@@ -1,4 +1,4 @@
-#include "PathTracer.hpp"
+#include "utils/PathTracer.hpp"
 
 #include <cstring>
 #include <unistd.h>

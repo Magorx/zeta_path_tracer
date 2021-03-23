@@ -1,7 +1,7 @@
 #ifndef RENDER_TASK
 #define RENDER_TASK
 
-#include "color.h"
+#include "color/color.h"
 #include <cstdio>
 #include <cassert>
 

@@ -1,7 +1,7 @@
 #ifndef COLLECTION_TEXTURES
 #define COLLECTION_TEXTURES
 
-#include "texture.h"
+#include "color/texture.h"
 
 class t_SolidColor : public Texture {
 private:
