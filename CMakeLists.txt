@@ -3,11 +3,13 @@ project(zeta_path_tracer LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
+set(WARNING_FLAGS "-Wall -Wextra -Wno-multichar -Wno-unused-result")
+
 include_directories(src)
 
 set(CMAKE_EXE_LINKER_FLAGS "-pthread")
-set(CMAKE_CXX_FLAGS_RELEASE  "-O3")
-set(CMAKE_CXX_FLAGS_DEBUG   "-g3 -O0")
+set(CMAKE_CXX_FLAGS_RELEASE  "-O3 ${WARNING_FLAGS}")
+set(CMAKE_CXX_FLAGS_DEBUG   "-g3 -O0 ${WARNING_FLAGS}")
 
 add_executable(pather
         src/hits/aabb.cpp
@@ -52,3 +54,13 @@ add_executable(pather
         src/color/texture.h
         src/utils/vec3d.cpp
         src/utils/vec3d.h)
+
+add_custom_target(convert
+        COMMAND convert image.ppm image.png
+        )
+
+add_custom_target(view
+        COMMAND eog -f image.png
+        )
+
+
