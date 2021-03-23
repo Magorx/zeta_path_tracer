@@ -39,7 +39,7 @@ struct Vec3d {
     Vec3d orient(const Vec3d &axis);
 
     double &operator[](const int i);
-    double operator[](const int i) const;
+    double operator[] (const int i) const;
 
     inline static Vec3d random() {
         return {vec3d_randdouble(), vec3d_randdouble(), vec3d_randdouble()};

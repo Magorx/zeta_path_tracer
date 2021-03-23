@@ -5,21 +5,25 @@
 
 // settings ===================================================================
 
-const int 	 VERBOSITY 		  = 2;
+const int 	 VERBOSITY 		  = 2; // 2 for detailed log of some things
 
 const int 	 SCREEN_WIDTH     = 100;
 const int 	 SCREEN_HEIGHT    = 100;
-const double RESOLUTION_COEF  = 512 / SCREEN_HEIGHT;
+const double RESOLUTION_COEF  = 100 / SCREEN_WIDTH; // actual image resolution is W*H here
 const int 	 MAX_TRACE_DEPTH  = 10;
-const int 	 PIXEL_SAMPLING   = 3000;
+const int 	 PIXEL_SAMPLING   = 10000; // >= 1000 for pretty images
 const double GAMMA_CORRECTION = 0.55;
 const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
 
 // ============================================================================
 
 HittableList scene_gen(int sphere_cnt = 1, Vec3d delta = VEC3D_ZERO);
+
 HittableList *cornell_box_objects();
 Scene *cornell_box_scene();
+
+HittableList *test_objects();
+Scene *test_scene();
 
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
@@ -37,8 +41,9 @@ int main(int argc, char* argv[]) {
 
     // reading command line
     extern char *optarg;
+    bool carg_to_reload_rtask_file = false;
     while (true) {
-    	switch(getopt(argc, argv, "k:t:v:")) {
+    	switch(getopt(argc, argv, "k:t:v:R")) {
     		case '?':
     		case 'h':
     		default:
@@ -56,54 +61,70 @@ int main(int argc, char* argv[]) {
     		case 't':
     			conf_pt.sysinf.rtask_filename = strdup(optarg);
     			continue;
+
+    		case 'R':
+    			carg_to_reload_rtask_file = true;
+    			continue;
     	}
     	break;
     }
  
-    if (VERBOSITY) printf("threads    : %d\n", conf_pt.sysinf.kernel_cnt);
-    if (VERBOSITY) printf("rt_filename: %s\n", conf_pt.sysinf.rtask_filename);
+    if (VERBOSITY >= 2) printf("threads    : %d\n", conf_pt.sysinf.kernel_cnt);
+    if (VERBOSITY >= 2) printf("rt_filename: %s\n", conf_pt.sysinf.rtask_filename);
 
-    Scene *scene = cornell_box_scene();
+    Scene *scene = test_scene();
+    RenderTask rtask(0, scene->camera->res_w, 0, scene->camera->res_h);
+    if (carg_to_reload_rtask_file) rtask.save("rtask.rt");
     render_from_rtask_file(scene, conf_pt);
-
-   	// ========================================================================
-
-    // Texture  *chkd_flr = new t_Checkered({190, 190, 190}, {50, 50, 50}, {1, 1, 1});
-    // Material *matr_flr = new m_Lambertian(chkd_flr);
-    // h_Sphere *flr = new h_Sphere({0, 0, -10000}, 10000, matr_flr);
-
-    // Camera *cam = new Camera({0, 0, 20}, {1, 0, -0.46}, 
-    // 						 conf_render.SCREEN_WIDTH * 2,
-    // 						 conf_render.SCREEN_WIDTH, conf_render.SCREEN_HEIGHT,
-    // 						 1);
-    // HittableList scene = scene_gen(10, {40, 0, 3});
-    // scene.insert(flr);
-
-    // Texture  *chkd_flr = new t_Checkered({190, 190, 190}, {50, 50, 50}, {1, 1, 1});
-    // Material *matr_flr = new m_Lambertian(chkd_flr);
-    // h_Sphere *flr = new h_Sphere({0, 0, -10000 - 5}, 10000, matr_flr);
-
-    // Camera *cam = new Camera({0, 0, 3}, {1, 0, 0}, 
-    // 						 conf_render.SCREEN_WIDTH * 2,
-    // 						 conf_render.SCREEN_WIDTH, conf_render.SCREEN_HEIGHT,
-    // 						 1);
-    // HittableList scene;
-    // scene.insert(flr);
-
-    // Texture *chk_s1 = new t_Checkered({100, 200, 255}, {140, 35, 20}, {0.25, 0.25, 0.25});
-    // Material *ms1 = new m_Lambertian(chk_s1);
-    // ms1->set_emitter(new l_Diffuse({255, 255, 255}));
-    // h_Sphere *s1 = new h_Sphere({60, 0, 5}, 7, ms1);
-    // scene.insert(s1);
-
-    // Texture *chk_r1 = new t_Checkered({200, 100, 255}, {100, 100, 100}, {1, 1, 1});
-    // Material *mr1 = new m_Dielectric(chk_r1, 1.3);
-    // // mr1->set_emitter(new l_Diffuse({255, 255, 255}));
-    // h_Box *rec1 = new h_Box({50, 10 / 2, 8}, {30, -10 / 2, 0}, mr1);
-    // scene.insert(rec1);
-
-    // ========================================================================
 }
+
+Scene *test_scene() {
+	Camera *camera = new Camera({-100, 50, 50}, {1, 0, 0}, 
+    							100,
+    							SCREEN_WIDTH, SCREEN_HEIGHT,
+    							RESOLUTION_COEF);
+	HittableList *objects = test_objects();
+	
+	Scene *scene = new Scene(camera, new BVH_Node(*objects));
+	return scene;
+}
+
+HittableList *test_objects() {
+	HittableList *scene = new HittableList;
+
+	// Material *m_white = new m_Lambertian({255, 255, 255});
+	Material *m_red   = new m_Lambertian({255,   0,   0});
+	Material *m_green = new m_Lambertian({  0, 255,   0});
+	Material *m_blue = new m_Lambertian({  100, 100,   255});
+
+	Light *l_rect_light = new l_Diffuse({255, 255, 255});
+
+	m_Lambertian *m_rect_light = new m_Lambertian(Vec3d(255, 255, 255) * 2);
+	m_rect_light->set_emitter(l_rect_light);
+	m_rect_light->to_affect_emitter = 0;
+
+	const double heigh = 100;
+	const double width = 100;
+	const double depth = 100;
+
+	const double light_size_coef = 1;
+	const double l_h = heigh - VEC3_EPS;
+	const double l_w = width * light_size_coef;
+	const double l_d = depth * light_size_coef;
+	
+	Hittable *rect_light = new h_RectXY({depth / 2 - l_d / 2, width / 2 - l_w / 2, l_h}, {depth / 2 + l_d / 2, width / 2 + l_w / 2, l_h}, m_rect_light);
+	scene->insert(rect_light);
+
+	Hittable *model = new Model("ship.mdl", {m_green, m_blue, m_red}, {0, 0, 0}, Vec3d(1, 1, 1) * 16);
+	model = new inst_RotY(model, Pi / 4);
+	model = new inst_RotZ(model, Pi / 8);
+	model = new inst_Translate(model, {60, 50, 25});
+	scene->insert(model);
+
+	return scene;
+}
+
+//=============================================================================
 
 Scene *cornell_box_scene() {
 	Camera *camera = new Camera({-100, 50, 50}, {1, 0, 0}, 
@@ -122,14 +143,13 @@ HittableList *cornell_box_objects() {
 	Material *m_white = new m_Lambertian({255, 255, 255});
 	Material *m_red   = new m_Lambertian({255,   0,   0});
 	Material *m_green = new m_Lambertian({  0, 255,   0});
-	Material *m_blue = new m_Lambertian({  100, 100,   255});
 
 	Material *m_box_1 = new m_Lambertian({255, 255, 255});
 	Material *m_box_2 = new m_Lambertian({255, 255, 255});
 
 	Light *l_rect_light = new l_Diffuse({255, 255, 255});
 
-	m_Lambertian *m_rect_light = new m_Lambertian(Vec3d(255, 255, 255) * 2);
+	m_Lambertian *m_rect_light = new m_Lambertian(Vec3d(255, 255, 255));
 	m_rect_light->set_emitter(l_rect_light);
 	m_rect_light->to_affect_emitter = 0;
 
@@ -137,7 +157,7 @@ HittableList *cornell_box_objects() {
 	const double width = 100;
 	const double depth = 100;
 
-	const double light_size_coef = 1;
+	const double light_size_coef = 0.32;
 	const double box_coef = 0.1;
 
 	const double l_h = heigh - VEC3_EPS;
@@ -160,24 +180,18 @@ HittableList *cornell_box_objects() {
 								{-depth * box_coef, -width * box_coef, heigh * 0.25},
 								m_box_2);
 
-	Hittable *rot_box_1 = new inst_Translate(new inst_RotZ(box_1, Pi/4), {60, 70, 0});
+	Hittable *rot_box_1 = new inst_Translate(new inst_RotZ(box_1,  Pi/4), {60, 70, 0});
 	Hittable *rot_box_2 = new inst_Translate(new inst_RotZ(box_2, -Pi/3), {30, 25, 0});
 
-	// scene->insert(rect_ceil );
-	// scene->insert(rect_floor);
-	// scene->insert(rect_fwall);
-	// scene->insert(rect_lwall);
-	// scene->insert(rect_rwall);
+	scene->insert(rect_ceil );
+	scene->insert(rect_floor);
+	scene->insert(rect_fwall);
+	scene->insert(rect_lwall);
+	scene->insert(rect_rwall);
 	scene->insert(rect_light);
 
-	// scene->insert(rot_box_1);
-	// scene->insert(rot_box_2);
-
-	Hittable *model = new Model("ship.mdl", {m_green, m_blue, m_red}, {0, 0, 0}, Vec3d(1, 1, 1) * 16);
-	model = new inst_RotY(model, Pi / 4);
-	model = new inst_RotZ(model, Pi / 8);
-	model = new inst_Translate(model, {60, 50, 25});
-	scene->insert(model);
+	scene->insert(rot_box_1);
+	scene->insert(rot_box_2);
 
 	return scene;
 }
