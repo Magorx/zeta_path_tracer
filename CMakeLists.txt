@@ -9,7 +9,7 @@ set(CMAKE_EXE_LINKER_FLAGS "-pthread")
 set(CMAKE_CXX_FLAGS_RELEASE  "-O3")
 set(CMAKE_CXX_FLAGS_DEBUG   "-g3 -O0")
 
-add_executable(zeta_path_tracer
+add_executable(pather
         src/hits/aabb.cpp
         src/hits/aabb.h
         src/utils/bvh.cpp
