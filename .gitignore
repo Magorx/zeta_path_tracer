@@ -33,3 +33,6 @@
 
 # Raytracing
 *.rt
+.idea
+cmake-build-debug
+build

@@ -1,9 +1,9 @@
 #ifndef BVH_H
 #define BVH_H
 
-#include "hittable.h"
-#include "hittable_list.h"
-#include "aabb.h"
+#include "hits/hittable.h"
+#include "hits/hittable_list.h"
+#include "hits/aabb.h"
 #include <algorithm>
 
 class BVH_Node : public Hittable {

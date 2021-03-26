@@ -1,9 +1,9 @@
 #ifndef COLLECTION_MATERIALS
 #define COLLECTION_MATERIALS
 
-#include "material.h"
-#include "hit_record.h"
-#include "texture.h"
+#include "material/material.h"
+#include "hits/hit_record.h"
+#include "color/texture.h"
 
 #include "collection_textures.h"
 

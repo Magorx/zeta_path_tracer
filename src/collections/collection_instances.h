@@ -1,7 +1,7 @@
 #ifndef COLLECTION_INSTANCES
 #define COLLECTION_INSTANCES
 
-#include "hittable.h"
+#include "hits/hittable.h"
 
 class inst_Translate : public Hittable {
 public:

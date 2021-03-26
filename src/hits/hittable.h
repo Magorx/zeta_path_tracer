@@ -2,8 +2,8 @@
 #define HITTABLE
 
 #include <cmath>
-#include "material.h"
-#include "ray.h"
+#include "material/material.h"
+#include "utils/ray.h"
 #include "hit_record.h"
 #include "aabb.h"
 

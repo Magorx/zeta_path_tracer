@@ -1,8 +1,8 @@
 #ifndef SCENE
 #define SCENE
 
-#include "camera.h"
-#include "hittable.h"
+#include "cameraLightColor/camera.h"
+#include "hits/hittable.h"
 
 struct Scene {
 	Camera   *camera;

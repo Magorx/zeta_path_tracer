@@ -1,7 +1,7 @@
 #ifndef RAY
 #define RAY
 
-#include "vec3d.h"
+#include "utils/vec3d.h"
 
 using Point = Vec3d;
 

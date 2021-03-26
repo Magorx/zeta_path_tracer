@@ -1,9 +1,9 @@
 #ifndef MATERIAL
 #define MATERIAL
 
-#include "ray.h"
-#include "color.h"
-#include "light.h"
+#include "utils/ray.h"
+#include "color/color.h"
+#include "cameraLightColor/light.h"
 
 struct HitRecord;
 
