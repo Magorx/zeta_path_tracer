@@ -267,7 +267,7 @@ HitRecord Triangle::hit(Ray &ray) const {
     if (v < 0.0 || u + v > 1.0)
         return hitrec;
     // At this stage we can compute t to find out where the intersection point is on the line.
-    float t = f * edge2.dot(q);
+    double t = f * edge2.dot(q);
     if (t > VEC3_EPS) // ray intersection
     {
         hitrec.p = ray.cast(t);

@@ -30,6 +30,8 @@ add_executable(pather
         src/collections/collection_textures.h
         src/color/color.cpp
         src/color/color.h
+        src/color/rgba.cpp
+        src/color/rgba.h
         src/hits/hit_record.cpp
         src/hits/hit_record.h
         src/hits/hittable.cpp
@@ -62,5 +64,4 @@ add_custom_target(convert
 add_custom_target(view
         COMMAND eog -f image.png
         )
-
 

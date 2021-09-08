@@ -2,6 +2,7 @@
 #define COLOR
 
 #include "utils/vec3d.h"
+#include "rgba.h"
 #include <cstdio>
 
 extern const int 	i_MAXRGB;
@@ -25,5 +26,14 @@ Color clamped_rgb(const Color color);
 void print_rgb(Color color, const double gamma_correction = 0.5, FILE *file = stdout);
 void save_rgb_to_ppm_image(FILE *fout, const Color *image, const size_t width, const size_t height, const double gamma_correction = 1);
 void save_rgb_to_ppm_image(const char *filename, const Color *image, const size_t width, const size_t height, const double gamma_correction = 1);
+
+//======================================================
+// COLOR -> RGBA work
+
+RGBA color_to_final_rgba(Color color, const double gamma_correction);
+
+void color_to_rgb_buffer(const Color *image, RGBA *buffer, const double gamma_correction, const int pixel_cnt);
+
+RGBA *mean_image(const RGBA *first, const RGBA *second, const int pixel_cnt);
 
 #endif // COLOR

@@ -49,11 +49,8 @@ Color clamped_rgb(const Color color) {
 }
 
 void print_rgb(Color color, const double gamma_correction, FILE *file) {
-	color = clamped_rgb(color);
-	color *= 1 / d_MAXRGB;
-	color = pow(color, gamma_correction);
-	color *= d_MAXRGB;
-	fprintf(file, "%d %d %d\n", (int) color.x, (int) color.y, (int) color.z);
+	RGBA rgba = color_to_final_rgba(color, gamma_correction);
+	fprintf(file, "%d %d %d\n", (int) rgba.r, (int) rgba.g, (int) rgba.b);
 }
 
 void save_rgb_to_ppm_image(FILE *fout, const Color *image, const size_t width, const size_t height, const double gamma_correction) {
@@ -91,4 +88,31 @@ void save_rgb_to_ppm_image(const char *filename, const Color *image, const size_
 
 	fclose(fout);
 	return;
+}
+
+RGBA color_to_final_rgba(Color color, const double gamma_correction) {
+    color = clamped_rgb(color);
+	color *= 1 / d_MAXRGB;
+	color = pow(color, gamma_correction);
+	color *= d_MAXRGB;
+    return {(unsigned char) color.x, (unsigned char) color.y, (unsigned char) color.z};
+}
+
+void color_to_rgb_buffer(const Color *image, RGBA *buffer, const double gamma_correction, const int pixel_cnt) {
+    for (int i = 0; i < pixel_cnt; ++i) {
+        buffer[i] = color_to_final_rgba(image[i], gamma_correction);
+    }
+}
+
+RGBA *mean_image(const RGBA *first, const RGBA *second, const int pixel_cnt) {
+    RGBA *buffer = (RGBA*) calloc(pixel_cnt, sizeof(RGBA));
+    if (!buffer) {
+        return buffer;
+    }
+
+    for (int i = 0; i < pixel_cnt; ++i) {
+        buffer[i] = (first[i] + second[i]) / 2;
+    }
+
+    return buffer;
 }

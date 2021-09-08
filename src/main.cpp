@@ -9,9 +9,9 @@ const int 	 VERBOSITY 		  = 2; // 2 for detailed log of some things
 
 const int 	 SCREEN_WIDTH     = 100;
 const int 	 SCREEN_HEIGHT    = 100;
-const double RESOLUTION_COEF  = 512 / SCREEN_WIDTH; // actual image resolution is W*H here
+const double RESOLUTION_COEF  = 100 / SCREEN_WIDTH; // actual image resolution is W*H here
 const int 	 MAX_TRACE_DEPTH  = 10;
-const int 	 PIXEL_SAMPLING   = 3000; // >= 1000 for pretty images
+const int 	 PIXEL_SAMPLING   = 100; // >= 1000 for pretty images
 const double GAMMA_CORRECTION = 0.55;
 const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
 
@@ -72,56 +72,12 @@ int main(int argc, char* argv[]) {
     if (VERBOSITY >= 2) printf("threads    : %d\n", conf_pt.sysinf.kernel_cnt);
     if (VERBOSITY >= 2) printf("rt_filename: %s\n", conf_pt.sysinf.rtask_filename);
 
-    Scene *scene = test_scene();
+    Scene *scene = cornell_box_scene();
     RenderTask rtask(0, scene->camera->res_w, 0, scene->camera->res_h);
+
     if (carg_to_reload_rtask_file) rtask.save("rtask.rt");
+
     render_from_rtask_file(scene, conf_pt);
-}
-
-Scene *test_scene() {
-	Camera *camera = new Camera({-100, 50, 50}, {1, 0, 0}, 
-    							100,
-    							SCREEN_WIDTH, SCREEN_HEIGHT,
-    							RESOLUTION_COEF);
-	HittableList *objects = test_objects();
-	
-	Scene *scene = new Scene(camera, new BVH_Node(*objects));
-	return scene;
-}
-
-HittableList *test_objects() {
-	HittableList *scene = new HittableList;
-
-	// Material *m_white = new m_Lambertian({255, 255, 255});
-	Material *m_red   = new m_Lambertian({255,   0,   0});
-	Material *m_green = new m_Lambertian({  0, 255,   0});
-	Material *m_blue = new m_Lambertian({  100, 100,   255});
-
-	Light *l_rect_light = new l_Diffuse({255, 255, 255});
-
-	m_Lambertian *m_rect_light = new m_Lambertian(Vec3d(255, 255, 255) * 2);
-	m_rect_light->set_emitter(l_rect_light);
-	m_rect_light->to_affect_emitter = 0;
-
-	const double heigh = 100;
-	const double width = 100;
-	const double depth = 100;
-
-	const double light_size_coef = 1;
-	const double l_h = heigh - VEC3_EPS;
-	const double l_w = width * light_size_coef;
-	const double l_d = depth * light_size_coef;
-	
-	Hittable *rect_light = new h_RectXY({depth / 2 - l_d / 2, width / 2 - l_w / 2, l_h}, {depth / 2 + l_d / 2, width / 2 + l_w / 2, l_h}, m_rect_light);
-	scene->insert(rect_light);
-
-	Hittable *model = new Model("ship.mdl", {m_green, m_blue, m_red}, {0, 0, 0}, Vec3d(1, 1, 1) * 16);
-	model = new inst_RotY(model, Pi / 4);
-	model = new inst_RotZ(model, Pi / 8);
-	model = new inst_Translate(model, {60, 50, 25});
-	scene->insert(model);
-
-	return scene;
 }
 
 //=============================================================================

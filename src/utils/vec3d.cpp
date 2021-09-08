@@ -146,11 +146,11 @@ bool operator==(const Vec3d &first, const Vec3d &second) {
 }
 
 Vec3d sqrt(const Vec3d &first) {
-    return {sqrt(first.x), sqrt(first.y), sqrt(first.z)};
+    return {(double) sqrt(first.x), (double) sqrt(first.y), (double) sqrt(first.z)};
 }
 
 Vec3d pow (const Vec3d &first, const double power) {
-    return {pow(first.x, power), pow(first.y, power), pow(first.z, power)};
+    return {(double) pow(first.x, power), (double) pow(first.y, power), (double) pow(first.z, power)};
 }
 
 bool operator<(const Vec3d &first, const Vec3d &second) {
