@@ -11,6 +11,7 @@
 3. Look for output in 'image.ppm'
 
 # Some results
+<img src="showcase/trio.png" alt="oops" width="600" height="600">
 <img src="showcase/1.png" alt="oops" width="600" height="600">
 <img src="showcase/2.png" alt="oops" width="600" height="600">
 <img src="showcase/3.png" alt="oops" width="600" height="600">
