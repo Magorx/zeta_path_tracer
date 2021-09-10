@@ -96,6 +96,7 @@ HitRecord inst_RotZ::hit(Ray &ray) const {
     normal[1] = -sin_a*hitrec.n[0] + cos_a*hitrec.n[1];
 
     hitrec.p = p;
+    hitrec.n = normal;
     hitrec.set_normal_orientation(rot_ray.dir);
     // fprintf(stderr, "dist %lg\n", hitrec.dist);
 
@@ -178,6 +179,7 @@ HitRecord inst_RotX::hit(Ray &ray) const {
     normal[2] = -sin_a*hitrec.n[1] + cos_a*hitrec.n[2];
 
     hitrec.p = p;
+    hitrec.n = normal;
     hitrec.set_normal_orientation(rot_ray.dir);
     // fprintf(stderr, "dist %lg\n", hitrec.dist);
 
@@ -260,6 +262,7 @@ HitRecord inst_RotY::hit(Ray &ray) const {
     normal[2] = -sin_a*hitrec.n[0] + cos_a*hitrec.n[2];
 
     hitrec.p = p;
+    hitrec.n = normal;
     hitrec.set_normal_orientation(rot_ray.dir);
     // fprintf(stderr, "dist %lg\n", hitrec.dist);
 

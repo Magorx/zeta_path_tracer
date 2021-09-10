@@ -104,15 +104,14 @@ void color_to_rgb_buffer(const Color *image, RGBA *buffer, const double gamma_co
     }
 }
 
-RGBA *mean_image(const RGBA *first, const RGBA *second, const int pixel_cnt) {
-    RGBA *buffer = (RGBA*) calloc(pixel_cnt, sizeof(RGBA));
-    if (!buffer) {
-        return buffer;
-    }
+RGBA *mean_image(RGBA *first, const RGBA *second, const int pixel_cnt) {
+	if (!first || !second) {
+		return first;
+	}
 
     for (int i = 0; i < pixel_cnt; ++i) {
-        buffer[i] = (first[i] + second[i]) / 2;
+        first[i] = (first[i] + second[i]) / 2;
     }
 
-    return buffer;
+    return first;
 }

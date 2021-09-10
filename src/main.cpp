@@ -3,13 +3,15 @@
 #include <cstring>
 #include <unistd.h>
 
+#include "sfml_interface/interface.h"
+
 // settings ===================================================================
 
 const int 	 VERBOSITY 		  = 2; // 2 for detailed log of some things
 
 const int 	 SCREEN_WIDTH     = 100;
 const int 	 SCREEN_HEIGHT    = 100;
-const double RESOLUTION_COEF  = 100 / SCREEN_WIDTH; // actual image resolution is W*H here
+const double RESOLUTION_COEF  = 25.0 / SCREEN_WIDTH; // actual image resolution is W*H here
 const int 	 MAX_TRACE_DEPTH  = 10;
 const int 	 PIXEL_SAMPLING   = 100; // >= 1000 for pretty images
 const double GAMMA_CORRECTION = 0.55;
@@ -73,11 +75,16 @@ int main(int argc, char* argv[]) {
     if (VERBOSITY >= 2) printf("rt_filename: %s\n", conf_pt.sysinf.rtask_filename);
 
     Scene *scene = cornell_box_scene();
-    RenderTask rtask(0, scene->camera->res_w, 0, scene->camera->res_h);
 
-    if (carg_to_reload_rtask_file) rtask.save("rtask.rt");
+	SFML_Interface interface("bubus", scene, conf_pt, 600, 600, 1);
 
-    render_from_rtask_file(scene, conf_pt);
+	interface.run();
+
+    // RenderTask rtask(0, scene->camera->res_w, 0, scene->camera->res_h);
+
+    // if (carg_to_reload_rtask_file) rtask.save("rtask.rt");
+
+    // render_from_rtask_file(scene, conf_pt);
 }
 
 //=============================================================================
@@ -139,6 +146,8 @@ HittableList *cornell_box_objects() {
 	Hittable *rot_box_1 = new inst_Translate(new inst_RotZ(box_1,  Pi/4), {60, 70, 0});
 	Hittable *rot_box_2 = new inst_Translate(new inst_RotZ(box_2, -Pi/3), {30, 25, 0});
 
+	Hittable *sphere = new h_Sphere({40, 30, 10}, 20, m_white);
+
 	scene->insert(rect_ceil );
 	scene->insert(rect_floor);
 	scene->insert(rect_fwall);
@@ -148,6 +157,8 @@ HittableList *cornell_box_objects() {
 
 	scene->insert(rot_box_1);
 	scene->insert(rot_box_2);
+	
+	// scene->insert(sphere);
 
 	return scene;
 }

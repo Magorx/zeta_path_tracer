@@ -25,12 +25,12 @@
 // extern const Vec3d BACKGROUND;
 
 struct conf_Render {
-	const int SCREEN_WIDTH;
-	const int SCREEN_HEIGHT;
-	const int MAX_TRACE_DEPTH;
-	const int PIXEL_SAMPLING;
-	const double GAMMA_CORRECTION;
-	const Vec3d BACKGROUND_COLOR;
+	int SCREEN_WIDTH;
+	int SCREEN_HEIGHT;
+	int MAX_TRACE_DEPTH;
+	int PIXEL_SAMPLING;
+	double GAMMA_CORRECTION;
+	Vec3d BACKGROUND_COLOR;
 
 	conf_Render(const int screen_width, const int screen_height,
 				const int max_tracing_depth,
@@ -54,8 +54,8 @@ struct conf_SystemInfo {
 };
 
 struct conf_PathTracer {
-	const conf_Render 	  render;
-	const conf_Verbosity  verbos;
+	conf_Render 	render;
+	conf_Verbosity  verbos;
 	conf_SystemInfo sysinf;
 
 	conf_PathTracer(const conf_Render 	  &render_config,
@@ -64,13 +64,16 @@ struct conf_PathTracer {
 };
 
 // Intersection test_ray(Ray &ray, const vector<Hittable*> &objects, const Hittable *to_ignore);
-Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &config, const int cur_trace_depth = 1);
+Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &config, const int cur_trace_depth = 1, Vec3d *normal_vec = nullptr);
 
 Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_y, 
-							 const Hittable *hittable, const conf_PathTracer &config);
+							 const Hittable *hittable, const conf_PathTracer &config, Vec3d *normal_vec = nullptr);
 
 void render_image       (Scene *scene, const conf_PathTracer &config);
+
 void render_into_buffer (Scene *scene, const conf_PathTracer &config, Color *buffer);
+void render_into_buffer (Scene *scene, const conf_PathTracer &config, Color *buffer, Vec3d *normal_map);
+
 void render_rtask       (Scene *scene, const conf_PathTracer &config, const RenderTask rtask, Color *buffer, const int verbouse = 1);
 
 void render_from_rtask_file(Scene *scene, const conf_PathTracer &config);

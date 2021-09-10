@@ -183,6 +183,14 @@ Vec3d Vec3d::orient(const Vec3d &axis) {
     return *this;
 }
 
+Vec3d &Vec3d::abs() {
+    x = fabs(x);
+    y = fabs(y);
+    z = fabs(z);
+
+    return *this;
+}
+
 Vec3d rotx(const Vec3d vec, double ang) {
     double x = vec.x;
     double y = vec.y * cos(ang) - vec.z * sin(ang);

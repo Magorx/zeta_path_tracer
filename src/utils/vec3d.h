@@ -37,6 +37,7 @@ struct Vec3d {
     Vec3d cross(const Vec3d &other) const;
 
     Vec3d orient(const Vec3d &axis);
+    Vec3d &abs();
 
     double &operator[](const int i);
     double  operator[](const int i) const;
