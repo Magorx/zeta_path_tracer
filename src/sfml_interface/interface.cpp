@@ -51,7 +51,7 @@ consecutive_frames_cnt(0)
 }
 
 void SFML_Interface::render_frame_portion() {
-    config.render.PIXEL_SAMPLING = log(consecutive_frames_cnt + 1) + 1;
+    config.render.PIXEL_SAMPLING = 1;
     render_into_buffer(scene, config, new_image_colored, normal_map);
 
     if (!consecutive_frames_cnt) {
@@ -63,7 +63,11 @@ void SFML_Interface::render_frame_portion() {
         }
     }
 
-    color_to_rgb_buffer(cur_image_colored, cur_image, config.render.GAMMA_CORRECTION, pixel_cnt);
+    sf::Vector2u img_size = image_texture.getSize();
+    Image<Color> output(img_size.x, img_size.y);
+    denoise(Image<Color>{cur_image_colored, img_size.x, img_size.y}, output);
+
+    color_to_rgb_buffer(output.data, cur_image, config.render.GAMMA_CORRECTION, pixel_cnt);
 
     ++consecutive_frames_cnt;
 }

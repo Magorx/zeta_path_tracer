@@ -3,7 +3,7 @@
 
 #include "utils/ray.h"
 #include "color/color.h"
-#include "cameraLightColor/light.h"
+#include "cameraLightScene/light.h"
 
 struct HitRecord;
 

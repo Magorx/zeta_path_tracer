@@ -12,18 +12,7 @@ Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &confi
 		}
 
 		if (normal_vec && hitrec.dist > 0) {
-			*normal_vec = hitrec.n * d_MAXRGB / 2;
-			if (normal_vec->x < 0) {
-				normal_vec->x *= -0.33;
-			}
-
-			if (normal_vec->y < 0) {
-				normal_vec->y *= -0.33;
-			}
-
-			if (normal_vec->z < 0) {
-				normal_vec->z *= -0.33;
-			}
+			*normal_vec = (hitrec.n + Vec3d(1, 1, 1)) / 2 * d_MAXRGB;
 		}
 
 		Ray scattered_ray;

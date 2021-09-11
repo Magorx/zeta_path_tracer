@@ -5,7 +5,7 @@
 
 #include <cstring>
 
-#include "utils/PathTracer.hpp"
+#include "PathTracer.hpp"
 
 class SFML_Interface {
     sf::RenderWindow  window;

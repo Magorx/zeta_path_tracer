@@ -1,1 +1,2 @@
 Scene.is_ready()
+render_to_buffer coppied to work with normal map :(

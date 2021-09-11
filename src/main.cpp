@@ -1,4 +1,4 @@
-#include "utils/PathTracer.hpp"
+#include "PathTracer.hpp"
 
 #include <cstring>
 #include <unistd.h>
@@ -11,7 +11,7 @@ const int 	 VERBOSITY 		  = 2; // 2 for detailed log of some things
 
 const int 	 SCREEN_WIDTH     = 100;
 const int 	 SCREEN_HEIGHT    = 100;
-const double RESOLUTION_COEF  = 25.0 / SCREEN_WIDTH; // actual image resolution is W*H here
+const double RESOLUTION_COEF  = 1.0; // actual image resolution is W*H here
 const int 	 MAX_TRACE_DEPTH  = 10;
 const int 	 PIXEL_SAMPLING   = 100; // >= 1000 for pretty images
 const double GAMMA_CORRECTION = 0.55;

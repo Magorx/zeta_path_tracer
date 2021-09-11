@@ -4,19 +4,19 @@
 #include <cstdio>
 #include <vector>
 
-#include "vec3d.h"
-#include "ray.h"
+#include "utils/vec3d.h"
+#include "utils/ray.h"
 #include "color/color.h"
 
-#include "progress_bar.h"
+#include "utils/progress_bar.h"
 
 #include "hits/hittable.h"
 #include "hits/hittable_list.h"
 #include "hits/hit_record.h"
 
-#include "cameraLightColor/scene.h"
+#include "cameraLightScene/scene.h"
 
-#include "bvh.h"
+#include "acceleration_structures/bvh.h"
 
 #include "render_task.h"
 #include <thread>
