@@ -9,16 +9,15 @@ set(WARNING_FLAGS "-Wall -Wextra -Wno-multichar -Wno-unused-result")
 include_directories(src)
 
 set(CMAKE_EXE_LINKER_FLAGS "-pthread ")
-set(CMAKE_CXX_FLAGS_RELEASE  "-O3 ${WARNING_FLAGS}")
-set(CMAKE_CXX_FLAGS_DEBUG   "-g3 -O0 ${WARNING_FLAGS}")
+set(CMAKE_CXX_FLAGS   "-O3 ${WARNING_FLAGS}")
 
 find_package(SFML 2 COMPONENTS system window graphics network audio REQUIRED)
 
 add_executable(pather
         src/hits/aabb.cpp
         src/acceleration_structures/bvh.cpp
-        src/cameraLightScene/camera.cpp
-        src/cameraLightScene/light.cpp
+        src/camera_light_scene/camera.cpp
+        src/camera_light_scene/light.cpp
         src/collections/collection_hittables.cpp
         src/collections/collection_instances.cpp
         src/collections/collection_lights.cpp

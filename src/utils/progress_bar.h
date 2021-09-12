@@ -2,18 +2,21 @@
 #define PROGRESS_BAR
 
 #include <cstdio>
+#include <chrono>
 
 class ProgressBar {
 	int cur_tick;
 	int capacity;
 	int cur_step;
 	int verbosity;
+    std::chrono::time_point<std::chrono::system_clock> start_timestamp;
 	FILE *file_ptr;
 
 	static constexpr const char* wheel_chars = "|/-\\";
 	static constexpr const int wheel_chars_len = 4;
 
 	void on_start() {
+        start_timestamp = std::chrono::system_clock::now();
 		fprintf(file_ptr, "[PRG] [>         ] |  0%%| [|]");
 	}
 
@@ -43,7 +46,9 @@ class ProgressBar {
 	}
 
 	void on_stop() {
-		fprintf(file_ptr, "\r[PRG] [==========] |100%%| [+]\n");
+        auto now = std::chrono::system_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start_timestamp);
+		fprintf(file_ptr, "\r[PRG] [==========] |100%%| [+] (%dms)\n",  elapsed.count());
 	}
 
 	void turn_wheele() const {
