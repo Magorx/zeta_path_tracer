@@ -83,8 +83,22 @@ public:
         }
     }
 
-    void intelligence_denoise() {
+    void colors_to_final_image() {
+        for (int i = 0; i < pixel_cnt; ++i) {
+            final_image[i] = data_color[i];
+        }
+    }
 
+    void normals_to_final_image() {
+        for (int i = 0; i < pixel_cnt; ++i) {
+            final_image[i] = data_normal[i];
+        }
+    }
+
+    void depths_to_final_image() {
+        for (int i = 0; i < pixel_cnt; ++i) {
+            final_image[i] = Color(1, 1, 1) * data_depth[i];
+        }
     }
 };
 

@@ -23,8 +23,8 @@ class SFML_Interface {
     int pixel_sampling_per_render;
 
     RGBA  *cur_image;
-    Color *cur_image_colored;
     Frame<Color, Vec3d, double> frame;
+    Frame<Color, Vec3d, double> new_frame;
 
     int consecutive_frames_cnt;
 

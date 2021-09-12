@@ -11,10 +11,10 @@ const int 	 VERBOSITY 		  = 2; // 2 for detailed log of some things
 
 const int 	 SCREEN_WIDTH     = 100;
 const int 	 SCREEN_HEIGHT    = 100;
-const double RESOLUTION_COEF  = 1.0; // actual image resolution is W*H here
-const int 	 MAX_TRACE_DEPTH  = 10;
+const double RESOLUTION_COEF  = 4.0; // actual image resolution is W*H here
+const int 	 MAX_TRACE_DEPTH  = 7;
 const int 	 PIXEL_SAMPLING   = 100; // >= 1000 for pretty images
-const double GAMMA_CORRECTION = 0.55;
+const double GAMMA_CORRECTION = 0.45;
 const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
 
 // ============================================================================
@@ -130,7 +130,7 @@ HittableList *cornell_box_objects() {
 	Hittable *rect_ceil  = new h_RectXY({    0,     0, heigh}, {depth, width, heigh}, m_white);
 	Hittable *rect_floor = new h_RectXY({    0,     0,     0}, {depth, width, heigh}, m_white);
 	Hittable *rect_fwall = new h_RectYZ({depth,     0,     0}, {depth, width, heigh}, m_white);
-	Hittable *rect_rwall = new h_RectXZ({    0,     0,     0}, {depth,     0, heigh}, m_red  );
+	Hittable *rect_rwall = new h_RectXZ({    0,     0,     -1}, {depth,     0, heigh + 1}, m_red  );
 	Hittable *rect_lwall = new h_RectXZ({    0, width,     0}, {depth, width, heigh}, m_green);
  	
 	Hittable *rect_light = new h_RectXY({depth / 2 - l_d / 2, width / 2 - l_w / 2, l_h}, {depth / 2 + l_d / 2, width / 2 + l_w / 2, l_h}, m_rect_light);

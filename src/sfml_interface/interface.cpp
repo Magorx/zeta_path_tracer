@@ -15,9 +15,9 @@ pixel_cnt(0),
 pixel_sampling_per_render(pixel_sampling_per_render_),
 
 cur_image(nullptr),
-cur_image_colored(nullptr),
 
 frame(),
+new_frame(),
 
 consecutive_frames_cnt(0)
 {   
@@ -34,42 +34,36 @@ consecutive_frames_cnt(0)
         fprintf(stderr, "[ERR] Can't calloc buffer for current/new image [%dx%d]\n", img_size.x, img_size.y);
     }
 
-    cur_image_colored = (Color*) calloc(pixel_cnt, sizeof(Color));
-    if (!cur_image) {
-        fprintf(stderr, "[ERR] Can't calloc buffer for new_image_colored [%dx%d]\n", img_size.x, img_size.y);
-    }
-
     frame = Frame<Color, Vec3d, double>(img_size.x, img_size.y);
+    new_frame = Frame<Color, Vec3d, double>(img_size.x, img_size.y);
 
     image_sprite.setTexture(image_texture);
-    image_sprite.setScale(scr_w / img_size.x, scr_h / img_size.y);
+    image_sprite.setScale((double) scr_w / img_size.x, (double) scr_h / img_size.y);
 }
 
 void SFML_Interface::render_frame_portion() {
-    config.render.PIXEL_SAMPLING = 1;
-    render_into_buffer(scene, config, frame.data_color, frame.data_normal, frame.data_depth);
+    config.render.PIXEL_SAMPLING = 2;
+    render_into_buffer(scene, config, new_frame.data_color, new_frame.data_normal, new_frame.data_depth);
 
+    new_frame.normalize_depth_map();
+    intelligence_denoise(new_frame, 1);
+    // new_frame.colors_to_final_image();
+    
+    memcpy(frame.data_normal, new_frame.data_normal, frame.pixel_cnt * sizeof(Vec3d));
+    memcpy(frame.data_depth, new_frame.data_depth, frame.pixel_cnt * sizeof(double));
     if (!consecutive_frames_cnt) {
-        memcpy(cur_image_colored, frame.data_color, pixel_cnt * sizeof(Color));
+        memcpy(frame.data_color, new_frame.data_color, pixel_cnt * sizeof(Color));
     } else {
         double n = consecutive_frames_cnt;
         for (int i = 0; i < pixel_cnt; ++i) {
-            cur_image_colored[i] = cur_image_colored[i] * ((n - 1.0) / n) + frame.data_color[i] /  n;
+            frame.data_color[i] = frame.data_color[i] * ((n - 1.0) / n) + new_frame.final_image[i] /  n;
         }
     }
+    
+    intelligence_denoise(frame, 1);
+    // frame.colors_to_final_image();
 
-    frame.normalize_depth_map();
-    sf::Vector2u img_size = image_texture.getSize();
-    Image<Color> output(img_size.x, img_size.y);
-    for (int x = 0; x < img_size.x; ++x) {
-        for (int y = 0; y < img_size.y; ++y) {
-            int px_shift = y * img_size.x + x;
-            output[y][x] = Vec3d(255, 255, 255) * (1 - frame.data_depth[px_shift]);
-        }
-    }
-    // denoise(Image<Color>{cur_image_colored, img_size.x, img_size.y}, output);
-
-    color_to_rgb_buffer(output.data, cur_image, config.render.GAMMA_CORRECTION, pixel_cnt);
+    color_to_rgb_buffer(frame.final_image, cur_image, config.render.GAMMA_CORRECTION, pixel_cnt);
 
     ++consecutive_frames_cnt;
 }
