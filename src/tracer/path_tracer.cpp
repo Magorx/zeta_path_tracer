@@ -1,6 +1,6 @@
 #include "path_tracer.h"
 
-Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &config, const int cur_trace_depth, Vec3d *normal_vec) {
+Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &config, const int cur_trace_depth) {
 	ray.orig += ray.dir * VEC3_EPS;
 	HitRecord hitrec = hittable->hit(ray);
 
@@ -11,8 +11,34 @@ Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &confi
 			return {0, 0, 0};
 		}
 
-		if (normal_vec && hitrec.dist > 0) {
+		Ray scattered_ray;
+		Color attenuation;
+		Color emmited = hitrec.mat->emit(hitrec.surf_x, hitrec.surf_y, hitrec.p);
+		if (hitrec.mat->scatter(ray, hitrec, attenuation, scattered_ray)) {
+			return emmited + attenuation * trace_ray(scattered_ray, hittable, config, cur_trace_depth + 1) / d_MAXRGB;
+		} else {
+			return emmited;
+		}
+	}
+}
+
+Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &config, const int cur_trace_depth,
+			   Vec3d *normal_vec, double *depth) {
+	ray.orig += ray.dir * VEC3_EPS;
+	HitRecord hitrec = hittable->hit(ray);
+
+	if (hitrec.dist < 0) {
+		return config.render.BACKGROUND_COLOR;
+	} else {
+		if (cur_trace_depth == config.render.MAX_TRACE_DEPTH) {
+			return {0, 0, 0};
+		}
+
+		if (normal_vec) {
 			*normal_vec = (hitrec.n + Vec3d(1, 1, 1)) / 2 * d_MAXRGB;
+		}
+		if (depth) {
+			*depth = hitrec.dist;
 		}
 
 		Ray scattered_ray;
@@ -27,15 +53,16 @@ Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &confi
 }
 
 Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_y, 
-							 const Hittable *hittable, const conf_PathTracer &config, Vec3d *normal_vec) {
+							 const Hittable *hittable, const conf_PathTracer &config, 
+							 Vec3d *normal, double *depth) {
 	Vec3d accumulator(0, 0, 0);
 	for (int sample_i = 0; sample_i < config.render.PIXEL_SAMPLING - 1; ++sample_i) {
 		Ray sample_ray = camera->get_sample_ray((double) px_x, (double) px_y);
-		accumulator += trace_ray(sample_ray, hittable, config, 0);
+		accumulator += trace_ray(sample_ray, hittable, config, 1);
 	}
 
 	Ray central_ray = camera->get_ray((double) px_x, (double) px_y);
-	accumulator += trace_ray(central_ray, hittable, config, 0, normal_vec);
+	accumulator += trace_ray(central_ray, hittable, config, 1, normal, depth);
 
 	return accumulator / config.render.PIXEL_SAMPLING;
 }
@@ -100,7 +127,7 @@ void render_into_buffer(Scene *scene, const conf_PathTracer &config, Color *buff
     }
 }
 
-void render_into_buffer(Scene *scene, const conf_PathTracer &config, Color *buffer, Vec3d *normal_map) {
+void render_into_buffer (Scene *scene, const conf_PathTracer &config, Color *buffer, Vec3d *normal_map, double *depth_map) {
 	if (!normal_map) {
 		printf("[ERR] no normal_map provided to render_into_buffer, thow you passed something here\n");
 	}
@@ -114,9 +141,10 @@ void render_into_buffer(Scene *scene, const conf_PathTracer &config, Color *buff
     for (int y = 0; y < res_h; ++y) {
         for (int x = 0; x < res_w; ++x) {
             prog_bar.tick();
-            Color px_color = accumulate_pixel_color(scene->camera, x, y, scene->objects, config, normal_map + (res_w * y + x));
-			Vec3d v = *(normal_map + (res_w * y + x));
-            buffer[res_w * y + x] = px_color;
+			int px_shift = res_w * y + x;
+
+            Color px_color = accumulate_pixel_color(scene->camera, x, y, scene->objects, config, normal_map + px_shift, depth_map + px_shift);
+            buffer[px_shift] = px_color;
         }
     }
 }

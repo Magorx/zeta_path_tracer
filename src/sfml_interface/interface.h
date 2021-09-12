@@ -6,11 +6,12 @@
 #include <cstring>
 
 #include "PathTracer.hpp"
+#include "image/frame.h"
 
 class SFML_Interface {
-    sf::RenderWindow  window;
-    sf::Texture image_texture;
-    sf::Sprite        image_sprite;
+    sf::RenderWindow window;
+    sf::Texture      image_texture;
+    sf::Sprite       image_sprite;
 
     Scene *scene;
     conf_PathTracer config;
@@ -22,12 +23,8 @@ class SFML_Interface {
     int pixel_sampling_per_render;
 
     RGBA  *cur_image;
-    RGBA  *new_image;
-
     Color *cur_image_colored;
-    Color *new_image_colored;
-
-    Vec3d *normal_map;
+    Frame<Color, Vec3d, double> frame;
 
     int consecutive_frames_cnt;
 

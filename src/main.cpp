@@ -22,10 +22,10 @@ const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
 HittableList scene_gen(int sphere_cnt = 1, Vec3d delta = VEC3D_ZERO);
 
 HittableList *cornell_box_objects();
-Scene *cornell_box_scene();
+Scene 		 *cornell_box_scene();
 
 HittableList *test_objects();
-Scene *test_scene();
+Scene 		 *test_scene();
 
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
