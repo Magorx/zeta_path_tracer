@@ -52,8 +52,8 @@ bool h_Sphere::bounding_box(AABB &box) const {
 
 bool h_Sphere::get_surface_coords(const Vec3d &point, double &sx, double &sy) const {
     Vec3d norm = normal(point);
-    double theta = acos(-norm.y);
-    double phi = atan2(-norm.z, norm.x) + VEC3D_PI;
+    double theta = acos(-norm[1]);
+    double phi = atan2(-norm[2], norm[0]) + VEC3D_PI;
 
     sx = phi / (2 * VEC3D_PI);
     sy = theta / VEC3D_PI;
@@ -70,23 +70,23 @@ p1(VEC3D_ONE)
 
 h_RectXY::h_RectXY(const Vec3d &p0_, const Vec3d &p1_, Material *material_):
 Hittable(material_),
-p0(Vec3d(std::min(p0_.x, p1_.x), std::min(p0_.y, p1_.y), p0_.z)),
-p1(Vec3d(std::max(p0_.x, p1_.x), std::max(p0_.y, p1_.y), p1_.z)) // we can force p1.z = p0.z, but what for
+p0(Vec3d(std::min(p0_[0], p1_[0]), std::min(p0_[1], p1_[1]), p0_[2])),
+p1(Vec3d(std::max(p0_[0], p1_[0]), std::max(p0_[1], p1_[1]), p1_[2])) // we can force p1[2] = p0[2], but what for
 {}
 
 HitRecord h_RectXY::hit(Ray &ray) const {
     HitRecord hitrec({0, 0, 0}, -1, {0, 0, 0}, material, ray.dir);
 
-    double t = (p0.z - ray.orig.z) / ray.dir.z;
-    double x = ray.orig.x + t * ray.dir.x;
-    double y = ray.orig.y + t * ray.dir.y;
+    double t = (p0[2] - ray.orig[2]) / ray.dir[2];
+    double x = ray.orig[0] + t * ray.dir[0];
+    double y = ray.orig[1] + t * ray.dir[1];
     // fprintf(stderr, "t = %lg x = %lg y = %lg\n", t, x, y);
-    if (t < 0 || x < p0.x || x > p1.x || y < p0.y || y > p1.y) {
+    if (t < 0 || x < p0[0] || x > p1[0] || y < p0[1] || y > p1[1]) {
         // fprintf(stderr, "no\n");
         return hitrec;
     }
 
-    get_surface_coords({x, y, p0.z}, hitrec.surf_x, hitrec.surf_y);
+    get_surface_coords({x, y, p0[2]}, hitrec.surf_x, hitrec.surf_y);
     hitrec.dist = t;
     hitrec.p = ray.cast(hitrec.dist);
     hitrec.n = Vec3d(0, 0, 1);
@@ -101,8 +101,8 @@ bool h_RectXY::bounding_box(AABB &box) const {
 }
 
 bool h_RectXY::get_surface_coords(const Vec3d &point, double &sx, double &sy) const {
-    sx = (point.x-p0.x) / (p1.x-p0.x);
-    sy = (point.y-p0.y) / (p1.y-p1.y);
+    sx = (point[0]-p0[0]) / (p1[0]-p0[0]);
+    sy = (point[1]-p0[1]) / (p1[1]-p1[1]);
     return true;
 }
 
@@ -116,23 +116,23 @@ p1(VEC3D_ONE)
 
 h_RectXZ::h_RectXZ(const Vec3d &p0_, const Vec3d &p1_, Material *material_):
 Hittable(material_),
-p0(Vec3d(std::min(p0_.x, p1_.x), p0_.y, std::min(p0_.z, p1_.z))),
-p1(Vec3d(std::max(p0_.x, p1_.x), p1_.y, std::max(p0_.z, p1_.z))) // we can force p1.z = p0.z, but what for
+p0(Vec3d(std::min(p0_[0], p1_[0]), p0_[1], std::min(p0_[2], p1_[2]))),
+p1(Vec3d(std::max(p0_[0], p1_[0]), p1_[1], std::max(p0_[2], p1_[2]))) // we can force p1[2] = p0[2], but what for
 {}
 
 HitRecord h_RectXZ::hit(Ray &ray) const {
     HitRecord hitrec({0, 0, 0}, -1, {0, 0, 0}, material, ray.dir);
 
-    double t = (p0.y - ray.orig.y) / ray.dir.y;
-    double x = ray.orig.x + t * ray.dir.x;
-    double z = ray.orig.z + t * ray.dir.z;
-    if (t < 0 || x < p0.x || x > p1.x || z < p0.z || z > p1.z) {
+    double t = (p0[1] - ray.orig[1]) / ray.dir[1];
+    double x = ray.orig[0] + t * ray.dir[0];
+    double z = ray.orig[2] + t * ray.dir[2];
+    if (t < 0 || x < p0[0] || x > p1[0] || z < p0[2] || z > p1[2]) {
         return hitrec;
     }
 
-    get_surface_coords({x, p0.y, z}, hitrec.surf_x, hitrec.surf_y);
+    get_surface_coords({x, p0[1], z}, hitrec.surf_x, hitrec.surf_y);
     hitrec.dist = t;
-    hitrec.p = {x, p0.y, z};
+    hitrec.p = {x, p0[1], z};
     hitrec.n = Vec3d(0, 1, 0);
     hitrec.set_normal_orientation(ray.dir);
     hitrec.mat = material;
@@ -145,8 +145,8 @@ bool h_RectXZ::bounding_box(AABB &box) const {
 }
 
 bool h_RectXZ::get_surface_coords(const Vec3d &point, double &sx, double &sy) const {
-    sx = (point.x-p0.x) / (p1.x-p0.x);
-    sy = (point.z-p0.z) / (p1.z-p1.z);
+    sx = (point[0]-p0[0]) / (p1[0]-p0[0]);
+    sy = (point[2]-p0[2]) / (p1[2]-p1[2]);
     return true;
 }
 
@@ -160,21 +160,21 @@ p1(VEC3D_ONE)
 
 h_RectYZ::h_RectYZ(const Vec3d &p0_, const Vec3d &p1_, Material *material_):
 Hittable(material_),
-p0(Vec3d(p0_.x, std::min(p0_.y, p1_.y), std::min(p0_.z, p1_.z))),
-p1(Vec3d(p1_.x, std::max(p0_.y, p1_.y), std::max(p0_.z, p1_.z))) // we can force p1.z = p0.z, but what for
+p0(Vec3d(p0_[0], std::min(p0_[1], p1_[1]), std::min(p0_[2], p1_[2]))),
+p1(Vec3d(p1_[0], std::max(p0_[1], p1_[1]), std::max(p0_[2], p1_[2]))) // we can force p1[2] = p0[2], but what for
 {}
 
 HitRecord h_RectYZ::hit(Ray &ray) const {
     HitRecord hitrec({0, 0, 0}, -1, {0, 0, 0}, material, ray.dir);
 
-    double t = (p0.x - ray.orig.x) / ray.dir.x;
-    double y = ray.orig.y + t * ray.dir.y;
-    double z = ray.orig.z + t * ray.dir.z;
-    if (t < 0 || y < p0.y || y > p1.y || z < p0.z || z > p1.z) {
+    double t = (p0[0] - ray.orig[0]) / ray.dir[0];
+    double y = ray.orig[1] + t * ray.dir[1];
+    double z = ray.orig[2] + t * ray.dir[2];
+    if (t < 0 || y < p0[1] || y > p1[1] || z < p0[2] || z > p1[2]) {
         return hitrec;
     }
 
-    get_surface_coords({p0.x, y, z}, hitrec.surf_x, hitrec.surf_y);
+    get_surface_coords({p0[0], y, z}, hitrec.surf_x, hitrec.surf_y);
     hitrec.dist = t;
     hitrec.n = Vec3d(1, 0, 0);
     hitrec.set_normal_orientation(ray.dir);
@@ -189,8 +189,8 @@ bool h_RectYZ::bounding_box(AABB &box) const {
 }
 
 bool h_RectYZ::get_surface_coords(const Vec3d &point, double &sx, double &sy) const {
-    sx = (point.y-p0.y) / (p1.y-p0.y);
-    sy = (point.z-p0.z) / (p1.z-p1.z);
+    sx = (point[1]-p0[1]) / (p1[1]-p0[1]);
+    sy = (point[2]-p0[2]) / (p1[2]-p1[2]);
     return true;
 }
 
@@ -204,17 +204,17 @@ p1(VEC3D_ONE)
 
 h_Box::h_Box(const Vec3d &p0_, const Vec3d &p1_, Material *material_):
 Hittable(material_),
-p0(Vec3d(std::min(p0_.x, p1_.x), std::min(p0_.y, p1_.y), std::min(p0_.z, p1_.z))),
-p1(Vec3d(std::max(p0_.x, p1_.x), std::max(p0_.y, p1_.y), std::max(p0_.z, p1_.z)))
+p0(Vec3d(std::min(p0_[0], p1_[0]), std::min(p0_[1], p1_[1]), std::min(p0_[2], p1_[2]))),
+p1(Vec3d(std::max(p0_[0], p1_[0]), std::max(p0_[1], p1_[1]), std::max(p0_[2], p1_[2])))
 {
-    sides.insert(new h_RectYZ({p0.x, p0.y, p0.z}, {p1.x, p1.y, p1.z}, material_));
-    sides.insert(new h_RectYZ({p1.x, p0.y, p0.z}, {p1.x, p1.y, p1.z}, material_));
+    sides.insert(new h_RectYZ({p0[0], p0[1], p0[2]}, {p1[0], p1[1], p1[2]}, material_));
+    sides.insert(new h_RectYZ({p1[0], p0[1], p0[2]}, {p1[0], p1[1], p1[2]}, material_));
 
-    sides.insert(new h_RectXZ({p0.x, p0.y, p0.z}, {p1.x, p1.y, p1.z}, material_));
-    sides.insert(new h_RectXZ({p0.x, p1.y, p0.z}, {p1.x, p1.y, p1.z}, material_));
+    sides.insert(new h_RectXZ({p0[0], p0[1], p0[2]}, {p1[0], p1[1], p1[2]}, material_));
+    sides.insert(new h_RectXZ({p0[0], p1[1], p0[2]}, {p1[0], p1[1], p1[2]}, material_));
 
-    sides.insert(new h_RectXY({p0.x, p0.y, p0.z}, {p1.x, p1.y, p1.z}, material_));
-    sides.insert(new h_RectXY({p0.x, p0.y, p1.z}, {p1.x, p1.y, p1.z}, material_));
+    sides.insert(new h_RectXY({p0[0], p0[1], p0[2]}, {p1[0], p1[1], p1[2]}, material_));
+    sides.insert(new h_RectXY({p0[0], p0[1], p1[2]}, {p1[0], p1[1], p1[2]}, material_));
 }
 
 HitRecord h_Box::hit(Ray &ray) const {
@@ -285,13 +285,13 @@ HitRecord Triangle::hit(Ray &ray) const {
 }
 
 bool Triangle::bounding_box(AABB &box) const {
-    box =  AABB({std::min(p0.x, std::min(p1.x, p2.x)),
-                 std::min(p0.y, std::min(p1.y, p2.y)),
-                 std::min(p0.z, std::min(p1.z, p2.z))},
+    box =  AABB({std::min(p0[0], std::min(p1[0], p2[0])),
+                 std::min(p0[1], std::min(p1[1], p2[1])),
+                 std::min(p0[2], std::min(p1[2], p2[2]))},
                 {
-                 std::max(p0.x, std::max(p1.x, p2.x)),
-                 std::max(p0.y, std::max(p1.y, p2.y)),
-                 std::max(p0.z, std::max(p1.z, p2.z))
+                 std::max(p0[0], std::max(p1[0], p2[0])),
+                 std::max(p0[1], std::max(p1[1], p2[1])),
+                 std::max(p0[2], std::max(p1[2], p2[2]))
                 });
     return true;
 }

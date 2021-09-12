@@ -60,7 +60,7 @@ void SFML_Interface::render_frame_portion() {
         }
     }
     
-    intelligence_denoise(frame, 1);
+    intelligence_denoise(frame, 2);
     // frame.colors_to_final_image();
 
     color_to_rgb_buffer(frame.final_image, cur_image, config.render.GAMMA_CORRECTION, pixel_cnt);

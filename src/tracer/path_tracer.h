@@ -14,7 +14,7 @@
 #include "hits/hittable_list.h"
 #include "hits/hit_record.h"
 
-#include "cameraLightScene/scene.h"
+#include "camera_light_scene/scene.h"
 
 #include "acceleration_structures/bvh.h"
 
