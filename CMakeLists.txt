@@ -37,7 +37,8 @@ add_executable(pather
         src/tracer/render_task.cpp
         src/utils/vec3d.cpp
         src/sfml_interface/interface.cpp
-        src/image/denoiser.cpp)
+        src/image/denoiser.cpp
+        src/multithreading/mt_path_tracer.cpp)
 
 target_link_libraries(pather sfml-graphics sfml-window sfml-system)        
 

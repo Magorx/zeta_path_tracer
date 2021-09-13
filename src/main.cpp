@@ -14,7 +14,7 @@ const int 	 SCREEN_HEIGHT    = 100;
 const double RESOLUTION_COEF  = 4.0; // actual image resolution is W*H here
 const int 	 MAX_TRACE_DEPTH  = 7;
 const int 	 PIXEL_SAMPLING   = 100; // >= 1000 for pretty images
-const double GAMMA_CORRECTION = 0.45;
+const double GAMMA_CORRECTION = 0.4;
 const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
 
 // ============================================================================
@@ -85,6 +85,8 @@ int main(int argc, char* argv[]) {
     // if (carg_to_reload_rtask_file) rtask.save("rtask.rt");
 
     // render_from_rtask_file(scene, conf_pt);
+
+	return 0;
 }
 
 //=============================================================================

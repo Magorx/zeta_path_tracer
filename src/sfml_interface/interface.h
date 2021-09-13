@@ -28,7 +28,10 @@ class SFML_Interface {
 
     int consecutive_frames_cnt;
 
+    Threader<ThreadRenderTask> render_threader;
+
     void render_frame_portion();
+    void render_frame_threaded();
     void flush_to_texture();
 
     void handle_events();

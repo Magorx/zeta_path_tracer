@@ -19,7 +19,9 @@ cur_image(nullptr),
 frame(),
 new_frame(),
 
-consecutive_frames_cnt(0)
+consecutive_frames_cnt(0),
+
+render_threader(4, render_threaded)
 {   
     if (!scene) {
         fprintf(stderr, "[ERR] scene is nullptr, aborting\n");
@@ -41,9 +43,29 @@ consecutive_frames_cnt(0)
     image_sprite.setScale((double) scr_w / img_size.x, (double) scr_h / img_size.y);
 }
 
+void SFML_Interface::render_frame_threaded() {
+    ProgressBar bar(stderr, 1);
+    bar.start();
+
+    int lines_per_thread = frame.size_y / render_threader.get_threads_cnt();
+
+    for (int i = 0; i < render_threader.get_threads_cnt(); ++i) {
+        int min_x = 0;
+        int max_x = frame.size_x;
+        int min_y = i * lines_per_thread;
+        int max_y = min_y + lines_per_thread;
+        ThreadRenderTask rt{*scene, config, {min_x, max_x, min_y, max_y, i}, new_frame};
+        render_threader.add_task(rt);
+    }
+
+    render_threader.wait();
+    bar.tick();
+}
+
 void SFML_Interface::render_frame_portion() {
     config.render.PIXEL_SAMPLING = pixel_sampling_per_render;
-    render_into_buffer(scene, config, new_frame.data_color, new_frame.data_normal, new_frame.data_depth);
+    // render_into_buffer(scene, config, new_frame.data_color, new_frame.data_normal, new_frame.data_depth);
+    render_frame_threaded();
 
     new_frame.set_post_processing(FramePostproc::denoise);
     new_frame.postproc(1);
