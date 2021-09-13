@@ -74,7 +74,7 @@ void SFML_Interface::render_frame_portion() {
     
     memcpy(frame.data_normal, new_frame.data_normal, frame.pixel_cnt * sizeof(Vec3d));
     memcpy(frame.data_depth, new_frame.data_depth, frame.pixel_cnt * sizeof(double));
-    if (!consecutive_frames_cnt) {
+    if (consecutive_frames_cnt < 2) {
         memcpy(frame.data_color, new_frame.data_color, pixel_cnt * sizeof(Color));
     } else {
         double n = consecutive_frames_cnt;
