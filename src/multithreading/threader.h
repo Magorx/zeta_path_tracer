@@ -7,100 +7,93 @@
 #include <thread>
 
 #include "thread_render_task.h"
-
+#include "multithreading/semaphore.h"
 
 template <typename T>
 class Threader {
-    std::queue<T> task_queue;
+    std::vector<T> tasks;
+
     std::vector<std::thread*> threads;
+    std::vector<Semaphore> sems_start;
+    std::vector<Semaphore> sems_stop;
+
     void (*func)(T&);
 
-    int cur_threads_in_work;
-
-    bool lock;
-
     bool running;
-    bool joining;
 
-    int max_thread_id;
-
-    void thread_main_loop(int thread_id) {
-        while (running && !(joining && !task_queue.size())) {
-            while (lock) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(rand() % 10));
-                continue;
-            }
-
-            if (task_queue.size()) {
-                lock = !lock;
-                if (!lock) {
-                    continue;
-                }
-
-                ++cur_threads_in_work;
-
-                T task = task_queue.front();
-                task_queue.pop();
-
-                lock = false;
-                // printf("[thr] id [%d] strt\n", thread_id);
-                func(task);
-                // printf("[thr] id [%d] done\n", thread_id);
-
-                --cur_threads_in_work;
-            }
+    void thread_main_loop(int thread_id) {  
+        while (running) {
+            sems_start[thread_id].wait();
+            func(tasks[thread_id]);
+            sems_stop[thread_id].post();
         }
     }
 
-    static void call_thread_main_loop_method(void *that) {
-        ((Threader<T>*) that)->thread_main_loop(++((Threader<T>*) that)->max_thread_id);
+    static void call_thread_main_loop_method(void *that, int thread_id) {
+        ((Threader<T>*) that)->thread_main_loop(thread_id);
     }
 
 public:
-    Threader(size_t thread_count, void (*func)(T&)):
-    task_queue(),
+    Threader():
+    tasks(),
     threads(),
-    cur_threads_in_work(0),
+    func(nullptr),
+    running(true)
+    {}
+
+    Threader(size_t thread_count, void (*func)(T&)):
+    tasks(),
+    threads(),
     func(func),
-
-    lock(false),
-
-    running(true),
-    joining(false),
-
-    max_thread_id(0)
+    running(true)
     {
         for (size_t i = 0; i < thread_count; ++i) {
-            threads.push_back(new std::thread(Threader::call_thread_main_loop_method, this));
+            threads.push_back(new std::thread(Threader::call_thread_main_loop_method, this, i));
+            sems_start.push_back({0});
+            sems_start.push_back({0});
         }
     }
 
-    inline void add_task(T &task) {
-        task_queue.push(task);
-    }
-
-    void join() {
-        joining = true;
-
+    inline void join() {
+        running = false;
         for (size_t i = 0; i < threads.size(); ++i) {
             threads[i]->join();
         }
     }
 
-    inline void do_lock() {
-        lock = true;
-    }
-
-    inline void do_unlock() {
-        lock = false;
-    }
-
-    inline int get_threads_cnt() const {
+    inline size_t get_threads_cnt() const {
         return threads.size();
     }
 
-    inline void wait() const {
-        while (task_queue.size()) std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    inline void add_task(const T &task) {
+        if (tasks.size() < get_threads_cnt())
+            tasks.push_back(task);
+        else {
+            printf("[ERR]<threader> adding more tasks will leave them undone, use set_tasks instead\n");
+        }
+    }
+
+    inline void set_task(size_t i, const T &task) {
+        if (i > tasks.size()) {
+            printf("[ERR]<threader> task index %lu is far too big (cur: %lu) \n", i, tasks.size());
+            return;
+        }
+
+        tasks[i] = task;
+    }
+
+    void perform() {
+        size_t threads_cnt = threads.size();
+        size_t tasks_cnt = tasks.size();
+        int threads_to_use = tasks_cnt < threads_cnt ? tasks_cnt : threads_cnt;
+
+        for (int i = 0; i < threads_to_use; ++i) {
+            sems_start[i].post();
+        }
+
+        for (int i = 0; i < threads_to_use; ++i) {
+            sems_stop[i].wait();
+        }
     }
 
 };

@@ -43,6 +43,8 @@ public:
     
     void tick();
     void run();
+
+    void stop();
 };
 
 #endif // SFML_INTERFACE
