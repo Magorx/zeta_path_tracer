@@ -49,6 +49,7 @@ void SFML_Interface::render_frame_threaded() {
 
     int lines_per_thread = frame.size_y / render_threader.get_threads_cnt();
 
+    render_threader.do_lock();
     for (int i = 0; i < render_threader.get_threads_cnt(); ++i) {
         int min_x = 0;
         int max_x = frame.size_x;
@@ -57,6 +58,7 @@ void SFML_Interface::render_frame_threaded() {
         ThreadRenderTask rt{*scene, config, {min_x, max_x, min_y, max_y, i}, new_frame};
         render_threader.add_task(rt);
     }
+    render_threader.do_unlock();
 
     render_threader.wait();
     bar.tick();
