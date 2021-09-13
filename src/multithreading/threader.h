@@ -100,7 +100,7 @@ public:
     }
 
     inline void wait() const {
-        while (task_queue.size() || cur_threads_in_work) std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        while (task_queue.size()) std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 
 };
