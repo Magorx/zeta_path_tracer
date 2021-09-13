@@ -79,7 +79,7 @@ void SFML_Interface::render_frame_portion() {
     } else {
         double n = consecutive_frames_cnt;
         for (int i = 0; i < pixel_cnt; ++i) {
-            frame.data_color[i] = frame.data_color[i] * ((n - 1.0) / n) + new_frame.final_image[i] /  n;
+            frame.data_color[i] = frame.final_image[i] * ((n - 1.0) / n) + new_frame.final_image[i] /  n;
         }
     }
 
