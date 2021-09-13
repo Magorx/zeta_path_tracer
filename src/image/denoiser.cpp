@@ -25,7 +25,7 @@ Color get_intelligence_denoised_color(const Frame<Color, Vec3d, double> &frame, 
 
     for (int x = x_center - sample_rad; x < x_center + sample_rad; ++x) {
         for (int y = y_center - sample_rad; y < y_center + sample_rad; ++y) {
-            if (x < 0 || x >= frame.size_x || y < 0 || y >= frame.size_y) {
+            if (x < 0 || x >= (int) frame.size_x || y < 0 || y >= (int) frame.size_y) {
                 continue;
             }
 
@@ -34,7 +34,7 @@ Color get_intelligence_denoised_color(const Frame<Color, Vec3d, double> &frame, 
             Vec3d cur_normal = frame.data_normal[cur_px];
             double cur_depth = frame.data_depth[cur_px];
 
-            double weight_depth  = 1 - abs(depth - cur_depth);
+            double weight_depth  = 1 - std::abs(depth - cur_depth);
             double weight_normal = pow(std::max(0.0, normal.dot(cur_normal)), 3); // 128
 
             float w = weight_depth * weight_normal;
@@ -48,18 +48,18 @@ Color get_intelligence_denoised_color(const Frame<Color, Vec3d, double> &frame, 
 }
 
 void denoise(Frame<Color, Vec3d, double> &frame, const int sample_rad) {
-    for (int x = sample_rad; x < frame.size_x - sample_rad; ++x) {
-        for (int y = sample_rad; y < frame.size_y - sample_rad; ++y) {
-            int px_shift = y * frame.size_x + x;
+    for (size_t x = sample_rad; x < frame.size_x - sample_rad; ++x) {
+        for (size_t y = sample_rad; y < frame.size_y - sample_rad; ++y) {
+            size_t px_shift = y * frame.size_x + x;
             frame.final_image[px_shift] = get_denoised_color(frame, x, y, sample_rad);
         }
     }
 }
 
 void intelligence_denoise(Frame<Color, Vec3d, double> &frame, const int sample_rad) {
-    for (int x = 0; x < frame.size_x; ++x) {
-        for (int y = 0; y < frame.size_y; ++y) {
-            int px_shift = y * frame.size_x + x;
+    for (size_t x = 0; x < frame.size_x; ++x) {
+        for (size_t y = 0; y < frame.size_y; ++y) {
+            size_t px_shift = y * frame.size_x + x;
             frame.final_image[px_shift] = get_intelligence_denoised_color(frame, x, y, sample_rad);
         }
     }

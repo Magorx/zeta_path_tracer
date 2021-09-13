@@ -42,12 +42,11 @@ consecutive_frames_cnt(0)
 }
 
 void SFML_Interface::render_frame_portion() {
-    config.render.PIXEL_SAMPLING = 2;
+    config.render.PIXEL_SAMPLING = pixel_sampling_per_render;
     render_into_buffer(scene, config, new_frame.data_color, new_frame.data_normal, new_frame.data_depth);
 
-    new_frame.normalize_depth_map();
-    intelligence_denoise(new_frame, 1);
-    // new_frame.colors_to_final_image();
+    new_frame.set_post_processing(FramePostproc::denoise);
+    new_frame.postproc(1);
     
     memcpy(frame.data_normal, new_frame.data_normal, frame.pixel_cnt * sizeof(Vec3d));
     memcpy(frame.data_depth, new_frame.data_depth, frame.pixel_cnt * sizeof(double));
@@ -59,10 +58,9 @@ void SFML_Interface::render_frame_portion() {
             frame.data_color[i] = frame.data_color[i] * ((n - 1.0) / n) + new_frame.final_image[i] /  n;
         }
     }
-    
-    intelligence_denoise(frame, 2);
-    // frame.colors_to_final_image();
 
+    frame.set_post_processing(FramePostproc::denoise);
+    frame.postproc(2);
     color_to_rgb_buffer(frame.final_image, cur_image, config.render.GAMMA_CORRECTION, pixel_cnt);
 
     ++consecutive_frames_cnt;
@@ -72,9 +70,6 @@ void SFML_Interface::flush_to_texture() {
     if (!scene || !scene->camera) {
         printf("[ERR] BAD scene or scene->camera in sfml_interface during flush_to_texture()");
     }
-
-    int x_max = image_texture.getSize().x;
-    int y_max = image_texture.getSize().y;
 
     image_texture.update((sf::Uint8*) cur_image);
 }
