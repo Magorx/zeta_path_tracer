@@ -78,7 +78,7 @@ void render_image       (Scene *scene, const conf_PathTracer &config);
 void render_into_buffer (Scene *scene, const conf_PathTracer &config, Color *buffer);
 void render_into_buffer (Scene *scene, const conf_PathTracer &config, Color *buffer, Vec3d *normal_map, double *depth_map);
 
-void render_rtask       (Scene *scene, const conf_PathTracer &config, const RenderTask rtask, Color *buffer, const int verbouse = 1);
+void render_rtask          (Scene *scene, const conf_PathTracer &config, const RenderTask rtask, Color *buffer, const int verbouse = 1);
 void render_from_rtask_file(Scene *scene, const conf_PathTracer &config);
 
 #endif // PATH_TRACER

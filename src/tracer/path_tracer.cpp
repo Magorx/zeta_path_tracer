@@ -130,7 +130,7 @@ void render_into_buffer(Scene *scene, const conf_PathTracer &config, Color *buff
     }
 }
 
-void render_into_buffer (Scene *scene, const conf_PathTracer &config, Color *buffer, Vec3d *normal_map, double *depth_map) {
+void render_into_buffer(Scene *scene, const conf_PathTracer &config, Color *buffer, Vec3d *normal_map, double *depth_map) {
 	if (!normal_map) {
 		printf("[ERR] no normal_map provided to render_into_buffer, thow you passed something here\n");
 	}

@@ -14,7 +14,7 @@ const int 	 SCREEN_HEIGHT    = 100;
 const double RESOLUTION_COEF  = 4.0; // actual image resolution is W*H here
 const int 	 MAX_TRACE_DEPTH  = 7;
 const int 	 PIXEL_SAMPLING   = 100; // >= 1000 for pretty images
-const double GAMMA_CORRECTION = 0.45;
+const double GAMMA_CORRECTION = 0.4;
 const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
 
 // ============================================================================
@@ -76,7 +76,7 @@ int main(int argc, char* argv[]) {
 
     Scene *scene = cornell_box_scene();
 
-	SFML_Interface interface("bubus", scene, conf_pt, 600, 600, 1);
+	SFML_Interface interface("bubus", scene, conf_pt, 600, 600, 2);
 
 	interface.run();
 
@@ -85,6 +85,8 @@ int main(int argc, char* argv[]) {
     // if (carg_to_reload_rtask_file) rtask.save("rtask.rt");
 
     // render_from_rtask_file(scene, conf_pt);
+
+	return 0;
 }
 
 //=============================================================================
@@ -110,8 +112,8 @@ HittableList *cornell_box_objects() {
     Material *m_mirror = new m_Metal({255, 255, 125}, 0.05);
     Material *m_glass  = new m_Dielectric({125, 255, 200}, 1.1);
 
-	Material *m_box_1 = new m_Lambertian({255, 255, 255});
-	Material *m_box_2 = new m_Lambertian({255, 255, 255});
+	// Material *m_box_1 = new m_Lambertian({255, 255, 255}); ^^^^^^^^^^^^^
+	// Material *m_box_2 = new m_Lambertian({255, 255, 255});
 
 	Light *l_rect_light = new l_Diffuse({255, 255, 255});
 
@@ -149,7 +151,7 @@ HittableList *cornell_box_objects() {
 	Hittable *rot_box_1 = new inst_Translate(new inst_RotZ(box_1,  Pi/3.5), {60, 70, 0});
 	Hittable *rot_box_2 = new inst_Translate(new inst_RotZ(box_2, -Pi/3), {30, 25, 0});
 
-	Hittable *sphere = new h_Sphere({40, 30, 10}, 20, m_white);
+	// Hittable *sphere = new h_Sphere({40, 30, 10}, 20, m_white);
 
 	scene->insert(rect_ceil );
 	scene->insert(rect_floor);

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
 project(zeta_path_tracer LANGUAGES CXX)
 
+set(CMAKE_CXX_COMPILER clang++)
+
 set(CMAKE_CXX_STANDARD 17)
 set(SFML_BUILD_GRAPHICS true)
 
@@ -8,7 +10,7 @@ set(WARNING_FLAGS "-Wall -Wextra -Wno-multichar -Wno-unused-result")
 
 include_directories(src)
 
-set(CMAKE_EXE_LINKER_FLAGS "-pthread ")
+set(CMAKE_EXE_LINKER_FLAGS "-pthread")
 set(CMAKE_CXX_FLAGS   "-O3 ${WARNING_FLAGS}")
 
 find_package(SFML 2 COMPONENTS system window graphics network audio REQUIRED)
@@ -35,7 +37,8 @@ add_executable(pather
         src/tracer/render_task.cpp
         src/utils/vec3d.cpp
         src/sfml_interface/interface.cpp
-        src/image/denoiser.cpp)
+        src/image/denoiser.cpp
+        src/multithreading/mt_path_tracer.cpp)
 
 target_link_libraries(pather sfml-graphics sfml-window sfml-system)        
 
