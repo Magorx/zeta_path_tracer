@@ -107,8 +107,8 @@ HittableList *cornell_box_objects() {
 	Material *m_red   = new m_Lambertian({255,   0,   0});
 	Material *m_green = new m_Lambertian({  0, 255,   0});
 
-	Material *m_mirror = new m_Metal({255, 255, 125}, 0.05);
-	Material *m_glass  = new m_Dielectric({125, 255, 200}, 1.1);
+    Material *m_mirror = new m_Metal({255, 255, 125}, 0.05);
+    Material *m_glass  = new m_Dielectric({125, 255, 200}, 1.1);
 
 	Material *m_box_1 = new m_Lambertian({255, 255, 255});
 	Material *m_box_2 = new m_Lambertian({255, 255, 255});
@@ -144,9 +144,9 @@ HittableList *cornell_box_objects() {
 
 	Hittable *box_2 = new h_Box({ depth * box_coef,  width * box_coef, 0},
 								{-depth * box_coef, -width * box_coef, heigh * 0.25},
-								m_glass);
+                                m_glass);
 
-	Hittable *rot_box_1 = new inst_Translate(new inst_RotZ(box_1,  Pi/4), {60, 70, 0});
+	Hittable *rot_box_1 = new inst_Translate(new inst_RotZ(box_1,  Pi/3.5), {60, 70, 0});
 	Hittable *rot_box_2 = new inst_Translate(new inst_RotZ(box_2, -Pi/3), {30, 25, 0});
 
 	Hittable *sphere = new h_Sphere({40, 30, 10}, 20, m_white);

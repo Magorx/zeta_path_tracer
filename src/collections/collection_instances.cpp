@@ -48,9 +48,11 @@ bbox()
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 2; j++) {
             for (int k = 0; k < 2; k++) {
-                double x = i*bbox.mx.x + (1-i)*bbox.mn.x;
-                double y = j*bbox.mx.y + (1-j)*bbox.mn.y;
-                double z = k*bbox.mx.z + (1-k)*bbox.mn.z;
+                const Vec3d p(i, j, k);
+                const auto mixed = p * bbox.mx + (1 - p) * bbox.mn;
+                const double x = mixed[0];
+                const double y = mixed[1];
+                const double z = mixed[2];
 
                 double newx =  cos_a*x + sin_a*y;
                 double newy = -sin_a*x + cos_a*y;
@@ -58,8 +60,8 @@ bbox()
                 Vec3d cur_vec(newx, newy, z);
 
                 for (int c = 0; c < 3; c++) {
-                    mn[c] = fmin(mn[c], cur_vec[c]);
-                    mx[c] = fmax(mx[c], cur_vec[c]);
+                    mn.set(c, fmin(mn[c], cur_vec[c]));
+                    mx.set(c,  fmax(mx[c], cur_vec[c]));
                 }
             }
         }
@@ -73,11 +75,11 @@ HitRecord inst_RotZ::hit(Ray &ray) const {
 	Vec3d orig = ray.orig;
     Vec3d dir  = ray.dir;
 
-    orig[0] = cos_a*ray.orig[0] - sin_a*ray.orig[1];
-    orig[1] = sin_a*ray.orig[0] + cos_a*ray.orig[1];
+    orig.set(0, cos_a*ray.orig[0] - sin_a*ray.orig[1]);
+    orig.set(1, sin_a*ray.orig[0] + cos_a*ray.orig[1]);
 
-    dir[0] = cos_a*ray.dir[0] - sin_a*ray.dir[1];
-    dir[1] = sin_a*ray.dir[0] + cos_a*ray.dir[1];
+    dir.set(0, cos_a*ray.dir[0] - sin_a*ray.dir[1]);
+    dir.set(1, sin_a*ray.dir[0] + cos_a*ray.dir[1]);
 
     Ray rot_ray(orig, dir);
 
@@ -89,11 +91,11 @@ HitRecord inst_RotZ::hit(Ray &ray) const {
     Vec3d p = hitrec.p;
     Vec3d normal = hitrec.n;
 
-    p[0] =  cos_a*hitrec.p[0] + sin_a*hitrec.p[1];
-    p[1] = -sin_a*hitrec.p[0] + cos_a*hitrec.p[1];
+    p.set(0, cos_a*hitrec.p[0] + sin_a*hitrec.p[1]);
+    p.set(1, -sin_a*hitrec.p[0] + cos_a*hitrec.p[1]);
 
-    normal[0] =  cos_a*hitrec.n[0] + sin_a*hitrec.n[1];
-    normal[1] = -sin_a*hitrec.n[0] + cos_a*hitrec.n[1];
+    normal.set(0,  cos_a*hitrec.n[0] + sin_a*hitrec.n[1]);
+    normal.set(1, -sin_a*hitrec.n[0] + cos_a*hitrec.n[1]);
 
     hitrec.p = p;
     hitrec.n = normal;
@@ -131,9 +133,11 @@ bbox()
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 2; j++) {
             for (int k = 0; k < 2; k++) {
-                double x = i*bbox.mx.x + (1-i)*bbox.mn.x;
-                double y = j*bbox.mx.y + (1-j)*bbox.mn.y;
-                double z = k*bbox.mx.z + (1-k)*bbox.mn.z;
+                const Vec3d p(i, j, k);
+                const auto mixed = p * bbox.mx + (1 - p) * bbox.mn;
+                const double x = mixed[0];
+                const double y = mixed[1];
+                const double z = mixed[2];
 
                 double newy =  cos_a*y + sin_a*z;
                 double newz = -sin_a*y + cos_a*z;
@@ -141,8 +145,8 @@ bbox()
                 Vec3d cur_vec(x, newy, newz);
 
                 for (int c = 0; c < 3; c++) {
-                    mn[c] = fmin(mn[c], cur_vec[c]);
-                    mx[c] = fmax(mx[c], cur_vec[c]);
+                    mn.set(c, fmin(mn[c], cur_vec[c]));
+                    mx.set(c, fmax(mx[c], cur_vec[c]));
                 }
             }
         }
@@ -156,11 +160,11 @@ HitRecord inst_RotX::hit(Ray &ray) const {
 	Vec3d orig = ray.orig;
     Vec3d dir  = ray.dir;
 
-    orig[1] = cos_a*ray.orig[1] - sin_a*ray.orig[2];
-    orig[2] = sin_a*ray.orig[1] + cos_a*ray.orig[2];
+    orig.set(1, cos_a*ray.orig[1] - sin_a*ray.orig[2]);
+    orig.set(2, sin_a*ray.orig[1] + cos_a*ray.orig[2]);
 
-    dir[1] = cos_a*ray.dir[1] - sin_a*ray.dir[2];
-    dir[2] = sin_a*ray.dir[1] + cos_a*ray.dir[2];
+    dir.set(1, cos_a*ray.dir[1] - sin_a*ray.dir[2]);
+    dir.set(2, sin_a*ray.dir[1] + cos_a*ray.dir[2]);
 
     Ray rot_ray(orig, dir);
 
@@ -172,11 +176,11 @@ HitRecord inst_RotX::hit(Ray &ray) const {
     Vec3d p = hitrec.p;
     Vec3d normal = hitrec.n;
 
-    p[1] =  cos_a*hitrec.p[1] + sin_a*hitrec.p[2];
-    p[2] = -sin_a*hitrec.p[1] + cos_a*hitrec.p[2];
+    p.set(1, cos_a*hitrec.p[1] + sin_a*hitrec.p[2]);
+    p.set(2, -sin_a*hitrec.p[1] + cos_a*hitrec.p[2]);
 
-    normal[1] =  cos_a*hitrec.n[1] + sin_a*hitrec.n[2];
-    normal[2] = -sin_a*hitrec.n[1] + cos_a*hitrec.n[2];
+    normal.set(1, cos_a*hitrec.n[1] + sin_a*hitrec.n[2]);
+    normal.set(2, -sin_a*hitrec.n[1] + cos_a*hitrec.n[2]);
 
     hitrec.p = p;
     hitrec.n = normal;
@@ -214,9 +218,11 @@ bbox()
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 2; j++) {
             for (int k = 0; k < 2; k++) {
-                double x = i*bbox.mx.x + (1-i)*bbox.mn.x;
-                double y = j*bbox.mx.y + (1-j)*bbox.mn.y;
-                double z = k*bbox.mx.z + (1-k)*bbox.mn.z;
+                const Vec3d p(i, j, k);
+                const auto mixed = p * bbox.mx + (1 - p) * bbox.mn;
+                const double x = mixed[0];
+                const double y = mixed[1];
+                const double z = mixed[2];
 
                 double newx =  cos_a*x + sin_a*z;
                 double newz = -sin_a*x + cos_a*z;
@@ -224,8 +230,8 @@ bbox()
                 Vec3d cur_vec(newx, y, newz);
 
                 for (int c = 0; c < 3; c++) {
-                    mn[c] = fmin(mn[c], cur_vec[c]);
-                    mx[c] = fmax(mx[c], cur_vec[c]);
+                    mn.set(c, fmin(mn[c], cur_vec[c]));
+                    mx.set(c, fmax(mx[c], cur_vec[c]));
                 }
             }
         }
@@ -239,11 +245,11 @@ HitRecord inst_RotY::hit(Ray &ray) const {
 	Vec3d orig = ray.orig;
     Vec3d dir  = ray.dir;
 
-    orig[0] = cos_a*ray.orig[0] - sin_a*ray.orig[2];
-    orig[2] = sin_a*ray.orig[0] + cos_a*ray.orig[2];
+    orig.set(0, cos_a*ray.orig[0] - sin_a*ray.orig[2]);
+    orig.set(2, sin_a*ray.orig[0] + cos_a*ray.orig[2]);
 
-    dir[0] = cos_a*ray.dir[0] - sin_a*ray.dir[2];
-    dir[2] = sin_a*ray.dir[0] + cos_a*ray.dir[2];
+    dir.set(0, cos_a*ray.dir[0] - sin_a*ray.dir[2]);
+    dir.set(2, sin_a*ray.dir[0] + cos_a*ray.dir[2]);
 
     Ray rot_ray(orig, dir);
 
@@ -255,11 +261,11 @@ HitRecord inst_RotY::hit(Ray &ray) const {
     Vec3d p = hitrec.p;
     Vec3d normal = hitrec.n;
 
-    p[0] =  cos_a*hitrec.p[0] + sin_a*hitrec.p[2];
-    p[2] = -sin_a*hitrec.p[0] + cos_a*hitrec.p[2];
+    p.set(0,  cos_a*hitrec.p[0] + sin_a*hitrec.p[2]);
+    p.set(2, -sin_a*hitrec.p[0] + cos_a*hitrec.p[2]);
 
-    normal[0] =  cos_a*hitrec.n[0] + sin_a*hitrec.n[2];
-    normal[2] = -sin_a*hitrec.n[0] + cos_a*hitrec.n[2];
+    normal.set(0, cos_a*hitrec.n[0] + sin_a*hitrec.n[2]);
+    normal.set(2, -sin_a*hitrec.n[0] + cos_a*hitrec.n[2]);
 
     hitrec.p = p;
     hitrec.n = normal;
