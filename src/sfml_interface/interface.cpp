@@ -41,33 +41,34 @@ render_threader(4, render_threaded)
 
     image_sprite.setTexture(image_texture);
     image_sprite.setScale((double) scr_w / img_size.x, (double) scr_h / img_size.y);
+
+// ============
+
+    int lines_per_thread = frame.size_y / render_threader.get_threads_cnt();
+
+    std::vector<ThreadRenderTask> rtasks;
+    for (size_t i = 0; i < render_threader.get_threads_cnt(); ++i) {
+        int min_x = 0;
+        int max_x = frame.size_x;
+        int min_y = i * lines_per_thread;
+        int max_y = min_y + lines_per_thread;
+        render_threader.add_task(ThreadRenderTask(*scene, config, {min_x, max_x, min_y, max_y, static_cast<int>(i)}, new_frame));
+    }
 }
 
 void SFML_Interface::render_frame_threaded() {
     ProgressBar bar(stderr, 1);
     bar.start();
 
-    int lines_per_thread = frame.size_y / render_threader.get_threads_cnt();
+    render_threader.perform();
 
-    render_threader.do_lock();
-    for (int i = 0; i < render_threader.get_threads_cnt(); ++i) {
-        int min_x = 0;
-        int max_x = frame.size_x;
-        int min_y = i * lines_per_thread;
-        int max_y = min_y + lines_per_thread;
-        ThreadRenderTask rt{*scene, config, {min_x, max_x, min_y, max_y, i}, new_frame};
-        render_threader.add_task(rt);
-    }
-    render_threader.do_unlock();
-
-    render_threader.wait();
     bar.tick();
 }
 
 void SFML_Interface::render_frame_portion() {
     config.render.PIXEL_SAMPLING = pixel_sampling_per_render;
-    // render_into_buffer(scene, config, new_frame.data_color, new_frame.data_normal, new_frame.data_depth);
-    render_frame_threaded();
+    render_into_buffer(scene, config, new_frame.data_color, new_frame.data_normal, new_frame.data_depth);
+    // render_frame_threaded();
 
     new_frame.set_post_processing(FramePostproc::denoise);
     new_frame.postproc(1);
@@ -79,7 +80,7 @@ void SFML_Interface::render_frame_portion() {
     } else {
         double n = consecutive_frames_cnt;
         for (int i = 0; i < pixel_cnt; ++i) {
-            frame.data_color[i] = frame.final_image[i] * ((n - 1.0) / n) + new_frame.final_image[i] /  n;
+            frame.data_color[i] = frame.data_color[i] * ((n - 1.0) / n) + new_frame.final_image[i] /  n;
         }
     }
 
@@ -130,4 +131,8 @@ void SFML_Interface::run() {
 
         window.display();
     }
+}
+
+void SFML_Interface::stop() {
+    render_threader.join();
 }
