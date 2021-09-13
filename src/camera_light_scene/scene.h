@@ -1,7 +1,7 @@
 #ifndef SCENE
 #define SCENE
 
-#include "cameraLightScene/camera.h"
+#include "camera_light_scene/camera.h"
 #include "hits/hittable.h"
 
 struct Scene {

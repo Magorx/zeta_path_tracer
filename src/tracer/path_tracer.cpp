@@ -15,10 +15,12 @@ Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &confi
 		Color attenuation;
 		Color emmited = hitrec.mat->emit(hitrec.surf_x, hitrec.surf_y, hitrec.p);
 		if (hitrec.mat->scatter(ray, hitrec, attenuation, scattered_ray)) {
-			return emmited + attenuation * trace_ray(scattered_ray, hittable, config, cur_trace_depth + 1) / d_MAXRGB;
-		} else {
-			return emmited;
+            attenuation *= trace_ray(scattered_ray, hittable, config, cur_trace_depth + 1);
+            attenuation /= d_MAXRGB;
+			emmited += attenuation;
 		}
+
+        return emmited;
 	}
 }
 
@@ -45,10 +47,11 @@ Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &confi
 		Color attenuation;
 		Color emmited = hitrec.mat->emit(hitrec.surf_x, hitrec.surf_y, hitrec.p);
 		if (hitrec.mat->scatter(ray, hitrec, attenuation, scattered_ray)) {
-			return emmited + attenuation * trace_ray(scattered_ray, hittable, config, cur_trace_depth + 1) / d_MAXRGB;
-		} else {
-			return emmited;
+            attenuation *= trace_ray(scattered_ray, hittable, config, cur_trace_depth + 1);
+            attenuation /= d_MAXRGB;
+            emmited += attenuation;
 		}
+        return emmited;
 	}
 }
 
@@ -132,15 +135,16 @@ void render_into_buffer (Scene *scene, const conf_PathTracer &config, Color *buf
 		printf("[ERR] no normal_map provided to render_into_buffer, thow you passed something here\n");
 	}
 
-	ProgressBar prog_bar(stderr, scene->camera->res_h * scene->camera->res_w,
+	ProgressBar prog_bar(stderr, scene->camera->res_h,
 						 config.verbos.VERBOSITY);
 
     prog_bar.start();
     int res_h = scene->camera->res_h;
     int res_w = scene->camera->res_w;
     for (int y = 0; y < res_h; ++y) {
+        prog_bar.tick();
         for (int x = 0; x < res_w; ++x) {
-            prog_bar.tick();
+
 			int px_shift = res_w * y + x;
 
             Color px_color = accumulate_pixel_color(scene->camera, x, y, scene->objects, config, normal_map + px_shift, depth_map + px_shift);

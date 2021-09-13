@@ -20,7 +20,7 @@ struct HitRecord {
 
     inline void set_normal_orientation(const Vec3d &ray_direction) {
     	front_hit = n.dot(ray_direction) < 0;
-    	n = front_hit ? n : -n;
+    	n *= front_hit * 2 - 1;
     }
 };
 

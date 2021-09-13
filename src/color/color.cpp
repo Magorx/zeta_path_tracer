@@ -20,12 +20,12 @@ Color rand_color_shift(const size_t module) {
 
 Color rand_shifted_color(Color color, const size_t module) {
 	color += rand_color_shift(module);
-	double rgb[3] = {color.x, color.y, color.z};
+    auto rgb = color;
 	for (int i = 0; i < 3; ++i) {
 		if (rgb[i] < 0) {
-			rgb[i] = 0;
+			rgb.set(i ,0);
 		} else if (rgb[i] > 255) {
-			rgb[i] = 255;
+            rgb.set(i ,255);
 		}
 	}
 
@@ -38,13 +38,13 @@ Color shift_color_randomly(Color &color, const size_t module) {
 }
 
 bool is_valid_color(Color color) {
-	return (color.x >= 0 && color.x <= 255 && color.y >= 0 && color.y <= 255 && color.z >= 0 && color.z <= 255);
+	return (color.content[0] >= 0 && color.content[0] <= 255 && color.content[1] >= 0 && color.content[1] <= 255 && color.content[2] >= 0 && color.content[2] <= 255);
 }
 
 Color clamped_rgb(const Color color) {
-	return {std::min(std::max(color.x, 0.0), 255.0),
-			std::min(std::max(color.y, 0.0), 255.0),
-			std::min(std::max(color.z, 0.0), 255.0)
+	return {std::min(std::max(color.content[0], 0.0), 255.0),
+			std::min(std::max(color.content[1], 0.0), 255.0),
+			std::min(std::max(color.content[2], 0.0), 255.0)
 		   };
 }
 
@@ -95,7 +95,7 @@ RGBA color_to_final_rgba(Color color, const double gamma_correction) {
 	color *= 1 / d_MAXRGB;
 	color = pow(color, gamma_correction);
 	color *= d_MAXRGB;
-    return {(unsigned char) color.x, (unsigned char) color.y, (unsigned char) color.z};
+    return {(unsigned char) color.content[0], (unsigned char) color.content[1], (unsigned char) color.content[2]};
 }
 
 void color_to_rgb_buffer(const Color *image, RGBA *buffer, const double gamma_correction, const int pixel_cnt) {
