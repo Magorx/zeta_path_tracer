@@ -1,3 +1,4 @@
+#include <utils/fast_random.hpp>
 #include "collection_materials.h"
 
 m_Lambertian::m_Lambertian(const Color &albedo_):
@@ -13,7 +14,8 @@ to_affect_emitter(1)
 {}
 
 bool m_Lambertian::scatter(const Ray &, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
-	Vec3d scatter_direction = hitrec.n + Vec3d::random_unit();
+	Vec3d scatter_direction = hitrec.n;
+    scatter_direction += Vec3d::random_unit(); // TODO plz
 	if (scatter_direction.is_zero()) {
 		scatter_direction = hitrec.n;
 	}
@@ -44,7 +46,10 @@ to_affect_emitter(1)
 {}
 
 bool m_Metal::scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
-	Vec3d scatter_direction = reflect(ray.dir, hitrec.n) + fuzziness * Vec3d::random_in_unit_sphere();
+    Vec3d scatter_direction = Vec3d::random_in_unit_sphere();
+    scatter_direction *= fuzziness;
+    scatter_direction += reflect(ray.dir, hitrec.n);
+
     scattered = Ray(hitrec.p, scatter_direction);
     attenuation = albedo->value(hitrec.surf_x, hitrec.surf_y, hitrec.p);
     return true;
@@ -79,7 +84,13 @@ bool m_Dielectric::scatter(const Ray &ray, const HitRecord &hitrec, Color &atten
 
 	bool cannot_refract = rc * sin_theta > 1.0;
 	Vec3d scatter_direction;
-	if (cannot_refract || reflectance(cos_theta, rc) > vec3d_randdouble() || (roughness > 0 && vec3d_randdouble() < roughness)) {
+
+    unsigned int random_values[4];
+    Brans::rand_sse(random_values);
+    double first_random_value = (double) random_values[0] / (double) UINT32_MAX;
+    double second_random_value = (double) random_values[1] / (double) UINT32_MAX;
+
+	if (cannot_refract || reflectance(cos_theta, rc) > first_random_value || (roughness > 0 && second_random_value < roughness)) {
 		scatter_direction = reflect(ray.dir, hitrec.n);
 	} else {
 		scatter_direction = refract(ray.dir, hitrec.n, rc);

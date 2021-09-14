@@ -3,6 +3,7 @@
 
 #include "utils/vec3d.h"
 #include "utils/ray.h"
+#include "utils/fast_random.hpp"
 
 struct Camera {
     Vec3d orig;
@@ -18,7 +19,6 @@ struct Camera {
 
     Camera();
     Camera(const Vec3d origin, Vec3d direction, double distance, double width, double height, double res_coef);
-    void update();
 
     Ray get_ray(double x, double y) const;
     Ray get_sample_ray(double x, double y) const;

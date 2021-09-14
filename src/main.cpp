@@ -9,11 +9,14 @@
 
 const int 	 VERBOSITY 		  = 2; // 2 for detailed log of some things
 
+const int WINDOW_WIDTH = 1000;
+const int WINDOW_HEIGHT = 1000;
+
 const int 	 SCREEN_WIDTH     = 100;
 const int 	 SCREEN_HEIGHT    = 100;
-const double RESOLUTION_COEF  = 4.0; // actual image resolution is W*H here
+const double RESOLUTION_COEF  = 10.0; // actual image resolution is W*H here
 const int 	 MAX_TRACE_DEPTH  = 7;
-const int 	 PIXEL_SAMPLING   = 100; // >= 1000 for pretty images
+const int 	 PIXEL_SAMPLING   = 10; // >= 1000 for pretty images
 const double GAMMA_CORRECTION = 0.4;
 const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
 
@@ -35,7 +38,7 @@ Scene 		 *test_scene();
 // }
 
 int main(int argc, char* argv[]) {
-	srand(time(NULL));
+	Brans::srand_sse(time(NULL));
 	long randomstamp = vec3d_randlong() % 10000;
 
 	conf_Render conf_render(SCREEN_WIDTH * RESOLUTION_COEF, SCREEN_HEIGHT * RESOLUTION_COEF,
@@ -83,7 +86,7 @@ int main(int argc, char* argv[]) {
 
     Scene *scene = cornell_box_scene();
 
-	SFML_Interface interface("bubus", scene, conf_pt, 600, 600, 2);
+	SFML_Interface interface("bubus", scene, conf_pt, WINDOW_WIDTH, WINDOW_HEIGHT, PIXEL_SAMPLING);
 
 	interface.run();
 	interface.stop();
@@ -119,6 +122,7 @@ HittableList *cornell_box_objects() {
 
     Material *m_mirror = new m_Metal({255, 255, 125}, 0.05);
     Material *m_glass  = new m_Dielectric({125, 255, 200}, 1.1);
+    Material *m_glass2  = new m_Dielectric({160, 90, 255}, 1.1);
 
 	// Material *m_box_1 = new m_Lambertian({255, 255, 255}); ^^^^^^^^^^^^^
 	// Material *m_box_2 = new m_Lambertian({255, 255, 255});
@@ -156,8 +160,14 @@ HittableList *cornell_box_objects() {
 								{-depth * box_coef, -width * box_coef, heigh * 0.25},
                                 m_glass);
 
+    Hittable *box_3 = new h_Box({ depth * 3 * box_coef,  width * 2.5 *  box_coef, 0},
+                                {-depth * 3 *  box_coef, -width *  2.5 * box_coef, heigh * 0.03},
+                                m_glass2);
+
 	Hittable *rot_box_1 = new inst_Translate(new inst_RotZ(box_1,  Pi/3.5), {60, 70, 0});
 	Hittable *rot_box_2 = new inst_Translate(new inst_RotZ(box_2, -Pi/3), {30, 25, 0});
+    Hittable *rot_box_3 = new inst_Translate(box_3, {depth / 2 - l_d / 2 + 6, width / 2 - l_w / 2 + 16.5, l_h - 22.5});
+
 
 	// Hittable *sphere = new h_Sphere({40, 30, 10}, 20, m_white);
 
@@ -170,6 +180,7 @@ HittableList *cornell_box_objects() {
 
 	scene->insert(rot_box_1);
 	scene->insert(rot_box_2);
+    scene->insert(rot_box_3);
 	
 	// scene->insert(sphere);
 

@@ -11,7 +11,7 @@ set(WARNING_FLAGS "-Wall -Wextra -Wno-multichar -Wno-unused-result")
 include_directories(src)
 
 set(CMAKE_EXE_LINKER_FLAGS "-pthread")
-set(CMAKE_CXX_FLAGS   "-O3 ${WARNING_FLAGS}")
+set(CMAKE_CXX_FLAGS   "-O3 ${WARNING_FLAGS} -fdeclspec -march=native")
 
 find_package(SFML 2 COMPONENTS system window graphics network audio REQUIRED)
 
@@ -38,7 +38,7 @@ add_executable(pather
         src/utils/vec3d.cpp
         src/sfml_interface/interface.cpp
         src/image/denoiser.cpp
-        src/multithreading/mt_path_tracer.cpp)
+        src/multithreading/mt_path_tracer.cpp src/utils/fast_random.hpp)
 
 target_link_libraries(pather sfml-graphics sfml-window sfml-system)        
 

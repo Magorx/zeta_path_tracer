@@ -13,7 +13,10 @@ radius(radius_)
 {}
 
 Vec3d h_Sphere::normal(const Vec3d &point) const {
-	return ((point - center) * radius).normal();
+    Vec3d result = point;
+    result -= center;
+    result.normalize();
+	return result;
 }
 
 HitRecord h_Sphere::hit(Ray &ray) const {
@@ -273,7 +276,8 @@ HitRecord Triangle::hit(Ray &ray) const {
         hitrec.p = ray.cast(t);
         hitrec.dist = t;
         hitrec.mat = material;
-        hitrec.n = edge1.cross(edge2).normal();
+        hitrec.n = edge1.cross(edge2);
+        hitrec.n.normalize();
         hitrec.set_normal_orientation(ray.dir);
         hitrec.front_hit = true;
         hitrec.surf_x = 0;

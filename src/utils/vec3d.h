@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <iostream>
+#include "fast_random.hpp"
 
 const double VEC3_EPS = 1e-6;
 const double VEC3_MAX_RANDOM_TRIES_CNT = 50;
@@ -48,6 +49,12 @@ struct Vec3d {
         }
     }
 
+    inline void normalize() {
+        double l = len();
+        if(l < VEC3_EPS) content = {0, 0, 0};
+        else content /= l;
+    }
+
     inline bool is_zero() const {
         const auto squared = (content * content) < VEC3_EPS;
         return squared[0] * squared[1] * squared[2];
@@ -79,12 +86,14 @@ struct Vec3d {
         content[ind] = value;
     }
 
-    inline static Vec3d random() {
-        return {vec3d_randdouble(), vec3d_randdouble(), vec3d_randdouble()};
-    }
-
     inline static Vec3d random(double mn, double mx) {
-        return {vec3d_randdouble(mn, mx), vec3d_randdouble(mn, mx), vec3d_randdouble(mn, mx)};
+        unsigned int random_values[4];
+        Brans::rand_sse(random_values);
+        double length = mx - mn;
+        double x = (double)random_values[0] / (double)UINT32_MAX * length + mn;
+        double y = (double)random_values[1] / (double)UINT32_MAX * length + mn;
+        double z = (double)random_values[2] / (double)UINT32_MAX * length + mn;
+        return {x, y, z};
     }
 
     inline static Vec3d random_in_unit_sphere() {
@@ -94,7 +103,7 @@ struct Vec3d {
     }
 
     inline static Vec3d random_unit() {
-        return random_in_unit_sphere().normal();
+        return Vec3d::random(-1, 1).normal();
     }
 
     inline static double sign(const double x) {
@@ -143,6 +152,11 @@ inline Vec3d operator/(const Vec3d &first, const double k) {
 
 inline Vec3d &operator+=(Vec3d &first, const Vec3d &second) {
     first.content += second.content;
+    return first;
+}
+
+inline Vec3d &operator-=(Vec3d &first, const Vec3d &second) {
+    first.content -= second.content;
     return first;
 }
 
@@ -205,9 +219,11 @@ Vec3d rotate(const Vec3d vec, double dx, double dy, double dz);
 
 Vec3d rotate(const Vec3d vec, const Vec3d &rotation);
 
-inline Vec3d reflect(const Vec3d vec, Vec3d normal) {
-    normal = normal.normal();
-    return vec - 2 * vec.dot(normal) * normal;
+inline Vec3d reflect(Vec3d vec, Vec3d normal) {
+    normal /= normal.len();
+    normal *= vec.dot(normal) * 2;
+    vec -= normal;
+    return vec;
 }
 
 Vec3d refract(const Vec3d vec, const Vec3d &normal, const double eta_from_over_eta_to);
