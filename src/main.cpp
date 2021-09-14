@@ -27,6 +27,13 @@ Scene 		 *cornell_box_scene();
 HittableList *test_objects();
 Scene 		 *test_scene();
 
+// int main() {
+// 	Semaphore s(0);
+// 	s.post();
+
+// 	return 0;
+// }
+
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
 	long randomstamp = vec3d_randlong() % 10000;
