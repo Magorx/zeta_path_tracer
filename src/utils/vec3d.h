@@ -9,6 +9,11 @@ const double VEC3_MAX_RANDOM_TRIES_CNT = 50;
 const double VEC3D_INF = 1e9;
 const double VEC3D_PI = 3.1415926535897;
 
+/**
+ * Vectorization by AlexRoar (https://github.com/AlexRoar).
+ * Debug and inlining help by JakMobius (https://github.com/JakMobius).
+ */
+
 //=============================================================================
 //<KCTF> Random for vector ====================================================
 
