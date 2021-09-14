@@ -39,14 +39,18 @@ public:
     }
 
     inline void wait() {
-        int r;
-        do {
-            r = sem_wait(&sem);
-        } while (r == -1 && errno == EINTR);
+        sem_wait(&sem);
     }
 
     inline void post() {
         sem_post(&sem);
+    }
+
+    inline int get_value() {
+        int sval = 0;
+        sem_getvalue(&sem, &sval);
+
+        return sval;
     }
 };
 

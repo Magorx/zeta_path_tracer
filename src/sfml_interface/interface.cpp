@@ -58,17 +58,17 @@ render_threader(4, render_threaded)
 
 void SFML_Interface::render_frame_threaded() {
     ProgressBar bar(stderr, 1);
-    bar.start();
+    // bar.start();
 
     render_threader.perform();
 
-    bar.tick();
+    // bar.tick();
 }
 
 void SFML_Interface::render_frame_portion() {
     config.render.PIXEL_SAMPLING = pixel_sampling_per_render;
-    render_into_buffer(scene, config, new_frame.data_color, new_frame.data_normal, new_frame.data_depth);
-    // render_frame_threaded();
+    // render_into_buffer(scene, config, new_frame.data_color, new_frame.data_normal, new_frame.data_depth);
+    render_frame_threaded();
 
     new_frame.set_post_processing(FramePostproc::denoise);
     new_frame.postproc(1);
