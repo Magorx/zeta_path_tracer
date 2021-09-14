@@ -3,7 +3,7 @@ project(zeta_path_tracer LANGUAGES CXX)
 
 set(CMAKE_CXX_COMPILER clang++)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(SFML_BUILD_GRAPHICS true)
 
 set(WARNING_FLAGS "-Wall -Wextra -Wno-multichar -Wno-unused-result")
@@ -11,7 +11,7 @@ set(WARNING_FLAGS "-Wall -Wextra -Wno-multichar -Wno-unused-result")
 include_directories(src)
 
 set(CMAKE_EXE_LINKER_FLAGS "-pthread")
-set(CMAKE_CXX_FLAGS   "-O0 ${WARNING_FLAGS}")
+set(CMAKE_CXX_FLAGS   "-O3 ${WARNING_FLAGS}")
 
 find_package(SFML 2 COMPONENTS system window graphics network audio REQUIRED)
 

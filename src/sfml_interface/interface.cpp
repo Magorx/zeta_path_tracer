@@ -58,11 +58,11 @@ render_threader(4, render_threaded)
 
 void SFML_Interface::render_frame_threaded() {
     ProgressBar bar(stderr, 1);
-    // bar.start();
+    bar.start();
 
     render_threader.perform();
 
-    // bar.tick();
+    bar.tick();
 }
 
 void SFML_Interface::render_frame_portion() {
@@ -75,7 +75,7 @@ void SFML_Interface::render_frame_portion() {
     
     memcpy(frame.data_normal, new_frame.data_normal, frame.pixel_cnt * sizeof(Vec3d));
     memcpy(frame.data_depth, new_frame.data_depth, frame.pixel_cnt * sizeof(double));
-    if (consecutive_frames_cnt < 2) {
+    if (!consecutive_frames_cnt) {
         memcpy(frame.data_color, new_frame.data_color, pixel_cnt * sizeof(Color));
     } else {
         double n = consecutive_frames_cnt;

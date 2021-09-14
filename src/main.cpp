@@ -86,6 +86,7 @@ int main(int argc, char* argv[]) {
 	SFML_Interface interface("bubus", scene, conf_pt, 600, 600, 2);
 
 	interface.run();
+	interface.stop();
 
     // RenderTask rtask(0, scene->camera->res_w, 0, scene->camera->res_h);
 
