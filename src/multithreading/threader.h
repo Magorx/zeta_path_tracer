@@ -105,5 +105,7 @@ public:
 
 };
 
+//todo less threads do more work
+
 
 #endif // THREADER_H

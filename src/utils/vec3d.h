@@ -7,7 +7,7 @@
 const double VEC3_EPS = 1e-6;
 const double VEC3_MAX_RANDOM_TRIES_CNT = 50;
 const double VEC3D_INF = 1e9;
-const double VEC3D_PI = 3.1415926535897;
+const double VEC3D_PI = 3.1415926535897; // TODO M_PI
 
 /**
  * Vectorization by AlexRoar

@@ -28,7 +28,7 @@ public:
     }
 };
 
-#else
+#else // todo: ELIF LINUX
 
 class Semaphore
 {
@@ -64,5 +64,7 @@ public:
 };
 
 #endif // NOT APPLE
+
+// ERROR HERE, NOT DEFINED
 
 #endif // SEMAPHORE_H
