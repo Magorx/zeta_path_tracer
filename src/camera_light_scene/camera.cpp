@@ -4,12 +4,14 @@ Camera::Camera () {}
 
 Camera::Camera(const Vec3d origin, Vec3d direction, double distance, double width, double height, double res_coef) {
     orig = origin;
-    dir = direction.normal();
+    dir = direction;
     dist = distance;
     w = width;
     h = height;
     res_w = width  * res_coef;
     res_h = height * res_coef;
+
+    dir.normalize();
 
     ort_h = {0, 0, 1}; // this does not work for not horizontal looking camera
     ort_w = -dir.cross(ort_h).normal();
@@ -24,13 +26,27 @@ Camera::Camera(const Vec3d origin, Vec3d direction, double distance, double widt
 }
 
 Ray Camera::get_ray(double x, double y) const {
-    Vec3d dw = ort_w * x * w / res_w;
-    Vec3d dh = ort_h * y * h / res_h;
-    return {orig, (left_upper + dw + dh - orig).normal()};
+    Vec3d dw = ort_w;
+    Vec3d dh = ort_h;
+
+    dw *= (x * w / res_w);
+    dh *= (y * h / res_h);
+
+    Vec3d ray_dir = left_upper;
+
+    ray_dir += dw;
+    ray_dir += dh;
+    ray_dir -= orig;
+
+    return {orig, ray_dir};
 }
 
 Ray Camera::get_sample_ray(double x, double y) const {
-    return get_ray(vec3d_randdouble(x, x + 1.0), vec3d_randdouble(y, y + 1.0));
+    unsigned int random_values[4];
+    Brans::rand_sse(random_values);
+    double rx = (double) random_values[0] / (double) UINT32_MAX + x;
+    double ry = (double) random_values[1] / (double) UINT32_MAX + y;
+    return get_ray(rx, ry);
 }
 
 void Camera::update() {

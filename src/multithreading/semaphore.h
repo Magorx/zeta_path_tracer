@@ -15,7 +15,7 @@ class Semaphore {
     dispatch_semaphore_t sem;
 
 public:
-    inline Semaphore(uint32_t value) {
+    inline Semaphore(uint32_t value = 0) {
         sem = dispatch_semaphore_create(value);
     }
 

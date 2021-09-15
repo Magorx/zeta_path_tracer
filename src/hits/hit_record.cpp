@@ -11,14 +11,15 @@ surf_x(0),
 surf_y(0)
 {}
 
-HitRecord::HitRecord(const Vec3d point, double distance, const Vec3d normal, Material* maretial, const Vec3d ray_dir) :
+HitRecord::HitRecord(const Vec3d& point, double distance, const Vec3d& normal, Material* material, const Vec3d& ray_dir) :
 p   (point),
 dist(distance),
-n   (normal.normal()),
-mat (maretial),
+n   (normal),
+mat (material),
 surf_x(0),
 surf_y(0)
 {
+    n.normalize();
 	set_normal_orientation(ray_dir);
 }
 

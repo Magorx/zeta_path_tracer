@@ -108,6 +108,12 @@ public:
         (this->*post_processing)(sample_rad);
     }
 
+    void clear() {
+        for (int i = 0; i < pixel_cnt; ++i) {
+            data_color[i] *= 0;
+        }
+    }
+
 private:
     void colors_to_final_image(const int) {
         for (size_t i = 0; i < pixel_cnt; ++i) {

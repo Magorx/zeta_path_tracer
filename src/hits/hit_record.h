@@ -16,7 +16,7 @@ struct HitRecord {
     double surf_y;
 
     HitRecord();
-    HitRecord(const Vec3d point, double distance, const Vec3d normal, Material* material, const Vec3d ray_dir);
+    HitRecord(const Vec3d& point, double distance, const Vec3d& normal, Material* material, const Vec3d& ray_dir);
 
     inline void set_normal_orientation(const Vec3d &ray_direction) {
     	front_hit = n.dot(ray_direction) < 0;

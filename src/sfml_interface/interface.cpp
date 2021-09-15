@@ -21,7 +21,7 @@ new_frame(),
 
 consecutive_frames_cnt(0),
 
-render_threader(4, render_threaded)
+render_threader(16, render_threaded)
 {   
     if (!scene) {
         fprintf(stderr, "[ERR] scene is nullptr, aborting\n");
@@ -47,13 +47,19 @@ render_threader(4, render_threaded)
     int lines_per_thread = frame.size_y / render_threader.get_threads_cnt();
 
     std::vector<ThreadRenderTask> rtasks;
-    for (size_t i = 0; i < render_threader.get_threads_cnt(); ++i) {
+    for (size_t i = 0; i < render_threader.get_threads_cnt() - 1; ++i) {
         int min_x = 0;
         int max_x = frame.size_x;
         int min_y = i * lines_per_thread;
         int max_y = min_y + lines_per_thread;
         render_threader.add_task(ThreadRenderTask(*scene, config, {min_x, max_x, min_y, max_y, static_cast<int>(i)}, new_frame));
     }
+
+    int min_x = 0;
+    int max_x = frame.size_x;
+    int min_y = (render_threader.get_threads_cnt() - 1) * lines_per_thread;
+    int max_y = frame.size_y;
+    render_threader.add_task(ThreadRenderTask(*scene, config, {min_x, max_x, min_y, max_y, static_cast<int>(10)}, new_frame));
 }
 
 void SFML_Interface::render_frame_threaded() {
@@ -66,11 +72,12 @@ void SFML_Interface::render_frame_threaded() {
 }
 
 void SFML_Interface::render_frame_portion() {
+    new_frame.clear();
     config.render.PIXEL_SAMPLING = pixel_sampling_per_render;
     // render_into_buffer(scene, config, new_frame.data_color, new_frame.data_normal, new_frame.data_depth);
     render_frame_threaded();
 
-    new_frame.set_post_processing(FramePostproc::denoise);
+    new_frame.set_post_processing(FramePostproc::copy);
     new_frame.postproc(1);
     
     memcpy(frame.data_normal, new_frame.data_normal, frame.pixel_cnt * sizeof(Vec3d));
@@ -80,11 +87,11 @@ void SFML_Interface::render_frame_portion() {
     } else {
         double n = consecutive_frames_cnt;
         for (int i = 0; i < pixel_cnt; ++i) {
-            frame.data_color[i] = frame.data_color[i] * ((n - 1.0) / n) + new_frame.final_image[i] /  n;
+            frame.data_color[i] = frame.final_image[i] * ((n - 1.0) / n) + new_frame.final_image[i] /  n;
         }
     }
 
-    frame.set_post_processing(FramePostproc::denoise);
+    frame.set_post_processing(FramePostproc::copy);
     frame.postproc(2);
     color_to_rgb_buffer(frame.final_image, cur_image, config.render.GAMMA_CORRECTION, pixel_cnt);
 

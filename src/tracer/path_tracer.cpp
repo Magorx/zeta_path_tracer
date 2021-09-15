@@ -64,7 +64,7 @@ Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_
 		accumulator += trace_ray(sample_ray, hittable, config, 1);
 	}
 
-	Ray central_ray = camera->get_ray((double) px_x, (double) px_y);
+	Ray central_ray = camera->get_sample_ray((double) px_x, (double) px_y);
 	accumulator += trace_ray(central_ray, hittable, config, 1, normal, depth);
 
 	return accumulator / config.render.PIXEL_SAMPLING;
