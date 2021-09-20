@@ -14,7 +14,7 @@ const int WINDOW_HEIGHT = 1000;
 
 const int 	 SCREEN_WIDTH     = 100;
 const int 	 SCREEN_HEIGHT    = 100;
-const double RESOLUTION_COEF  = 10.0; // actual image resolution is W*H here
+const double RESOLUTION_COEF  = 5.0; // actual image resolution is W*H here
 const int 	 MAX_TRACE_DEPTH  = 7;
 const int 	 PIXEL_SAMPLING   = 10; // >= 1000 for pretty images
 const double GAMMA_CORRECTION = 0.4;

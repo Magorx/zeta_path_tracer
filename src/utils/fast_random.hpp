@@ -18,7 +18,6 @@ inline void rand_sse(unsigned int* result) {
     __declspec(align(16)) __m128i adder;
     __declspec(align(16)) __m128i mod_mask;
     __declspec(align(16)) __m128i sra_mask;
-    __declspec(align(16)) __m128i sseresult;
 
     __declspec(align(16)) static const unsigned int mult[4] = { 214013, 17405, 214013, 69069 };
     __declspec(align(16)) static const unsigned int gadd[4] = { 2531011, 10395331, 13737667, 1 };

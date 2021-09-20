@@ -2,9 +2,11 @@
 
 Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &config, const int cur_trace_depth) {
 	ray.orig += ray.dir * VEC3_EPS;
-	HitRecord hitrec = hittable->hit(ray);
+    HitRecord hitrec;
+    hitrec.dist = INFINITY;
+	hittable->hit(ray, &hitrec);
 
-	if (hitrec.dist < 0) {
+	if (hitrec.dist == INFINITY || hitrec.dist < 0) {
 		return config.render.BACKGROUND_COLOR;
 	} else {
 		if (cur_trace_depth == config.render.MAX_TRACE_DEPTH) {
@@ -13,7 +15,7 @@ Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &confi
 
 		Ray scattered_ray;
 		Color attenuation;
-		Color emmited = hitrec.mat->emit(hitrec.surf_x, hitrec.surf_y, hitrec.p);
+		Color emmited = hitrec.mat->emit(hitrec.surf_x, hitrec.surf_y, hitrec.point);
 		if (hitrec.mat->scatter(ray, hitrec, attenuation, scattered_ray)) {
             attenuation *= trace_ray(scattered_ray, hittable, config, cur_trace_depth + 1);
             attenuation /= d_MAXRGB;
@@ -27,9 +29,11 @@ Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &confi
 Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &config, const int cur_trace_depth,
 			   Vec3d *normal_vec, double *depth) {
 	ray.orig += ray.dir * VEC3_EPS;
-	HitRecord hitrec = hittable->hit(ray);
+	HitRecord hitrec;
+    hitrec.dist = INFINITY;
+    hittable->hit(ray, &hitrec);
 
-	if (hitrec.dist < 0) {
+	if (hitrec.dist == INFINITY || hitrec.dist < 0) {
 		return config.render.BACKGROUND_COLOR;
 	} else {
 		if (cur_trace_depth == config.render.MAX_TRACE_DEPTH) {
@@ -37,7 +41,7 @@ Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &confi
 		}
 
 		if (normal_vec) {
-			*normal_vec = (hitrec.n + Vec3d(1, 1, 1)) / 2 * d_MAXRGB;
+			*normal_vec = (hitrec.normal + Vec3d(1, 1, 1)) / 2 * d_MAXRGB;
 		}
 		if (depth) {
 			*depth = hitrec.dist;
@@ -45,7 +49,7 @@ Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &confi
 
 		Ray scattered_ray;
 		Color attenuation;
-		Color emmited = hitrec.mat->emit(hitrec.surf_x, hitrec.surf_y, hitrec.p);
+		Color emmited = hitrec.mat->emit(hitrec.surf_x, hitrec.surf_y, hitrec.point);
 		if (hitrec.mat->scatter(ray, hitrec, attenuation, scattered_ray)) {
             attenuation *= trace_ray(scattered_ray, hittable, config, cur_trace_depth + 1);
             attenuation /= d_MAXRGB;

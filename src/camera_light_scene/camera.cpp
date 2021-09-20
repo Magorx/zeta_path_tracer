@@ -48,14 +48,3 @@ Ray Camera::get_sample_ray(double x, double y) const {
     double ry = (double) random_values[1] / (double) UINT32_MAX + y;
     return get_ray(rx, ry);
 }
-
-void Camera::update() {
-    // ort_w = Vec3d(-dir.y, dir.x, dir.z).normal();
-    // ort_h = ort_w.cross(dir).normal();
-    ort_h = {0, 0, 1}; // this does not work for not horizontal looking camera
-    ort_w = -dir.cross(ort_h).normal();
-    left_upper = orig + dir * dist + ort_w * w * 0.5 + ort_h * h * 0.5;
-
-    ort_w *= -1;
-    ort_h *= -1;
-}
