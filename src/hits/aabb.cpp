@@ -9,18 +9,20 @@ AABB::AABB(const Vec3d minimum, const Vec3d maximum) :
         mx(maximum) {}
 
 bool AABB::hit(const Ray &ray, double t_min, double t_max) const {
+    Vec3d::content3 invDv = 1.0 / ray.dir.content;
+    Vec3d::content3 t0v = (mn.content - ray.orig.content) * invDv;
+    Vec3d::content3 t1v = (mx.content - ray.orig.content) * invDv;
+
     for(int dim_i = 0; dim_i < 3; dim_i++) {
-        double invD = 1.0f / ray.dir[dim_i];
-        double t0 = (mn[dim_i] - ray.orig[dim_i]) * invD;
-        double t1 = (mx[dim_i] - ray.orig[dim_i]) * invD;
+        double invD = invDv[dim_i];
+        double t0 = t0v[dim_i];
+        double t1 = t1v[dim_i];
         if(invD < 0.0f)
             std::swap(t0, t1);
-        t_min = t0 > t_min ? t0 : t_min;
-        t_max = t1 < t_max ? t1 : t_max;
-        if(t_max <= t_min)
-            return false;
+        if(t0 > t_min) t_min = t0;
+        if(t1 < t_max) t_max = t1;
     }
-    return true;
+    return t_max > t_min;
 }
 
 AABB surrounding_box(const AABB first, const AABB second) {
