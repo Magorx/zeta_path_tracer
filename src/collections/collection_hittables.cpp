@@ -90,7 +90,7 @@ bool h_RectXY::hit(Ray &ray, HitRecord* hitRecord) const {
     double x = ray.orig[0] + t * ray.dir[0];
     double y = ray.orig[1] + t * ray.dir[1];
     // fprintf(stderr, "t = %lg x = %lg y = %lg\normal", t, x, y);
-    if (t < 0 || x < p0[0] || x > p1[0] || y < p0[1] || y > p1[1]) {
+    if (t < 0 || x < p0[0] || x > p1[0] || y < p0[1] || y > p1[1] || t > hitRecord->dist) {
         // fprintf(stderr, "no\normal");
         return false;
     }
@@ -137,7 +137,7 @@ bool h_RectXZ::hit(Ray &ray, HitRecord* hitRecord) const {
 
     double x = ray.orig[0] + t * ray.dir[0];
     double z = ray.orig[2] + t * ray.dir[2];
-    if (t < 0 || x < p0[0] || x > p1[0] || z < p0[2] || z > p1[2]) {
+    if (t < 0 || x < p0[0] || x > p1[0] || z < p0[2] || z > p1[2] || t > hitRecord->dist) {
         return false;
     }
 
@@ -182,7 +182,7 @@ bool h_RectYZ::hit(Ray &ray, HitRecord* hitRecord) const {
 
     double y = ray.orig[1] + t * ray.dir[1];
     double z = ray.orig[2] + t * ray.dir[2];
-    if (t < 0 || y < p0[1] || y > p1[1] || z < p0[2] || z > p1[2]) {
+    if (t < 0 || y < p0[1] || y > p1[1] || z < p0[2] || z > p1[2] || t > hitRecord->dist) {
         return false;
     }
 
@@ -279,7 +279,7 @@ bool Triangle::hit(Ray &ray, HitRecord* hitRecord) const {
         return false;
     // At this stage we can compute t to find out where the intersection point is on the line.
     double t = f * edge2.dot(q);
-    if (t > VEC3_EPS) // ray intersection
+    if (t > VEC3_EPS && t < hitRecord->dist) // ray intersection
     {
         hitRecord->point = ray.cast(t);
         hitRecord->dist = t;
@@ -327,28 +327,42 @@ bool Model::load(const char *filename, std::vector<Material*> matrs, const Vec3d
     }
 
     std::vector<Vec3d> points;
-    char line_type;
-    while (fscanf(fin, "%c", &line_type) == 1) {
-        if (isspace(line_type)) continue;
+    char line_type[5];
+    while (fscanf(fin, "%4s", line_type) == 1) {
+        if (isspace(*line_type)) continue;
 
-        if (line_type == 'p') {
+        if (strcmp(line_type, "v") == 0) {
             double x, y, z;
             fscanf(fin, "%lg %lg %lg", &x, &y, &z);
             points.push_back(offset + Vec3d(x, y ,z) * scale);
-        } else if (line_type == 'e') {
-            size_t x, y, z, matr;
-            fscanf(fin, "%lu %lu %lu %lu", &x, &y, &z, &matr);
+            printf("vert: %g %g %g\n", x, y, z);
+        } else if (strcmp(line_type, "f") == 0) {
+            size_t x, y, z, tr;
+            fscanf(fin, "%lu/%lu/%lu %lu/%lu/%lu %lu/%lu/%lu", &x, &tr, &tr, &y, &tr, &tr, &z, &tr, &tr);
             --x;
             --y;
             --z;
+            printf("f with vecs: %lu %lu %lu\n", x, y, z);
             if (x >= points.size() || y >= points.size() || z >= points.size()) {
                 fprintf(stderr, "[ERR] model::load point index overflow\n");
                 return false;
             }
 
-            hittables.push_back(new Triangle(points[x], points[y], points[z], matrs[matr]));
+            hittables.push_back(new Triangle(points[x], points[y], points[z], matrs[0]));
+        } else {
+            printf("skipped: {");
+            int c;
+            while ((c = fgetc(fin)) != '\n') {
+                if (c == EOF) {
+                    break;
+                }
+                printf("%c", c);
+            }
+            printf("}\n");
         }
+
     }
+    printf("read %lu verts\n", points.size());
 
     fclose(fin);
     return true;

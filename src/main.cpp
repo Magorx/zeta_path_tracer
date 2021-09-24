@@ -14,10 +14,10 @@ const int WINDOW_HEIGHT = 1000;
 
 const int 	 SCREEN_WIDTH     = 100;
 const int 	 SCREEN_HEIGHT    = 100;
-const double RESOLUTION_COEF  = 10.0; // actual image resolution is W*H here
+const double RESOLUTION_COEF  = 3.0; // actual image resolution is W*H here
 const int 	 MAX_TRACE_DEPTH  = 7;
 const int 	 PIXEL_SAMPLING   = 10; // >= 1000 for pretty images
-const double GAMMA_CORRECTION = 0.4;
+const double GAMMA_CORRECTION = 0.37;
 const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
 
 // ============================================================================
@@ -151,6 +151,7 @@ HittableList *cornell_box_objects() {
 	Hittable *rect_lwall = new h_RectXZ({    0, width,     0}, {depth, width, heigh}, m_green);
  	
 	Hittable *rect_light = new h_RectXY({depth / 2 - l_d / 2, width / 2 - l_w / 2, l_h}, {depth / 2 + l_d / 2, width / 2 + l_w / 2, l_h}, m_rect_light);
+	Hittable *rect_light_floor = new h_RectXY({depth / 2 - l_d / 2, width / 2 - l_w / 2, -10}, {depth / 2 + l_d / 2, width / 2 + l_w / 2, l_h}, m_rect_light);
 
 	Hittable *box_1 = new h_Box({ depth * box_coef,  width * box_coef, 0},
 								{-depth * box_coef, -width * box_coef, heigh * 0.75},
@@ -176,11 +177,19 @@ HittableList *cornell_box_objects() {
 	scene->insert(rect_fwall);
 	scene->insert(rect_lwall);
 	scene->insert(rect_rwall);
-	scene->insert(rect_light);
 
-	scene->insert(rot_box_1);
-	scene->insert(rot_box_2);
-    scene->insert(rot_box_3);
+	scene->insert(rect_light);
+	scene->insert(rect_light_floor);
+
+	Hittable *model = new Model("models/kit.obj", {m_glass}, {0, 0, 0}, 35);
+	model = new inst_RotX(model, -Pi/2);
+	model = new inst_Translate(model, {45, 55, 20});
+	
+	scene->insert(model);
+
+	// scene->insert(rot_box_1);
+	// scene->insert(rot_box_2);
+    // scene->insert(rot_box_3);
 	
 	// scene->insert(sphere);
 

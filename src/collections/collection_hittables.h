@@ -1,6 +1,8 @@
 #ifndef COLLECTION_HITTABLES
 #define COLLECTION_HITTABLES
 
+#include <cstring>
+
 #include "hits/hittable.h"
 #include "hits/hittable_list.h"
 
