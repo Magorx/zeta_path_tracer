@@ -9,7 +9,7 @@ public:
 	Vec3d offset;
 
 	inst_Translate(Hittable *obj_, const Vec3d &offset_);
-	virtual HitRecord hit(Ray &ray) const override;
+	virtual bool hit(Ray &ray, HitRecord* hitRecord) const override;
 	virtual bool bounding_box(AABB &box) const override;
 	virtual bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const override;
 };
@@ -23,7 +23,7 @@ public:
 	AABB bbox;
 
 	inst_RotX(Hittable *obj_, const double angle);
-	virtual HitRecord hit(Ray &ray) const override;
+	virtual bool hit(Ray &ray, HitRecord* hitRecord) const override;
 	virtual bool bounding_box(AABB &box) const override;
 	virtual bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const override;
 };
@@ -37,7 +37,7 @@ public:
 	AABB bbox;
 
 	inst_RotY(Hittable *obj_, const double angle);
-	virtual HitRecord hit(Ray &ray) const override;
+	virtual bool hit(Ray &ray, HitRecord* hitRecord) const override;
 	virtual bool bounding_box(AABB &box) const override;
 	virtual bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const override;
 };
@@ -51,7 +51,7 @@ public:
 	AABB bbox;
 
 	inst_RotZ(Hittable *obj_, const double angle);
-	virtual HitRecord hit(Ray &ray) const override;
+	virtual bool hit(Ray &ray, HitRecord* hitRecord) const override;
 	virtual bool bounding_box(AABB &box) const override;
 	virtual bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const override;
 };

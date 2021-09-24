@@ -14,14 +14,14 @@ to_affect_emitter(1)
 {}
 
 bool m_Lambertian::scatter(const Ray &, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
-	Vec3d scatter_direction = hitrec.n;
+	Vec3d scatter_direction = hitrec.normal;
     scatter_direction += Vec3d::random_unit(); // TODO plz
 	if (scatter_direction.is_zero()) {
-		scatter_direction = hitrec.n;
+		scatter_direction = hitrec.normal;
 	}
 
-    scattered = Ray(hitrec.p, scatter_direction);
-    attenuation = albedo->value(hitrec.surf_x, hitrec.surf_y, hitrec.p);
+    scattered = Ray(hitrec.point, scatter_direction);
+    attenuation = albedo->value(hitrec.surf_x, hitrec.surf_y, hitrec.point);
     return true;
 }
 
@@ -48,10 +48,10 @@ to_affect_emitter(1)
 bool m_Metal::scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
     Vec3d scatter_direction = Vec3d::random_in_unit_sphere();
     scatter_direction *= fuzziness;
-    scatter_direction += reflect(ray.dir, hitrec.n);
+    scatter_direction += reflect(ray.dir, hitrec.normal);
 
-    scattered = Ray(hitrec.p, scatter_direction);
-    attenuation = albedo->value(hitrec.surf_x, hitrec.surf_y, hitrec.p);
+    scattered = Ray(hitrec.point, scatter_direction);
+    attenuation = albedo->value(hitrec.surf_x, hitrec.surf_y, hitrec.point);
     return true;
 }
 
@@ -76,10 +76,10 @@ to_affect_emitter(1)
 {}
 
 bool m_Dielectric::scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
-	attenuation = albedo->value(hitrec.surf_x, hitrec.surf_y, hitrec.p);
+	attenuation = albedo->value(hitrec.surf_x, hitrec.surf_y, hitrec.point);
 	double rc = hitrec.front_hit ? (1 / refrac_coef) : refrac_coef;
 
-	double cos_theta = fmin(-(ray.dir.dot(hitrec.n)) / ray.dir.len(), 1.0);
+	double cos_theta = fmin(-(ray.dir.dot(hitrec.normal)) / ray.dir.len(), 1.0);
 	double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
 
 	bool cannot_refract = rc * sin_theta > 1.0;
@@ -91,12 +91,12 @@ bool m_Dielectric::scatter(const Ray &ray, const HitRecord &hitrec, Color &atten
     double second_random_value = (double) random_values[1] / (double) UINT32_MAX;
 
 	if (cannot_refract || reflectance(cos_theta, rc) > first_random_value || (roughness > 0 && second_random_value < roughness)) {
-		scatter_direction = reflect(ray.dir, hitrec.n);
+		scatter_direction = reflect(ray.dir, hitrec.normal);
 	} else {
-		scatter_direction = refract(ray.dir, hitrec.n, rc);
+		scatter_direction = refract(ray.dir, hitrec.normal, rc);
 	}
 
-	scattered = Ray(hitrec.p, scatter_direction);
+	scattered = Ray(hitrec.point, scatter_direction);
 
     return true;
 }

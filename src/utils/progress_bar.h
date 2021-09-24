@@ -48,7 +48,7 @@ class ProgressBar {
 	void on_stop() {
         auto now = std::chrono::system_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start_timestamp);
-		fprintf(file_ptr, "\r[PRG] [==========] |100%%| [+] (%ldms)\n",  elapsed.count());
+		fprintf(file_ptr, "\r[PRG] [==========] |100%%| [+] (%lldms)\n",  elapsed.count());
 	}
 
 	void turn_wheele() const {

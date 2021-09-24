@@ -97,12 +97,15 @@ double BVH_Node_by_axis_estimation(HittableList &hitlist, size_t from, size_t to
 	}
 }
 
-HitRecord BVH_Node::hit(Ray &ray) const {
+bool BVH_Node::hit(Ray &ray, HitRecord* hitRecord) const {
 	if (!box.hit(ray, 0, VEC3D_INF)) {
-		return HITREC_NONE;
+		return false;
 	}
 
-	return std::min(left->hit(ray), right->hit(ray));
+    bool left_hit = left->hit(ray, hitRecord);
+    bool right_hit = right->hit(ray, hitRecord);
+
+    return left_hit || right_hit;
 }
 
 bool BVH_Node::bounding_box(AABB &output_box) const {

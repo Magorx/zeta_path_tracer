@@ -14,7 +14,7 @@ public:
 
 	void insert(Hittable *hittable);
 
-	HitRecord hit(Ray &ray) const override;
+	bool hit(Ray &ray, HitRecord* hitRecord) const override;
 	bool bounding_box(AABB &output_box) const override;
 	bool bounding_box(AABB &output_box, size_t from, size_t to) const;
 

@@ -12,7 +12,7 @@ struct h_Sphere : public Hittable {
     h_Sphere(const Vec3d center, double radius, Material *material_);
 
     Vec3d normal(const Vec3d &point) const;
-    HitRecord hit(Ray &ray) const override;
+    bool hit(Ray &ray, HitRecord* hitRecord) const override;
     bool bounding_box(AABB &box) const override;
     bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const override;
 };
@@ -25,7 +25,7 @@ struct h_RectXY : public Hittable {
     h_RectXY(const Vec3d &p0_, const Vec3d &p1_, Material *material_);
 
     Vec3d normal(const Vec3d &point) const;
-    HitRecord hit(Ray &ray) const override;
+    bool hit(Ray &ray, HitRecord* hitRecord) const override;
     bool bounding_box(AABB &box) const override;
     bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const override;
 };
@@ -38,7 +38,7 @@ struct h_RectXZ : public Hittable {
     h_RectXZ(const Vec3d &p0_, const Vec3d &p1_, Material *material_);
 
     Vec3d normal(const Vec3d &point) const;
-    HitRecord hit(Ray &ray) const override;
+    bool hit(Ray &ray, HitRecord* hitRecord) const override;
     bool bounding_box(AABB &box) const override;
     bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const override;
 };
@@ -51,7 +51,7 @@ struct h_RectYZ : public Hittable {
     h_RectYZ(const Vec3d &p0_, const Vec3d &p1_, Material *material_);
 
     Vec3d normal(const Vec3d &point) const;
-    HitRecord hit(Ray &ray) const override;
+    bool hit(Ray &ray, HitRecord* hitRecord) const override;
     bool bounding_box(AABB &box) const override;
     bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const override;
 };
@@ -65,7 +65,7 @@ struct h_Box : public Hittable {
     h_Box(const Vec3d &p0_, const Vec3d &p1_, Material *material_);
 
     Vec3d normal(const Vec3d &point) const;
-    HitRecord hit(Ray &ray) const override;
+    bool hit(Ray &ray, HitRecord* hitRecord) const override;
     bool bounding_box(AABB &box) const override;
     bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const override;
 };
@@ -77,7 +77,7 @@ struct Plane : Hittable {
     Plane();
     Plane(const Vec3d point, const Vec3d normal, Material *material_);
 
-    HitRecord hit(Ray &ray) const override;
+    bool hit(Ray &ray, HitRecord* hitRecord) const override;
     bool bounding_box(AABB &box) const override;
     bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const override;
 };
@@ -90,7 +90,7 @@ struct Triangle : Hittable {
     Triangle();
     Triangle(const Vec3d &point_0, const Vec3d &point_1, const Vec3d &point_2, Material *material_);
 
-    HitRecord hit(Ray &ray) const override;
+    bool hit(Ray &ray, HitRecord* hitRecord) const override;
     bool bounding_box(AABB &box) const override;
 };
 

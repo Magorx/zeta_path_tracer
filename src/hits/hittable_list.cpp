@@ -7,17 +7,14 @@ void HittableList::insert(Hittable *hittable) {
 	hittables.push_back(hittable);
 }
 
-HitRecord HittableList::hit(Ray &ray) const {
-	HitRecord hitrec = HITREC_NONE;
-
-	for (auto hittable : hittables) {
-		HitRecord hr = hittable->hit(ray);
-		if (hitrec.dist < 0 || (hr.dist > 0 && hr.dist < hitrec.dist)) {
-			hitrec = hr;
-		}
+bool HittableList::hit(Ray &ray, HitRecord* hitRecord) const {
+    bool hit_occurred = false;
+    for (auto hittable : hittables) {
+		if(hittable->hit(ray, hitRecord)) hit_occurred = true;
 	}
+    return hit_occurred;
+    //return true;
 
-	return hitrec;
 }
 
 bool HittableList::bounding_box(AABB &output_box) const {
