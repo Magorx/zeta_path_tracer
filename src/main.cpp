@@ -181,7 +181,7 @@ HittableList *cornell_box_objects() {
 	scene->insert(rect_light);
 	scene->insert(rect_light_floor);
 
-	Hittable *model = new Model("models/kit.obj", {m_glass}, {0, 0, 0}, 35);
+	Hittable *model = new Model("src/models/kit.obj", {m_glass}, {0, 0, 0}, 35);
 	model = new inst_RotX(model, -Pi/2);
 	model = new inst_Translate(model, {45, 55, 20});
 	
