@@ -19,7 +19,7 @@ Vec3d h_Sphere::normal(const Vec3d &point) const {
 	return result;
 }
 
-bool h_Sphere::hit(Ray &ray, HitRecord* hitRecord) const {
+bool h_Sphere::hit(Ray &ray, HitRecord* hit_record) const {
 
     Vec3d c_o = ray.orig - center;
     double disc = radius * radius - (c_o.dot(c_o) - ray.dir.dot(c_o) * ray.dir.dot(c_o));
@@ -39,15 +39,15 @@ bool h_Sphere::hit(Ray &ray, HitRecord* hitRecord) const {
         return false;
     }
 
-    if(d > hitRecord->dist) return false;
+    if(d > hit_record->dist) return false;
 
     Vec3d point = ray.cast(d);
-    hitRecord->mat = material;
-    hitRecord->set_normal_orientation(ray.dir);
-    hitRecord->point = point;
-    hitRecord->dist = d;
-    hitRecord->normal = this->normal(point);
-    get_surface_coords(point, hitRecord->surf_x, hitRecord->surf_y);
+    hit_record->mat = material;
+    hit_record->set_normal_orientation(ray.dir);
+    hit_record->point = point;
+    hit_record->dist = d;
+    hit_record->normal = this->normal(point);
+    get_surface_coords(point, hit_record->surf_x, hit_record->surf_y);
     return true;
 }
 
@@ -82,25 +82,25 @@ p0(Vec3d(std::min(p0_[0], p1_[0]), std::min(p0_[1], p1_[1]), p0_[2])),
 p1(Vec3d(std::max(p0_[0], p1_[0]), std::max(p0_[1], p1_[1]), p1_[2])) // we can force p1[2] = p0[2], but what for
 {}
 
-bool h_RectXY::hit(Ray &ray, HitRecord* hitRecord) const {
+bool h_RectXY::hit(Ray &ray, HitRecord* hit_record) const {
 
     double t = (p0[2] - ray.orig[2]) / ray.dir[2];
-    if(t > hitRecord->dist) return false;
+    if(t > hit_record->dist) return false;
 
     double x = ray.orig[0] + t * ray.dir[0];
     double y = ray.orig[1] + t * ray.dir[1];
     // fprintf(stderr, "t = %lg x = %lg y = %lg\normal", t, x, y);
-    if (t < 0 || x < p0[0] || x > p1[0] || y < p0[1] || y > p1[1] || t > hitRecord->dist) {
+    if (t < 0 || x < p0[0] || x > p1[0] || y < p0[1] || y > p1[1] || t > hit_record->dist) {
         // fprintf(stderr, "no\normal");
         return false;
     }
 
-    get_surface_coords({x, y, p0[2]}, hitRecord->surf_x, hitRecord->surf_y);
-    hitRecord->dist = t;
-    hitRecord->point = ray.cast(hitRecord->dist);
-    hitRecord->normal = Vec3d(0, 0, 1);
-    hitRecord->set_normal_orientation(ray.dir);
-    hitRecord->mat = material;
+    get_surface_coords({x, y, p0[2]}, hit_record->surf_x, hit_record->surf_y);
+    hit_record->dist = t;
+    hit_record->point = ray.cast(hit_record->dist);
+    hit_record->normal = Vec3d(0, 0, 1);
+    hit_record->set_normal_orientation(ray.dir);
+    hit_record->mat = material;
 
     return true;
 }
@@ -130,23 +130,23 @@ p0(Vec3d(std::min(p0_[0], p1_[0]), p0_[1], std::min(p0_[2], p1_[2]))),
 p1(Vec3d(std::max(p0_[0], p1_[0]), p1_[1], std::max(p0_[2], p1_[2]))) // we can force p1[2] = p0[2], but what for
 {}
 
-bool h_RectXZ::hit(Ray &ray, HitRecord* hitRecord) const {
+bool h_RectXZ::hit(Ray &ray, HitRecord* hit_record) const {
 
     double t = (p0[1] - ray.orig[1]) / ray.dir[1];
-    if(t > hitRecord->dist) return false;
+    if(t > hit_record->dist) return false;
 
     double x = ray.orig[0] + t * ray.dir[0];
     double z = ray.orig[2] + t * ray.dir[2];
-    if (t < 0 || x < p0[0] || x > p1[0] || z < p0[2] || z > p1[2] || t > hitRecord->dist) {
+    if (t < 0 || x < p0[0] || x > p1[0] || z < p0[2] || z > p1[2] || t > hit_record->dist) {
         return false;
     }
 
-    get_surface_coords({x, p0[1], z}, hitRecord->surf_x, hitRecord->surf_y);
-    hitRecord->dist = t;
-    hitRecord->point = {x, p0[1], z};
-    hitRecord->normal = Vec3d(0, 1, 0);
-    hitRecord->set_normal_orientation(ray.dir);
-    hitRecord->mat = material;
+    get_surface_coords({x, p0[1], z}, hit_record->surf_x, hit_record->surf_y);
+    hit_record->dist = t;
+    hit_record->point = {x, p0[1], z};
+    hit_record->normal = Vec3d(0, 1, 0);
+    hit_record->set_normal_orientation(ray.dir);
+    hit_record->mat = material;
     return true;
 }
 
@@ -175,23 +175,23 @@ p0(Vec3d(p0_[0], std::min(p0_[1], p1_[1]), std::min(p0_[2], p1_[2]))),
 p1(Vec3d(p1_[0], std::max(p0_[1], p1_[1]), std::max(p0_[2], p1_[2]))) // we can force p1[2] = p0[2], but what for
 {}
 
-bool h_RectYZ::hit(Ray &ray, HitRecord* hitRecord) const {
+bool h_RectYZ::hit(Ray &ray, HitRecord* hit_record) const {
 
     double t = (p0[0] - ray.orig[0]) / ray.dir[0];
-    if(t > hitRecord->dist) return false;
+    if(t > hit_record->dist) return false;
 
     double y = ray.orig[1] + t * ray.dir[1];
     double z = ray.orig[2] + t * ray.dir[2];
-    if (t < 0 || y < p0[1] || y > p1[1] || z < p0[2] || z > p1[2] || t > hitRecord->dist) {
+    if (t < 0 || y < p0[1] || y > p1[1] || z < p0[2] || z > p1[2] || t > hit_record->dist) {
         return false;
     }
 
-    get_surface_coords({p0[0], y, z}, hitRecord->surf_x, hitRecord->surf_y);
-    hitRecord->dist = t;
-    hitRecord->normal = Vec3d(1, 0, 0);
-    hitRecord->set_normal_orientation(ray.dir);
-    hitRecord->mat = material;
-    hitRecord->point = ray.cast(hitRecord->dist);
+    get_surface_coords({p0[0], y, z}, hit_record->surf_x, hit_record->surf_y);
+    hit_record->dist = t;
+    hit_record->normal = Vec3d(1, 0, 0);
+    hit_record->set_normal_orientation(ray.dir);
+    hit_record->mat = material;
+    hit_record->point = ray.cast(hit_record->dist);
     return true;
 }
 
@@ -229,8 +229,8 @@ p1(Vec3d(std::max(p0_[0], p1_[0]), std::max(p0_[1], p1_[1]), std::max(p0_[2], p1
     sides.insert(new h_RectXY({p0[0], p0[1], p1[2]}, {p1[0], p1[1], p1[2]}, material_));
 }
 
-bool h_Box::hit(Ray &ray, HitRecord* hitRecord) const {
-    return sides.hit(ray, hitRecord);
+bool h_Box::hit(Ray &ray, HitRecord* hit_record) const {
+    return sides.hit(ray, hit_record);
 }
 
 bool h_Box::bounding_box(AABB &box) const {
@@ -258,7 +258,7 @@ p1(point_1),
 p2(point_2)
 {}
 
-bool Triangle::hit(Ray &ray, HitRecord* hitRecord) const {
+bool Triangle::hit(Ray &ray, HitRecord* hit_record) const {
     Vec3d edge1, edge2, h, s, q;
     double a, f, u, v;
 
@@ -279,17 +279,17 @@ bool Triangle::hit(Ray &ray, HitRecord* hitRecord) const {
         return false;
     // At this stage we can compute t to find out where the intersection point is on the line.
     double t = f * edge2.dot(q);
-    if (t > VEC3_EPS && t < hitRecord->dist) // ray intersection
+    if (t > VEC3_EPS && t < hit_record->dist) // ray intersection
     {
-        hitRecord->point = ray.cast(t);
-        hitRecord->dist = t;
-        hitRecord->mat = material;
-        hitRecord->normal = edge1.cross(edge2);
-        hitRecord->normal.normalize();
-        hitRecord->set_normal_orientation(ray.dir);
-        hitRecord->front_hit = true;
-        hitRecord->surf_x = 0;
-        hitRecord->surf_y = 0;
+        hit_record->point = ray.cast(t);
+        hit_record->dist = t;
+        hit_record->mat = material;
+        hit_record->normal = edge1.cross(edge2);
+        hit_record->normal.normalize();
+        hit_record->set_normal_orientation(ray.dir);
+        hit_record->front_hit = true;
+        hit_record->surf_x = 0;
+        hit_record->surf_y = 0;
         return true;
     }
     else // This means that there is a line intersection but not a ray intersection.

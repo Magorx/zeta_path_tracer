@@ -9,9 +9,11 @@ public:
 	Vec3d offset;
 
 	inst_Translate(Hittable *obj_, const Vec3d &offset_);
-	virtual bool hit(Ray &ray, HitRecord* hitRecord) const override;
+	virtual bool hit(Ray &ray, HitRecord* hit_record) const override;
 	virtual bool bounding_box(AABB &box) const override;
 	virtual bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const override;
+
+    Hittable* get_bvh_tree() override { return new inst_Translate(obj->get_bvh_tree(), offset); }
 };
 
 class inst_RotX : public Hittable {
@@ -23,9 +25,12 @@ public:
 	AABB bbox;
 
 	inst_RotX(Hittable *obj_, const double angle);
-	virtual bool hit(Ray &ray, HitRecord* hitRecord) const override;
+    inst_RotX(Hittable *obj_, const double sin_a, const double cos_a);
+	virtual bool hit(Ray &ray, HitRecord* hit_record) const override;
 	virtual bool bounding_box(AABB &box) const override;
 	virtual bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const override;
+
+    Hittable* get_bvh_tree() override { return new inst_RotX(obj->get_bvh_tree(), sin_a, cos_a); }
 };
 
 class inst_RotY : public Hittable {
@@ -37,9 +42,12 @@ public:
 	AABB bbox;
 
 	inst_RotY(Hittable *obj_, const double angle);
-	virtual bool hit(Ray &ray, HitRecord* hitRecord) const override;
+    inst_RotY(Hittable *obj_, const double sin_a, const double cos_a);
+	virtual bool hit(Ray &ray, HitRecord* hit_record) const override;
 	virtual bool bounding_box(AABB &box) const override;
 	virtual bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const override;
+
+    Hittable* get_bvh_tree() override { return new inst_RotY(obj->get_bvh_tree(), sin_a, cos_a); }
 };
 
 class inst_RotZ : public Hittable {
@@ -51,9 +59,12 @@ public:
 	AABB bbox;
 
 	inst_RotZ(Hittable *obj_, const double angle);
-	virtual bool hit(Ray &ray, HitRecord* hitRecord) const override;
+    inst_RotZ(Hittable *obj_, const double sin_a, const double cos_a);
+	virtual bool hit(Ray &ray, HitRecord* hit_record) const override;
 	virtual bool bounding_box(AABB &box) const override;
 	virtual bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const override;
+
+    Hittable* get_bvh_tree() override { return new inst_RotZ(obj->get_bvh_tree(), sin_a, cos_a); }
 };
 
 #endif // COLLECTION_INSTANCES

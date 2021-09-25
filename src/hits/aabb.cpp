@@ -14,11 +14,13 @@ bool AABB::hit(const Ray &ray, double t_min, double t_max) const {
     Vec3d::content3 t1v = (mx.content - ray.orig.content) * invDv;
 
     for(int dim_i = 0; dim_i < 3; dim_i++) {
-        double invD = invDv[dim_i];
         double t0 = t0v[dim_i];
         double t1 = t1v[dim_i];
-        if(invD < 0.0f)
+
+        if(invDv[dim_i] < 0) {
             std::swap(t0, t1);
+        }
+
         if(t0 > t_min) t_min = t0;
         if(t1 < t_max) t_max = t1;
     }

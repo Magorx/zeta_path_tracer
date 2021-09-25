@@ -13,9 +13,11 @@ struct Hittable {
     Hittable();
     Hittable(Material *material_);
 
-    virtual bool hit(Ray &ray, HitRecord* hitRecord) const = 0;
+    virtual bool hit(Ray &ray, HitRecord* hit_record) const = 0;
     virtual bool bounding_box(AABB &box) const = 0;
     virtual bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const;
+
+    virtual Hittable* get_bvh_tree();
 };
 
 #endif // HITTABLE

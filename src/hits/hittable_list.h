@@ -14,12 +14,14 @@ public:
 
 	void insert(Hittable *hittable);
 
-	bool hit(Ray &ray, HitRecord* hitRecord) const override;
+	bool hit(Ray &ray, HitRecord* hit_record) const override;
 	bool bounding_box(AABB &output_box) const override;
 	bool bounding_box(AABB &output_box, size_t from, size_t to) const;
 
 	size_t size() const;
 	Hittable *operator[](const size_t i) const;
+
+    Hittable* get_bvh_tree() override;
 };
 
 
