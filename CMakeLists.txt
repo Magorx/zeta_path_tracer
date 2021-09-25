@@ -18,27 +18,53 @@ find_package(SFML 2 COMPONENTS system window graphics network audio REQUIRED)
 add_executable(pather
         src/hits/aabb.cpp
         src/acceleration_structures/bvh.cpp
+
         src/camera_light_scene/camera.cpp
         src/camera_light_scene/light.cpp
+
         src/collections/collection_hittables.cpp
         src/collections/collection_instances.cpp
         src/collections/collection_lights.cpp
         src/collections/collection_materials.cpp
         src/collections/collection_textures.cpp
+
         src/color/color.cpp
         src/color/rgba.cpp
+
         src/hits/hit_record.cpp
+
         src/hits/hittable.cpp
         src/hits/hittable_list.cpp
-        src/main.cpp
+
         src/material/material.cpp
-        src/tracer/path_tracer.cpp
-        src/utils/ray.cpp
-        src/tracer/render_task.cpp
+
         src/utils/vec3d.cpp
+        src/utils/ray.cpp
+
+        src/tracer/path_tracer.cpp
+
+        src/tracer/render_task.cpp
+
         src/sfml_interface/interface.cpp
         src/image/denoiser.cpp
-        src/multithreading/mt_path_tracer.cpp src/utils/fast_random.hpp)
+        src/multithreading/mt_path_tracer.cpp
+        
+        src/utils/fast_random.hpp
+        
+        src/collections/hittables/sphere.cpp
+        src/collections/hittables/triangle.cpp
+        src/collections/hittables/rect_xy.cpp
+        src/collections/hittables/rect_xz.cpp
+        src/collections/hittables/rect_yz.cpp
+        src/collections/hittables/box.cpp
+
+        src/collections/instances/translate.cpp
+        src/collections/instances/rot_x.cpp
+        src/collections/instances/rot_y.cpp
+        src/collections/instances/rot_z.cpp
+
+        src/main.cpp
+        )
 
 target_link_libraries(pather sfml-graphics sfml-window sfml-system)        
 

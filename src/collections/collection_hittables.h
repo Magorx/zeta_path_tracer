@@ -1,10 +1,7 @@
 #ifndef COLLECTION_HITTABLES
 #define COLLECTION_HITTABLES
 
-#include <cstring>
-
-#include "hits/hittable.h"
-#include "hits/hittable_list.h"
+#include "hittables/utils_header.h"
 
 struct h_Sphere : public Hittable {
     Vec3d center;

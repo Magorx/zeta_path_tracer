@@ -39,7 +39,7 @@ bool h_Sphere::hit(Ray &ray, HitRecord* hit_record) const {
         return false;
     }
 
-    if(d > hit_record->dist) return false;
+    if (d > hit_record->dist) return false;
 
     Vec3d point = ray.cast(d);
     hit_record->mat = material;
