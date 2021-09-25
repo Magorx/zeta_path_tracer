@@ -40,7 +40,8 @@ render_threader(7, render_threaded)
     new_frame = Frame<Color, Vec3d, double>(img_size.x, img_size.y);
 
     image_sprite.setTexture(image_texture);
-    image_sprite.setScale((double) scr_w / img_size.x, (double) scr_h / img_size.y);
+    image_sprite.setPosition({(float) -scr_w / 2, (float) -scr_h / 2});
+    image_sprite.setScale(2 * (double) scr_w / img_size.x, 2 *(double) scr_h / img_size.y);
 
 // ============
 

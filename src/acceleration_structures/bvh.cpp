@@ -54,7 +54,10 @@ BVH_Node::BVH_Node(HittableList &hitlist, size_t from, size_t to) {
 
 	size_t objects_cnt = to - from;
 
-    assert(objects_cnt > 0);
+    if (objects_cnt <= 0) {
+		printf("[ERR] constructing BVH_Node from 0 objects, terminating\n");
+		exit(0);
+	}
 
 	if (objects_cnt == 1) {
 		left = hitlist[from]->get_bvh_tree();
@@ -77,8 +80,10 @@ BVH_Node::BVH_Node(HittableList &hitlist, size_t from, size_t to) {
 
 	AABB box_left{}, box_right{};
 
-    if(left) assert(left->bounding_box(box_left));
-    if(right) assert(right->bounding_box(box_right));
+	if ((left && !left->bounding_box(box_left)) || (right && !right->bounding_box(box_right))) {
+		printf("[ERR] failed to get a bounding box from Hittable* [%p] or [%p], terminating\n", left, right);
+		exit(0);
+	}
 
     if(left && right) {
         box = surrounding_box(box_left, box_right);

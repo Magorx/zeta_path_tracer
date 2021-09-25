@@ -9,14 +9,14 @@
 
 const int 	 VERBOSITY 		  = 2; // 2 for detailed log of some things
 
-const int WINDOW_WIDTH = 1500;
-const int WINDOW_HEIGHT = 1500;
+const int WINDOW_WIDTH = 500;
+const int WINDOW_HEIGHT = 500;
 
-const int 	 SCREEN_WIDTH     = 100;
-const int 	 SCREEN_HEIGHT    = 100;
-const double RESOLUTION_COEF  = 15.0; // actual image resolution is W*H here
+const int 	 SCREEN_WIDTH     = 200;
+const int 	 SCREEN_HEIGHT    = 200;
+const double RESOLUTION_COEF  = 1.0; // actual image resolution is W*H here
 const int 	 MAX_TRACE_DEPTH  = 7;
-const int 	 PIXEL_SAMPLING   = 10; // >= 1000 for pretty images
+const int 	 PIXEL_SAMPLING   = 1; // >= 1000 for pretty images
 const double GAMMA_CORRECTION = 0.37;
 const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
 
@@ -183,7 +183,7 @@ HittableList *cornell_box_objects() {
 	scene->insert(rect_light);
 	scene->insert(rect_light_floor);
 
-	Hittable *model = new Model("src/models/kit.obj", {m_glass2}, {0, 0, 0}, 35);
+	Hittable *model = new Model("../src/models/kit.obj", {m_glass2}, {0, 0, 0}, 35); // remove ../ if you build tracer NOT in build dir
 	model = new inst_RotX(model, -Pi/2);
 	model = new inst_Translate(model, {35, 60, 20});
 	

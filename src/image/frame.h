@@ -109,7 +109,7 @@ public:
     }
 
     void clear() {
-        for (int i = 0; i < pixel_cnt; ++i) {
+        for (size_t i = 0; i < pixel_cnt; ++i) {
             data_color[i] *= 0;
         }
     }

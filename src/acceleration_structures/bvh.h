@@ -4,6 +4,8 @@
 #include "hits/hittable.h"
 #include "hits/hittable_list.h"
 #include "hits/aabb.h"
+
+#include <cstdio>
 #include <algorithm>
 
 class BVH_Node : public Hittable {
