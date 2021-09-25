@@ -1,4 +1,4 @@
-#include "collection_lights.h"
+#include "diffuse.h"
 
 l_Diffuse::l_Diffuse(const Color color_):
 color(color_)

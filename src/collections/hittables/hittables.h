@@ -8,5 +8,6 @@
 #include "rect_yz.h"
 #include "box.h"
 #include "plane.h"
+#include "model.h"
 
 #endif // HITTABLES_EVERYTHING_H

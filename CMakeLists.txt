@@ -22,11 +22,11 @@ add_executable(pather
         src/camera_light_scene/camera.cpp
         src/camera_light_scene/light.cpp
 
-        src/collections/collection_hittables.cpp
-        src/collections/collection_instances.cpp
-        src/collections/collection_lights.cpp
-        src/collections/collection_materials.cpp
-        src/collections/collection_textures.cpp
+        # src/collections/collection_hittables.cpp
+        # src/collections/collection_instances.cpp
+        # src/collections/collection_lights.cpp
+        # src/collections/collection_materials.cpp
+        # src/collections/collection_textures.cpp
 
         src/color/color.cpp
         src/color/rgba.cpp
@@ -57,11 +57,21 @@ add_executable(pather
         src/collections/hittables/rect_xz.cpp
         src/collections/hittables/rect_yz.cpp
         src/collections/hittables/box.cpp
+        src/collections/hittables/model.cpp
 
         src/collections/instances/translate.cpp
         src/collections/instances/rot_x.cpp
         src/collections/instances/rot_y.cpp
         src/collections/instances/rot_z.cpp
+
+        src/collections/materials/lambertian.cpp
+        src/collections/materials/metal.cpp
+        src/collections/materials/dielectric.cpp
+
+        src/collections/lights/diffuse.cpp
+
+        src/collections/textures/solid_color.cpp
+        src/collections/textures/checkered.cpp
 
         src/main.cpp
         )
