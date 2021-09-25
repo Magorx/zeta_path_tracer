@@ -5,15 +5,15 @@ obj(obj_),
 offset(offset_)
 {}
 
-bool inst_Translate::hit(Ray &ray, HitRecord* hitRecord) const {
+bool inst_Translate::hit(Ray &ray, HitRecord* hit_record) const {
 	Ray moved_r(ray.orig - offset, ray.dir);
 
-    if (!obj->hit(moved_r, hitRecord)) {
+    if (!obj->hit(moved_r, hit_record)) {
         return false;
     }
 
-    hitRecord->point += offset;
-    hitRecord->set_normal_orientation(moved_r.dir);
+    hit_record->point += offset;
+    hit_record->set_normal_orientation(moved_r.dir);
 
     return true;
 }
@@ -32,15 +32,14 @@ bool inst_Translate::get_surface_coords(const Vec3d&, double&, double&) const {
 
 //=============================================================================
 
-inst_RotZ::inst_RotZ(Hittable *obj_, const double angle):
+inst_RotZ::inst_RotZ(Hittable *obj_, const double angle): inst_RotZ(obj_, sin(angle), cos(angle)) {}
+inst_RotZ::inst_RotZ(Hittable *obj_, const double sin_a, const double cos_a):
 obj(obj_),
-cos_a(1),
-sin_a(0),
+cos_a(cos_a),
+sin_a(sin_a),
 has_bbox(false),
 bbox()
 {
-    sin_a = sin(angle);
-    cos_a = cos(angle);
     has_bbox = obj->bounding_box(bbox);
 
     Vec3d mn( VEC3D_INF,  VEC3D_INF,  VEC3D_INF);
@@ -72,7 +71,7 @@ bbox()
     // fprintf(stderr, "bbox [%lg %lg %lg] [%lg %lg %lg]\normal", bbox.mn.x, bbox.mn.y, bbox.mn.z, bbox.mx.x, bbox.mx.y, bbox.mx.z);
 }
 
-bool inst_RotZ::hit(Ray &ray, HitRecord* hitRecord) const {
+bool inst_RotZ::hit(Ray &ray, HitRecord* hit_record) const {
 	Vec3d orig = ray.orig;
     Vec3d dir  = ray.dir;
 
@@ -84,22 +83,22 @@ bool inst_RotZ::hit(Ray &ray, HitRecord* hitRecord) const {
 
     Ray rot_ray(orig, dir);
 
-    if (!obj->hit(rot_ray, hitRecord)) {
+    if (!obj->hit(rot_ray, hit_record)) {
         return false;
     }
 
-    Vec3d p = hitRecord->point;
-    Vec3d normal = hitRecord->normal;
+    Vec3d p = hit_record->point;
+    Vec3d normal = hit_record->normal;
 
-    p.set(0, cos_a*hitRecord->point[0] + sin_a * hitRecord->point[1]);
-    p.set(1, -sin_a*hitRecord->point[0] + cos_a * hitRecord->point[1]);
+    p.set(0, cos_a*hit_record->point[0] + sin_a * hit_record->point[1]);
+    p.set(1, -sin_a*hit_record->point[0] + cos_a * hit_record->point[1]);
 
-    normal.set(0,  cos_a*hitRecord->normal[0] + sin_a * hitRecord->normal[1]);
-    normal.set(1, -sin_a*hitRecord->normal[0] + cos_a * hitRecord->normal[1]);
+    normal.set(0,  cos_a*hit_record->normal[0] + sin_a * hit_record->normal[1]);
+    normal.set(1, -sin_a*hit_record->normal[0] + cos_a * hit_record->normal[1]);
 
-    hitRecord->point = p;
-    hitRecord->normal = normal;
-    hitRecord->set_normal_orientation(rot_ray.dir);
+    hit_record->point = p;
+    hit_record->normal = normal;
+    hit_record->set_normal_orientation(rot_ray.dir);
     // fprintf(stderr, "dist %lg\normal", hitrec.dist);
 
     return true;
@@ -116,15 +115,13 @@ bool inst_RotZ::get_surface_coords(const Vec3d&, double&, double&) const {
 
 //=============================================================================
 
-inst_RotX::inst_RotX(Hittable *obj_, const double angle):
-obj(obj_),
-cos_a(1),
-sin_a(0),
-has_bbox(false),
-bbox()
-{
-    sin_a = sin(angle);
-    cos_a = cos(angle);
+inst_RotX::inst_RotX(Hittable *obj_, const double angle): inst_RotX(obj_, sin(angle), cos(angle)) {}
+inst_RotX::inst_RotX(Hittable* obj_, const double sin_a, const double cos_a):
+        obj(obj_),
+        cos_a(cos_a),
+        sin_a(sin_a),
+        has_bbox(false),
+        bbox() {
     has_bbox = obj->bounding_box(bbox);
 
     Vec3d mn( VEC3D_INF,  VEC3D_INF,  VEC3D_INF);
@@ -153,10 +150,9 @@ bbox()
     }
 
     bbox = AABB(mn, mx);
-    // fprintf(stderr, "bbox [%lg %lg %lg] [%lg %lg %lg]\normal", bbox.mn.x, bbox.mn.y, bbox.mn.z, bbox.mx.x, bbox.mx.y, bbox.mx.z);
 }
 
-bool inst_RotX::hit(Ray &ray, HitRecord* hitRecord) const {
+bool inst_RotX::hit(Ray &ray, HitRecord* hit_record) const {
 	Vec3d orig = ray.orig;
     Vec3d dir  = ray.dir;
 
@@ -168,22 +164,22 @@ bool inst_RotX::hit(Ray &ray, HitRecord* hitRecord) const {
 
     Ray rot_ray(orig, dir);
 
-    if (!obj->hit(rot_ray, hitRecord)) {
+    if (!obj->hit(rot_ray, hit_record)) {
         return false;
     }
 
-    Vec3d p = hitRecord->point;
-    Vec3d normal = hitRecord->normal;
+    Vec3d p = hit_record->point;
+    Vec3d normal = hit_record->normal;
 
-    p.set(1, cos_a*hitRecord->point[1] + sin_a * hitRecord->point[2]);
-    p.set(2, -sin_a*hitRecord->point[1] + cos_a * hitRecord->point[2]);
+    p.set(1, cos_a*hit_record->point[1] + sin_a * hit_record->point[2]);
+    p.set(2, -sin_a*hit_record->point[1] + cos_a * hit_record->point[2]);
 
-    normal.set(1, cos_a*hitRecord->normal[1] + sin_a * hitRecord->normal[2]);
-    normal.set(2, -sin_a*hitRecord->normal[1] + cos_a * hitRecord->normal[2]);
+    normal.set(1, cos_a*hit_record->normal[1] + sin_a * hit_record->normal[2]);
+    normal.set(2, -sin_a*hit_record->normal[1] + cos_a * hit_record->normal[2]);
 
-    hitRecord->point = p;
-    hitRecord->normal = normal;
-    hitRecord->set_normal_orientation(rot_ray.dir);
+    hit_record->point = p;
+    hit_record->normal = normal;
+    hit_record->set_normal_orientation(rot_ray.dir);
     // fprintf(stderr, "dist %lg\normal", hitrec.dist);
 
     return true;
@@ -195,20 +191,19 @@ bool inst_RotX::bounding_box(AABB &box) const {
 }
 
 bool inst_RotX::get_surface_coords(const Vec3d&, double&, double&) const {
-	return false;
+    return false;
 }
 
 //=============================================================================
 
-inst_RotY::inst_RotY(Hittable *obj_, const double angle):
+inst_RotY::inst_RotY(Hittable *obj_, const double angle): inst_RotY(obj_, sin(angle), cos(angle)) {}
+inst_RotY::inst_RotY(Hittable *obj_, const double sin_a, const double cos_a):
 obj(obj_),
-cos_a(1),
-sin_a(0),
+cos_a(cos_a),
+sin_a(sin_a),
 has_bbox(false),
 bbox()
 {
-    sin_a = sin(angle);
-    cos_a = cos(angle);
     has_bbox = obj->bounding_box(bbox);
 
     Vec3d mn( VEC3D_INF,  VEC3D_INF,  VEC3D_INF);
@@ -240,7 +235,7 @@ bbox()
     // fprintf(stderr, "bbox [%lg %lg %lg] [%lg %lg %lg]\normal", bbox.mn.x, bbox.mn.y, bbox.mn.z, bbox.mx.x, bbox.mx.y, bbox.mx.z);
 }
 
-bool inst_RotY::hit(Ray &ray, HitRecord* hitRecord) const {
+bool inst_RotY::hit(Ray &ray, HitRecord* hit_record) const {
 	Vec3d orig = ray.orig;
     Vec3d dir  = ray.dir;
 
@@ -252,22 +247,22 @@ bool inst_RotY::hit(Ray &ray, HitRecord* hitRecord) const {
 
     Ray rot_ray(orig, dir);
 
-    if (!obj->hit(rot_ray, hitRecord)) {
+    if (!obj->hit(rot_ray, hit_record)) {
         return false;
     }
 
-    Vec3d p = hitRecord->point;
-    Vec3d normal = hitRecord->normal;
+    Vec3d p = hit_record->point;
+    Vec3d normal = hit_record->normal;
 
-    p.set(0,  cos_a*hitRecord->point[0] + sin_a * hitRecord->point[2]);
-    p.set(2, -sin_a*hitRecord->point[0] + cos_a * hitRecord->point[2]);
+    p.set(0,  cos_a*hit_record->point[0] + sin_a * hit_record->point[2]);
+    p.set(2, -sin_a*hit_record->point[0] + cos_a * hit_record->point[2]);
 
-    normal.set(0, cos_a*hitRecord->normal[0] + sin_a * hitRecord->normal[2]);
-    normal.set(2, -sin_a*hitRecord->normal[0] + cos_a * hitRecord->normal[2]);
+    normal.set(0, cos_a*hit_record->normal[0] + sin_a * hit_record->normal[2]);
+    normal.set(2, -sin_a*hit_record->normal[0] + cos_a * hit_record->normal[2]);
 
-    hitRecord->point = p;
-    hitRecord->normal = normal;
-    hitRecord->set_normal_orientation(rot_ray.dir);
+    hit_record->point = p;
+    hit_record->normal = normal;
+    hit_record->set_normal_orientation(rot_ray.dir);
     // fprintf(stderr, "dist %lg\normal", hitrec.dist);
 
     return true;

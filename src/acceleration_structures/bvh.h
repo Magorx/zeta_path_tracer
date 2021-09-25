@@ -16,7 +16,7 @@ public:
 	BVH_Node(HittableList &hitlist);
 	BVH_Node(HittableList &hitlist, size_t from, size_t to);
 
-	virtual bool hit(Ray &ray, HitRecord* hitRecord) const override;
+	virtual bool hit(Ray &ray, HitRecord* hit_record) const override;
 	virtual bool bounding_box(AABB &box) const override;
 };
 

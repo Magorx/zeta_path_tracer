@@ -8,7 +8,3 @@ dir(direction)
 {
     dir.normalize();
 }
-
-Point Ray::cast(double t) const {
-    return orig + dir * t;
-}

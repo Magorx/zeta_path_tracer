@@ -13,7 +13,12 @@ public:
     Ray();
     Ray(const Point& origin, const Vec3d& direction);
 
-    Point cast(double t) const;
+    inline Point cast(double t) const {
+        Vec3d result = dir;
+        result *= t;
+        result += orig;
+        return result;
+    }
 };
 
 #endif // RAY

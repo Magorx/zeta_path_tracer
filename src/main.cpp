@@ -9,12 +9,12 @@
 
 const int 	 VERBOSITY 		  = 2; // 2 for detailed log of some things
 
-const int WINDOW_WIDTH = 1000;
-const int WINDOW_HEIGHT = 1000;
+const int WINDOW_WIDTH = 1500;
+const int WINDOW_HEIGHT = 1500;
 
 const int 	 SCREEN_WIDTH     = 100;
 const int 	 SCREEN_HEIGHT    = 100;
-const double RESOLUTION_COEF  = 3.0; // actual image resolution is W*H here
+const double RESOLUTION_COEF  = 15.0; // actual image resolution is W*H here
 const int 	 MAX_TRACE_DEPTH  = 7;
 const int 	 PIXEL_SAMPLING   = 10; // >= 1000 for pretty images
 const double GAMMA_CORRECTION = 0.37;
@@ -108,8 +108,10 @@ Scene *cornell_box_scene() {
     							SCREEN_WIDTH, SCREEN_HEIGHT,
     							RESOLUTION_COEF);
 	HittableList *objects = cornell_box_objects();
+
+    auto tree = objects->get_bvh_tree();
 	
-	Scene *scene = new Scene(camera, new BVH_Node(*objects));
+	Scene *scene = new Scene(camera, tree);
 	return scene;
 }
 
@@ -122,7 +124,7 @@ HittableList *cornell_box_objects() {
 
     Material *m_mirror = new m_Metal({255, 255, 125}, 0.05);
     Material *m_glass  = new m_Dielectric({125, 255, 200}, 1.1);
-    Material *m_glass2  = new m_Dielectric({160, 90, 255}, 1.1);
+    Material *m_glass2  = new m_Dielectric({130, 130, 255}, 2.4);
 
 	// Material *m_box_1 = new m_Lambertian({255, 255, 255}); ^^^^^^^^^^^^^
 	// Material *m_box_2 = new m_Lambertian({255, 255, 255});
@@ -181,14 +183,14 @@ HittableList *cornell_box_objects() {
 	scene->insert(rect_light);
 	scene->insert(rect_light_floor);
 
-	Hittable *model = new Model("src/models/kit.obj", {m_glass}, {0, 0, 0}, 35);
+	Hittable *model = new Model("src/models/kit.obj", {m_glass2}, {0, 0, 0}, 35);
 	model = new inst_RotX(model, -Pi/2);
-	model = new inst_Translate(model, {45, 55, 20});
+	model = new inst_Translate(model, {35, 60, 20});
 	
 	scene->insert(model);
 
-	// scene->insert(rot_box_1);
-	// scene->insert(rot_box_2);
+//	 scene->insert(rot_box_1);
+//	 scene->insert(rot_box_2);
     // scene->insert(rot_box_3);
 	
 	// scene->insert(sphere);

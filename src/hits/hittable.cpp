@@ -13,3 +13,7 @@ bool Hittable::get_surface_coords(const Vec3d&, double &sx, double &sy) const {
 	sy = 0;
 	return false;
 }
+
+Hittable* Hittable::get_bvh_tree() {
+    return this;
+}

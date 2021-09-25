@@ -21,7 +21,7 @@ new_frame(),
 
 consecutive_frames_cnt(0),
 
-render_threader(16, render_threaded)
+render_threader(7, render_threaded)
 {   
     if (!scene) {
         fprintf(stderr, "[ERR] scene is nullptr, aborting\n");
@@ -85,9 +85,9 @@ void SFML_Interface::render_frame_portion() {
     if (!consecutive_frames_cnt) {
         memcpy(frame.data_color, new_frame.data_color, pixel_cnt * sizeof(Color));
     } else {
-        double n = consecutive_frames_cnt;
+        double n = consecutive_frames_cnt + 1;
         for (int i = 0; i < pixel_cnt; ++i) {
-            frame.data_color[i] = frame.final_image[i] * ((n - 1.0) / n) + new_frame.final_image[i] /  n;
+            frame.data_color[i] = frame.final_image[i] * ((n - 1.0) / n) + new_frame.final_image[i] / n;
         }
     }
 

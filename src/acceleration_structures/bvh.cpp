@@ -53,15 +53,19 @@ BVH_Node::BVH_Node(HittableList &hitlist, size_t from, size_t to) {
 								  : box_z_compare;
 
 	size_t objects_cnt = to - from;
+
+    assert(objects_cnt > 0);
+
 	if (objects_cnt == 1) {
-		left = right = hitlist[from];
+		left = hitlist[from]->get_bvh_tree();
+        right = nullptr;
 	} else if (objects_cnt == 2) {
 		if (comparator(hitlist[from], hitlist[from + 1])) {
-			left  = hitlist[from];
-			right = hitlist[from + 1];
+			left  = hitlist[from]->get_bvh_tree();
+			right = hitlist[from + 1]->get_bvh_tree();
 		} else {
-			right = hitlist[from];
-			left  = hitlist[from + 1];
+			right = hitlist[from]->get_bvh_tree();
+			left  = hitlist[from + 1]->get_bvh_tree();
 		}
 	} else {
 		 std::sort(hitlist.hittables.begin() + from, hitlist.hittables.begin() + to, comparator);
@@ -71,12 +75,19 @@ BVH_Node::BVH_Node(HittableList &hitlist, size_t from, size_t to) {
 		 right = new BVH_Node(hitlist, mid , to);
 	}
 
-	AABB box_left, box_right;
-	if (!left->bounding_box(box_left) || !right->bounding_box(box_right)) {
-		exit(0);
-	}
+	AABB box_left{}, box_right{};
 
-	box = surrounding_box(box_left, box_right);
+    if(left) assert(left->bounding_box(box_left));
+    if(right) assert(right->bounding_box(box_right));
+
+    if(left && right) {
+        box = surrounding_box(box_left, box_right);
+    } else if(left) {
+        box = box_left;
+    } else {
+        box = box_right;
+    }
+
 }
 
 double BVH_Node_by_axis_estimation(HittableList &hitlist, size_t from, size_t to, const int axis) {
@@ -97,13 +108,13 @@ double BVH_Node_by_axis_estimation(HittableList &hitlist, size_t from, size_t to
 	}
 }
 
-bool BVH_Node::hit(Ray &ray, HitRecord* hitRecord) const {
+bool BVH_Node::hit(Ray &ray, HitRecord* hit_record) const {
 	if (!box.hit(ray, 0, VEC3D_INF)) {
 		return false;
 	}
 
-    bool left_hit = left->hit(ray, hitRecord);
-    bool right_hit = right->hit(ray, hitRecord);
+    bool left_hit = left && left->hit(ray, hit_record);
+    bool right_hit = right && right->hit(ray, hit_record);
 
     return left_hit || right_hit;
 }
