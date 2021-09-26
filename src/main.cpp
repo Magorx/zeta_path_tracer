@@ -16,7 +16,7 @@ const int 	 SCREEN_WIDTH     = 200;
 const int 	 SCREEN_HEIGHT    = 200;
 const double RESOLUTION_COEF  = 1.0; // actual image resolution is W*H here
 const int 	 MAX_TRACE_DEPTH  = 7;
-const int 	 PIXEL_SAMPLING   = 10; // >= 1000 for pretty images
+const int 	 PIXEL_SAMPLING   = 100; // >= 1000 for pretty images
 const double GAMMA_CORRECTION = 0.37;
 const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
 

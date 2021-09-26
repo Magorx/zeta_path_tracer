@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 #include <cstring>
+#include <string>
 
 #include "PathTracer.hpp"
 #include "image/frame.h"
@@ -40,6 +41,8 @@ public:
     SFML_Interface(const char *window_name, Scene *scene_, const conf_PathTracer config_, int scr_w_, int scr_h_, int pixel_sampling_per_render_=1);
 
     void flush_to_window();
+
+    void screenshot_to_file(const char *filename = "scrsht.png");
     
     void tick();
     void run();

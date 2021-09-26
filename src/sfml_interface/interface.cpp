@@ -117,6 +117,12 @@ void SFML_Interface::handle_events() {
     {
         if (event.type == sf::Event::Closed)
             window.close();
+        
+        if (event.type == sf::Event::KeyPressed) {
+            if (event.key.code == sf::Keyboard::F) {
+                screenshot_to_file(("scrsht" + std::to_string(consecutive_frames_cnt) + ".png").c_str());
+            }
+        }
     }
 }
 
@@ -143,4 +149,16 @@ void SFML_Interface::run() {
 
 void SFML_Interface::stop() {
     render_threader.join();
+}
+
+void SFML_Interface::screenshot_to_file(const char *filename) {
+    if (!filename) {
+        printf("[ERR] can't screenshot to nullptr filename, will save to SCRSHT.png");
+        filename = "SCRSHT.png";
+    }
+
+    sf::Texture texture;
+    texture.create(window.getSize().x, window.getSize().y);
+    texture.update(window);
+    texture.copyToImage().saveToFile(filename);
 }

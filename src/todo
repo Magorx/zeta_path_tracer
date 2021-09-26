@@ -1,5 +1,16 @@
+~~~ soon ~~~
 Scene.is_ready()
-marble texture
-update showcase
 .obj file textures and normals usage
-f for screenshot
+
+--- not soon ---
+marble texture
+plane hittable
+fix denoiser
+
+separate thread for the interface
+
+=== NOT soon ===
+interface overhaul
+scene editor
+model editor
+
