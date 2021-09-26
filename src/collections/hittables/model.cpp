@@ -29,8 +29,11 @@ bool Model::load(const char *filename, std::vector<Material*> matrs, const Vec3d
             fscanf(fin, "%lg %lg %lg", &x, &y, &z);
             points.push_back(offset + Vec3d(x, y ,z) * scale);
         } else if (strcmp(line_type, "f") == 0) {
-            size_t x, y, z, tr;
-            fscanf(fin, "%lu/%lu/%lu %lu/%lu/%lu %lu/%lu/%lu", &x, &tr, &tr, &y, &tr, &tr, &z, &tr, &tr);
+            size_t x, y, z;
+            size_t xt, yt, zt;
+            size_t xn, yn, zn;
+
+            fscanf(fin, "%lu/%lu/%lu %lu/%lu/%lu %lu/%lu/%lu", &x, &xt, &xn, &y, &yt, &yn, &z, &zt, &zn);
             --x;
             --y;
             --z;
@@ -54,7 +57,7 @@ bool Model::load(const char *filename, std::vector<Material*> matrs, const Vec3d
 
     }
     
-    fprintf(stderr, "[INF] read model [%s]: %d verticies, %d triangles\n", filename, points.size(), hittables.size());
+    fprintf(stderr, "[INF] read model [%s]: %zu verticies, %zu triangles\n", filename, points.size(), hittables.size());
 
     fclose(fin);
     return true;

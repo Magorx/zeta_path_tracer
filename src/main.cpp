@@ -60,6 +60,8 @@ int main(int argc, char* argv[]) {
 
 	SFML_Interface interface("zether", scene, conf_pt, WINDOW_WIDTH, WINDOW_HEIGHT, PIXEL_SAMPLING);
 
+	if (VERBOSITY >= 1) printf("[INF] launching sfml interface, press F to make a screenshot\n");
+
 	interface.run();
 	interface.stop();
 
@@ -151,7 +153,7 @@ HittableList *cornell_box_objects() {
 	scene->insert(rect_light);
 	scene->insert(rect_light_floor);
 
-	Hittable *model = new Model("../src/models/kit.obj", {m_glass2}, {0, 0, 0}, 35); // remove ../ if you build tracer NOT in build dir
+	Hittable *model = new Model("../models/kit.obj", {m_glass2}, {0, 0, 0}, 35); // remove ../ if you build tracer NOT in build dir
 	model = new inst_RotX(model, -Pi/2);
 	model = new inst_Translate(model, {35, 60, 20});
 	
