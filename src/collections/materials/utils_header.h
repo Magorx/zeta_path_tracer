@@ -5,6 +5,6 @@
 #include "hits/hit_record.h"
 #include "color/texture.h"
 
-#include "../textures/textures.h"
+#include "../textures/Textures.h"
 
 #endif // MATERIALS_UTILS_HEADER_H
