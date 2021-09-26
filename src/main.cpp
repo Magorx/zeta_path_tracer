@@ -1,24 +1,28 @@
 #include "PathTracer.hpp"
 
 #include <cstring>
-#include <unistd.h>
 
 #include "sfml_interface/interface.h"
 
 // settings ===================================================================
 
-const int 	 VERBOSITY 		  = 2; // 2 for detailed log of some things
+const int 	 VERBOSITY = 2; // 2 for detailed log of some things
 
 const int WINDOW_WIDTH  = 100;
 const int WINDOW_HEIGHT = 100;
 
 const int 	 SCREEN_WIDTH     = 200;
 const int 	 SCREEN_HEIGHT    = 200;
+
 const double RESOLUTION_COEF  = 1.0; // W *= RES_COEF, H *= RES_COEF
+const int 	 PIXEL_SAMPLING   = 10;
+
 const int 	 MAX_TRACE_DEPTH  = 7;
-const int 	 PIXEL_SAMPLING   = 100;
+
 const double GAMMA_CORRECTION = 0.37;
 const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
+
+const int DEFAULT_THREADS_CNT = 8;
 
 // ============================================================================
 
@@ -30,16 +34,11 @@ Scene 		 *cornell_box_scene();
 HittableList *test_objects();
 Scene 		 *test_scene();
 
-// int main() {
-// 	Semaphore s(0);
-// 	s.post();
-
-// 	return 0;
-// }
+// ============================================================================
 
 int main(int argc, char* argv[]) {
 	Brans::srand_sse(time(NULL));
-	long randomstamp = vec3d_randlong() % 10000;
+	srand(time(NULL));
 
 	conf_Render conf_render(SCREEN_WIDTH * RESOLUTION_COEF, SCREEN_HEIGHT * RESOLUTION_COEF,
 							MAX_TRACE_DEPTH,
@@ -48,54 +47,23 @@ int main(int argc, char* argv[]) {
 							BACKGROUND_COLOR);
 
     conf_Verbosity  conf_verbos(VERBOSITY);
-    conf_SystemInfo conf_sysinf(randomstamp, 1, nullptr);
+    conf_SystemInfo conf_sysinf(vec3d_randlong() % 10000, DEFAULT_THREADS_CNT, nullptr);
     conf_PathTracer conf_pt(conf_render, conf_verbos, conf_sysinf);
 
-    // reading command line
-    extern char *optarg;
-    bool carg_to_reload_rtask_file = false;
-    while (true) {
-    	switch(getopt(argc, argv, "k:t:v:R")) {
-    		case '?':
-    		case 'h':
-    		default:
-    			printf("run ./pather -k #threads-count -t #render-task-file\n");
-    			printf("use -t only if you understand what it does\n");
-    			break;
+	if (VERBOSITY >= 1) printf("[INF] PathTracing process [%d] started\n", conf_pt.sysinf.timestamp);
 
-    		case -1:
-    			break;
-
-    		case 'k':
-    			sscanf(optarg, "%d", &conf_pt.sysinf.kernel_cnt);
-    			continue;
-
-    		case 't':
-    			conf_pt.sysinf.rtask_filename = strdup(optarg);
-    			continue;
-
-    		case 'R':
-    			carg_to_reload_rtask_file = true;
-    			continue;
-    	}
-    	break;
-    }
+    conf_pt.update_from_command_line_args(argc, argv);
  
-    if (VERBOSITY >= 2) printf("threads    : %d\n", conf_pt.sysinf.kernel_cnt);
-    if (VERBOSITY >= 2) printf("rt_filename: %s\n", conf_pt.sysinf.rtask_filename);
+    if (VERBOSITY >= 2) printf("[INF] threads: %d\n", conf_pt.sysinf.kernel_cnt);
 
     Scene *scene = cornell_box_scene();
 
-	SFML_Interface interface("bubus", scene, conf_pt, WINDOW_WIDTH, WINDOW_HEIGHT, PIXEL_SAMPLING);
+	SFML_Interface interface("zether", scene, conf_pt, WINDOW_WIDTH, WINDOW_HEIGHT, PIXEL_SAMPLING);
 
 	interface.run();
 	interface.stop();
 
-    // RenderTask rtask(0, scene->camera->res_w, 0, scene->camera->res_h);
-
-    // if (carg_to_reload_rtask_file) rtask.save("rtask.rt");
-
-    // render_from_rtask_file(scene, conf_pt);
+	if (VERBOSITY >= 1) printf("[INF] PathTracing process [%d] finished\n", conf_pt.sysinf.timestamp);
 
 	return 0;
 }

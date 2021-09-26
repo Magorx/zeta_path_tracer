@@ -223,10 +223,11 @@ conf_Verbosity::conf_Verbosity(const int verbosity):
 VERBOSITY(verbosity)
 {}
 
-conf_SystemInfo::conf_SystemInfo(const int timestamp_, const int kernel_cnt_, const char *rtask_filename_):
+conf_SystemInfo::conf_SystemInfo(const int timestamp_, const int kernel_cnt_, const char *rtask_filename_, const bool to_rewrire_rtask_file_):
 timestamp(timestamp_),
 kernel_cnt(kernel_cnt_),
-rtask_filename(rtask_filename_)
+rtask_filename(rtask_filename_),
+to_rewrire_rtask_file(to_rewrire_rtask_file_)
 {}
 
 conf_PathTracer::conf_PathTracer(const conf_Render     &render_config,

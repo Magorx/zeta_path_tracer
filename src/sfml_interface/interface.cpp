@@ -21,7 +21,7 @@ new_frame(),
 
 consecutive_frames_cnt(0),
 
-render_threader(7, render_threaded)
+render_threader(config_.sysinf.kernel_cnt, render_threaded)
 {   
     if (!scene) {
         fprintf(stderr, "[ERR] scene is nullptr, aborting\n");
@@ -120,7 +120,7 @@ void SFML_Interface::handle_events() {
         
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::F) {
-                screenshot_to_file(("scrsht" + std::to_string(consecutive_frames_cnt) + ".png").c_str());
+                screenshot_to_file(("scrsht_" + std::to_string(config.sysinf.timestamp) + "_" + std::to_string(consecutive_frames_cnt) + ".png").c_str());
             }
         }
     }

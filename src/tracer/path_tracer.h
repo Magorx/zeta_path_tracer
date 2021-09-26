@@ -21,6 +21,9 @@
 #include "render_task.h"
 #include <thread>
 
+#include <cstring>
+#include <unistd.h>
+
 // extern const double AMBIENT;
 // extern const Vec3d BACKGROUND;
 
@@ -49,8 +52,9 @@ struct conf_SystemInfo {
 	int  timestamp;
 	int  kernel_cnt;
 	const char *rtask_filename;
+	bool to_rewrire_rtask_file;
 
-	conf_SystemInfo(const int timestamp_, const int kernel_cnt_, const char *rtask_filename_);
+	conf_SystemInfo(const int timestamp_, const int kernel_cnt_, const char *rtask_filename_, const bool to_rewrire_rtask_file_=false);
 };
 
 struct conf_PathTracer {
@@ -61,6 +65,36 @@ struct conf_PathTracer {
 	conf_PathTracer(const conf_Render 	  &render_config,
 					const conf_Verbosity  &verbos_config,
 					const conf_SystemInfo &sysinf_config);
+	
+	inline void update_from_command_line_args(int argc, char* argv[]) {
+		extern char *optarg;
+		while (true) {
+			switch(getopt(argc, argv, "k:t:v:R")) {
+				case '?':
+				case 'h':
+				default:
+					printf("run ./pather -k #threads-count -t #render-task-file\n");
+					printf("use -t only if you understand what it does\n");
+					break;
+
+				case -1:
+					break;
+
+				case 'k':
+					sscanf(optarg, "%d", &sysinf.kernel_cnt);
+					continue;
+
+				case 't':
+					sysinf.rtask_filename = strdup(optarg);
+					continue;
+
+				case 'R':
+					sysinf.to_rewrire_rtask_file = true;
+					continue;
+			}
+			break;
+		}
+	}
 };
 
 // Intersection test_ray(Ray &ray, const vector<Hittable*> &objects, const Hittable *to_ignore);

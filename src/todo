@@ -1,6 +1,8 @@
 ~~~ soon ~~~
 Scene.is_ready()
 .obj file textures and normals usage
+fix all the memory leaks
+fix non-exiting behaviour
 
 --- not soon ---
 marble texture
