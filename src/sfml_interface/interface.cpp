@@ -157,8 +157,5 @@ void SFML_Interface::screenshot_to_file(const char *filename) {
         filename = "SCRSHT.png";
     }
 
-    sf::Texture texture;
-    texture.create(window.getSize().x, window.getSize().y);
-    texture.update(window);
-    texture.copyToImage().saveToFile(filename);
+    image_texture.copyToImage().saveToFile(filename);
 }

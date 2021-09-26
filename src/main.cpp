@@ -9,8 +9,8 @@
 
 const int 	 VERBOSITY 		  = 2; // 2 for detailed log of some things
 
-const int WINDOW_WIDTH = 500;
-const int WINDOW_HEIGHT = 500;
+const int WINDOW_WIDTH = 100;
+const int WINDOW_HEIGHT = 100;
 
 const int 	 SCREEN_WIDTH     = 200;
 const int 	 SCREEN_HEIGHT    = 200;
