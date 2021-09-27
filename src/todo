@@ -2,17 +2,15 @@
 utils/timer.h from progress bar
 Scene.is_ready()
 .obj file textures and normals usage
-fix all the memory leaks
-fix non-exiting behaviour
 
 --- not soon ---
 marble texture
 plane hittable
 fix denoiser
-
-separate thread for the interface
+fix all the memory leaks
 
 === NOT soon ===
+separate thread for the interface
 interface overhaul
 scene editor
 model editor

@@ -9,6 +9,8 @@
 #include "PathTracer.hpp"
 #include "image/frame.h"
 
+#include "utils/timer.h"
+
 class SFML_Interface {
     sf::RenderWindow window;
     sf::Texture      image_texture;

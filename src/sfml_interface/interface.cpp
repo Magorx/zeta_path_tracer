@@ -29,7 +29,6 @@ render_threader(config_.sysinf.kernel_cnt, render_threaded)
 
     image_texture.create(scene->camera->res_w, scene->camera->res_h);
     sf::Vector2u img_size = image_texture.getSize();
-    printf("%u %u size\n", img_size.x, img_size.y);
     pixel_cnt = img_size.x * img_size.y;
 
     cur_image = (RGBA*) calloc(pixel_cnt, sizeof(RGBA));
@@ -64,22 +63,17 @@ render_threader(config_.sysinf.kernel_cnt, render_threaded)
 }
 
 void SFML_Interface::render_frame_threaded() {
-    for (int i = 0; i < pixel_cnt; ++i) {
-        new_frame.data_color[i] = {0, 255, 0};
-    }
-
-    ProgressBar bar(stderr, 1);
-    bar.start();
+    Timer timer;
+    timer.start();
 
     render_threader.perform();
-
-    bar.tick();
+    
+    timer.print();
 }
 
 void SFML_Interface::render_frame_portion() {
     new_frame.clear();
     config.render.PIXEL_SAMPLING = pixel_sampling_per_render;
-    // render_into_buffer(scene, config, new_frame.data_color, new_frame.data_normal, new_frame.data_depth);
     render_frame_threaded();
 
     new_frame.set_post_processing(FramePostproc::copy);
@@ -153,7 +147,6 @@ void SFML_Interface::run() {
 
 void SFML_Interface::stop() {
     render_threader.join();
-    printf("done\n");
 }
 
 void SFML_Interface::screenshot_to_file(const char *filename) {

@@ -1,7 +1,4 @@
 #include "PathTracer.hpp"
-
-#include <cstring>
-
 #include "sfml_interface/interface.h"
 
 // settings ===================================================================
@@ -26,7 +23,8 @@ const int DEFAULT_THREADS_CNT = 8;
 const int REAL_SCREEN_WIDTH   = 100;
 const int REAL_SCREEN_HEIGHT  = 100;
 
-const double RESOLUTION_COEF  = (double) PIXEL_SCREEN_WIDTH / (double) REAL_SCREEN_WIDTH ; // W *= RES_COEF, H *= RES_COEF
+const double RESOLUTION_COEF  =   (double) PIXEL_SCREEN_WIDTH * (double) PIXEL_SCREEN_HEIGHT 
+							    / (double)  REAL_SCREEN_WIDTH / (double)  REAL_SCREEN_HEIGHT;
 
 const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
 
@@ -36,9 +34,6 @@ HittableList scene_gen(int sphere_cnt = 1, Vec3d delta = VEC3D_ZERO);
 
 HittableList *cornell_box_objects();
 Scene 		 *cornell_box_scene();
-
-HittableList *test_objects();
-Scene 		 *test_scene();
 
 // ============================================================================
 
@@ -148,8 +143,6 @@ HittableList *cornell_box_objects() {
     Hittable *rot_box_3 = new inst_Translate(box_3, {depth / 2 - l_d / 2 + 6, width / 2 - l_w / 2 + 16.5, l_h - 22.5});
 
 
-	// Hittable *sphere = new h_Sphere({40, 30, 10}, 20, m_white);
-
 	scene->insert(rect_ceil );
 	scene->insert(rect_floor);
 	scene->insert(rect_fwall);
@@ -165,60 +158,10 @@ HittableList *cornell_box_objects() {
 	
 	scene->insert(model);
 
-//	 scene->insert(rot_box_1);
-//	 scene->insert(rot_box_2);
-    // scene->insert(rot_box_3);
-	
-	// scene->insert(sphere);
-
-	return scene;
-}
-
-HittableList scene_gen(int sphere_cnt, Vec3d delta) {
-	HittableList scene;
-
-	Material *matr = new m_Lambertian({255, 255, 255});
-	matr->set_emitter(new l_Diffuse(Vec3d(255, 0, 0) * 4));
-	scene.insert(new h_Sphere(delta + Vec3d(0, 0, 5), 1, matr));
-
-	matr = new m_Dielectric({200, 100, 255}, 1.3);
-	//matr->set_emitter(new l_Diffuse(Vec3d(255, 255, 255) * 5));
-	scene.insert(new h_Sphere(delta + Vec3d(-4, 0, -0.95), 1.4, matr));
-
-	for (int i = 0; i < sphere_cnt; ++i) {
-		Material *matr;
-		long roll = i % 3 + 1;
-		if (roll == 1) {
-			matr = new m_Lambertian(randcolor(100, 255));
-		} else if (roll == 2) {
-			matr = new m_Dielectric(randcolor(100, 255), 1.15);
-		} else {
-			matr = new m_Metal(randcolor(100, 255), vec3d_randdouble());
-		}
-
-		//h_Sphere *sph = new h_Sphere(delta + Vec3d(vec3d_randdouble(0, 100), vec3d_randdouble(-25, +25), vec3d_randdouble(-1, 1)),
-		//							 vec3d_randdouble(1, 5), matr);
-
-		h_Sphere *sph = nullptr;
-		roll = i % 8;
-		if (roll == 0) {
-			sph = new h_Sphere(delta + Vec3d(i, i, 0) / 2.5, (i % 3 + 2) / 2, matr);
-		} else if (roll == 1) {
-			sph = new h_Sphere(delta + Vec3d(i, -i, 0) / 2.5, (i % 3 + 2) / 2, matr);
-		} else if (roll == 2) {
-			sph = new h_Sphere(delta + Vec3d(-i, i, 0) / 2.5, (i % 3 + 2) / 2, matr);
-		} else if (roll == 3){
-			sph = new h_Sphere(delta + Vec3d(-i, -i, 0) / 2.5, (i % 3 + 2) / 2, matr);
-		} else if (roll == 4) {
-			sph = new h_Sphere(delta + Vec3d(i, i / 2, 0) / 2.5, (i % 3 + 2) / 2, matr);
-		} else if (roll == 5) {
-			sph = new h_Sphere(delta + Vec3d(i, -i / 2, 0) / 2.5, (i % 3 + 2) / 2, matr);
-		} else if (roll == 6) {
-			sph = new h_Sphere(delta + Vec3d(-i / 2, i, 0) / 2.5, (i % 3 + 2) / 2, matr);
-		} else {
-			sph = new h_Sphere(delta + Vec3d(-i / 2, -i, 0) / 2.5, (i % 3 + 2) / 2, matr);
-		}
-		scene.insert(sph);
+	if (0) { // so not to see "unused" warnings
+		scene->insert(rot_box_1);
+		scene->insert(rot_box_2);
+		scene->insert(rot_box_3);
 	}
 
 	return scene;
