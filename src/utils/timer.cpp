@@ -37,9 +37,9 @@ void Timer::print(bool put_new_line, const char *format) {
 
     if (!format) {
         if (id) {
-            format = "[TMR]<%d>: %ldms";
+            format = "[TMR]<%d> %ldms";
         } else {
-            format = "[TMR]: %ldms";
+            format = "[TMR] %ldms";
         }
     }
 

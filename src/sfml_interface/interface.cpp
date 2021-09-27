@@ -64,7 +64,6 @@ render_threader(config_.sysinf.kernel_cnt, render_threaded)
 
 void SFML_Interface::render_frame_threaded() {
     Timer timer;
-    timer.start();
 
     render_threader.perform();
     

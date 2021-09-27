@@ -8,15 +8,15 @@ const int 	 VERBOSITY = 2; // 2 for detailed log of some things
 const int WINDOW_WIDTH  = 1000;
 const int WINDOW_HEIGHT = 1000;
 
-const int PIXEL_SCREEN_WIDTH  = 200;
-const int PIXEL_SCREEN_HEIGHT = 200;
+const int PIXEL_SCREEN_WIDTH  = 500;
+const int PIXEL_SCREEN_HEIGHT = 500;
 
 const int 	 PIXEL_SAMPLING   = 1;
 const int 	 MAX_TRACE_DEPTH  = 7;
 
 const double GAMMA_CORRECTION = 0.37;
 
-const int DEFAULT_THREADS_CNT = 8;
+const int DEFAULT_THREADS_CNT = 1;
 
 // ============================================================================
 
@@ -152,9 +152,9 @@ HittableList *cornell_box_objects() {
 	scene->insert(rect_light);
 	scene->insert(rect_light_floor);
 
-	Hittable *model = new Model("../models/kit.obj", {m_glass2}, {0, 0, 0}, 35); // remove ../ if you build tracer NOT in build dir
-	model = new inst_RotX(model, -Pi/2);
-	model = new inst_Translate(model, {35, 60, 20});
+	Hittable *model = new Model("../models/ship.obj", {m_glass2}, {0, 0, 0}, 7); // remove ../ if you build tracer NOT in build dir
+	model = new inst_RotY(new inst_RotZ(new inst_RotX(model, -Pi/10), -Pi/2.5), Pi/8);
+	model = new inst_Translate(model, {35, 50, 40});
 	
 	scene->insert(model);
 
