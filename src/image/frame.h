@@ -110,7 +110,7 @@ public:
 
     void clear() {
         for (size_t i = 0; i < pixel_cnt; ++i) {
-            data_color[i] *= 0;
+            data_color[i] = {255, 0, 0};
         }
     }
 

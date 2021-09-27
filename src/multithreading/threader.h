@@ -29,6 +29,9 @@ class Threader {
     void thread_main_loop(int thread_id) {
         while (running) {
             sems_start[thread_id]->wait();
+            if (!running) {
+                break;
+            }
 
             func(tasks[thread_id]);
             
@@ -64,6 +67,7 @@ public:
     inline void join() {
         running = false;
         for (size_t i = 0; i < threads.size(); ++i) {
+            sems_start[i]->post();
             threads[i]->join();
         }
     }

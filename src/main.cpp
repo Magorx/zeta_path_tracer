@@ -8,21 +8,27 @@
 
 const int 	 VERBOSITY = 2; // 2 for detailed log of some things
 
-const int WINDOW_WIDTH  = 100;
-const int WINDOW_HEIGHT = 100;
+const int WINDOW_WIDTH  = 1000;
+const int WINDOW_HEIGHT = 1000;
 
-const int 	 SCREEN_WIDTH     = 200;
-const int 	 SCREEN_HEIGHT    = 200;
+const int PIXEL_SCREEN_WIDTH  = 200;
+const int PIXEL_SCREEN_HEIGHT = 200;
 
-const double RESOLUTION_COEF  = 1.0; // W *= RES_COEF, H *= RES_COEF
-const int 	 PIXEL_SAMPLING   = 10;
-
+const int 	 PIXEL_SAMPLING   = 1;
 const int 	 MAX_TRACE_DEPTH  = 7;
 
 const double GAMMA_CORRECTION = 0.37;
-const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
 
 const int DEFAULT_THREADS_CNT = 8;
+
+// ============================================================================
+
+const int REAL_SCREEN_WIDTH   = 100;
+const int REAL_SCREEN_HEIGHT  = 100;
+
+const double RESOLUTION_COEF  = (double) PIXEL_SCREEN_WIDTH / (double) REAL_SCREEN_WIDTH ; // W *= RES_COEF, H *= RES_COEF
+
+const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
 
 // ============================================================================
 
@@ -40,7 +46,7 @@ int main(int argc, char* argv[]) {
 	Brans::srand_sse(time(NULL));
 	srand(time(NULL));
 
-	conf_Render conf_render(SCREEN_WIDTH * RESOLUTION_COEF, SCREEN_HEIGHT * RESOLUTION_COEF,
+	conf_Render conf_render(REAL_SCREEN_WIDTH * RESOLUTION_COEF, REAL_SCREEN_HEIGHT * RESOLUTION_COEF,
 							MAX_TRACE_DEPTH,
 							PIXEL_SAMPLING,
 							GAMMA_CORRECTION,
@@ -75,7 +81,7 @@ int main(int argc, char* argv[]) {
 Scene *cornell_box_scene() {
 	Camera *camera = new Camera({-100, 50, 50}, {1, 0, 0}, 
     							100,
-    							SCREEN_WIDTH, SCREEN_HEIGHT,
+    							REAL_SCREEN_WIDTH, REAL_SCREEN_HEIGHT,
     							RESOLUTION_COEF);
 	HittableList *objects = cornell_box_objects();
 
@@ -119,8 +125,8 @@ HittableList *cornell_box_objects() {
 	Hittable *rect_ceil  = new h_RectXY({    0,     0, heigh}, {depth, width, heigh}, m_white);
 	Hittable *rect_floor = new h_RectXY({    0,     0,     0}, {depth, width, heigh}, m_white);
 	Hittable *rect_fwall = new h_RectYZ({depth,     0,     0}, {depth, width, heigh}, m_white);
-	Hittable *rect_rwall = new h_RectXZ({    0,     0,     -1}, {depth,     0, heigh + 1}, m_red  );
-	Hittable *rect_lwall = new h_RectXZ({    0, width,     0}, {depth, width, heigh}, m_green);
+	Hittable *rect_rwall = new h_RectXZ({    0,     0,    -1}, {depth,     0, heigh + 1}, m_red  );
+	Hittable *rect_lwall = new h_RectXZ({    -100, width,     0}, {depth, width, heigh}, m_green);
  	
 	Hittable *rect_light = new h_RectXY({depth / 2 - l_d / 2, width / 2 - l_w / 2, l_h}, {depth / 2 + l_d / 2, width / 2 + l_w / 2, l_h}, m_rect_light);
 	Hittable *rect_light_floor = new h_RectXY({depth / 2 - l_d / 2, width / 2 - l_w / 2, -10}, {depth / 2 + l_d / 2, width / 2 + l_w / 2, l_h}, m_rect_light);

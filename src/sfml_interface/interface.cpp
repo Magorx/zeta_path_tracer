@@ -29,6 +29,7 @@ render_threader(config_.sysinf.kernel_cnt, render_threaded)
 
     image_texture.create(scene->camera->res_w, scene->camera->res_h);
     sf::Vector2u img_size = image_texture.getSize();
+    printf("%u %u size\n", img_size.x, img_size.y);
     pixel_cnt = img_size.x * img_size.y;
 
     cur_image = (RGBA*) calloc(pixel_cnt, sizeof(RGBA));
@@ -40,8 +41,7 @@ render_threader(config_.sysinf.kernel_cnt, render_threaded)
     new_frame = Frame<Color, Vec3d, double>(img_size.x, img_size.y);
 
     image_sprite.setTexture(image_texture);
-    image_sprite.setPosition({(float) -scr_w / 2, (float) -scr_h / 2});
-    image_sprite.setScale(2 * (double) scr_w / img_size.x, 2 *(double) scr_h / img_size.y);
+    image_sprite.setScale((double) scr_w / img_size.x, (double) scr_h / img_size.y);
 
 // ============
 
@@ -64,6 +64,10 @@ render_threader(config_.sysinf.kernel_cnt, render_threaded)
 }
 
 void SFML_Interface::render_frame_threaded() {
+    for (int i = 0; i < pixel_cnt; ++i) {
+        new_frame.data_color[i] = {0, 255, 0};
+    }
+
     ProgressBar bar(stderr, 1);
     bar.start();
 
@@ -149,6 +153,7 @@ void SFML_Interface::run() {
 
 void SFML_Interface::stop() {
     render_threader.join();
+    printf("done\n");
 }
 
 void SFML_Interface::screenshot_to_file(const char *filename) {
