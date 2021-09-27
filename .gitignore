@@ -1,3 +1,6 @@
+# my files
+.vscode
+
 # Prerequisites
 *.d
 
@@ -36,4 +39,5 @@
 .idea
 cmake-build-debug
 build
-pather
+build/*
+zether
