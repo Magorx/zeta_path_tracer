@@ -117,7 +117,9 @@ void SFML_Interface::handle_events() {
         
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::F) {
-                screenshot_to_file(("scrsht_" + std::to_string(config.sysinf.timestamp) + "_" + std::to_string(consecutive_frames_cnt) + ".png").c_str());
+                auto filename = strdup(("scrsht_" + std::to_string(config.sysinf.timestamp) + "_" + std::to_string(consecutive_frames_cnt) + ".png").c_str());
+                screenshot_to_file(filename);
+                printf("[SCR] screenshot <%s> saved\n", filename);
             }
         }
     }

@@ -154,7 +154,7 @@ HittableList *cornell_box_objects() {
 
 	Hittable *model = new Model("../models/ship.obj", {m_glass2}, {0, 0, 0}, 7); // remove ../ if you build tracer NOT in build dir
 	model = new inst_RotY(new inst_RotZ(new inst_RotX(model, -Pi/10), -Pi/2.5), Pi/8);
-	model = new inst_Translate(model, {35, 50, 40});
+	model = new inst_Translate(model, {35, 45, 40});
 	
 	scene->insert(model);
 
