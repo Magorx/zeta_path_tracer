@@ -1,5 +1,4 @@
 #include "model.h"
-#include "triangle.h"
 
 Model::Model(const char *filename, std::vector<Material*> matrs, const Vec3d &offset, const Vec3d &scale) {
     load(filename, matrs, offset, scale);
@@ -7,17 +6,17 @@ Model::Model(const char *filename, std::vector<Material*> matrs, const Vec3d &of
 
 bool Model::load(const char *filename, std::vector<Material*> matrs, const Vec3d &offset, const Vec3d &scale) {
     if (!filename) {
-        fprintf(stderr, "[ERR] model::load filename[nullptr]\n");
+        logger.error("model", "trying to load filename[nullptr]");
         return false;
     }
     
     FILE *fin = fopen(filename, "r");
     if (!fin) {
-        fprintf(stderr, "[ERR] model::load can't open [%s]\n", filename);
+        logger.error("model", "failed to load (%s)", filename);
         return false;
     }
 
-    fprintf(stderr, "[INF] reading model [%s]\n", filename);
+    logger.info("model", "loading (%s)", filename);
 
     std::vector<Vec3d> points;
     char line_type[5];
@@ -38,7 +37,7 @@ bool Model::load(const char *filename, std::vector<Material*> matrs, const Vec3d
             --y;
             --z;
             if (x >= points.size() || y >= points.size() || z >= points.size()) {
-                fprintf(stderr, "[ERR] model::load point index overflow\n");
+                logger.error("model", "load point index overflow");
                 return false;
             }
 
@@ -57,7 +56,7 @@ bool Model::load(const char *filename, std::vector<Material*> matrs, const Vec3d
 
     }
     
-    fprintf(stderr, "[INF] read model [%s]: %zu verticies, %zu triangles\n", filename, points.size(), hittables.size());
+    logger.info("model", "(%zu) verticies, (%zu) triangles", points.size(), hittables.size());
 
     fclose(fin);
     return true;

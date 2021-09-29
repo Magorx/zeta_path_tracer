@@ -25,7 +25,7 @@ consecutive_frames_cnt(0),
 render_threader(config_.sysinf.kernel_cnt, render_threaded)
 {   
     if (!scene) {
-        fprintf(stderr, "[ERR] scene is nullptr, aborting\n");
+        fprintf(stderr, "[ERR] scene is nullptr, aborting");
     }
 
     image_texture.create(scene->camera->res_w, scene->camera->res_h);
@@ -34,7 +34,7 @@ render_threader(config_.sysinf.kernel_cnt, render_threaded)
 
     cur_image = (RGBA*) calloc(pixel_cnt, sizeof(RGBA));
     if (!cur_image) {
-        fprintf(stderr, "[ERR] Can't calloc buffer for current/new image [%dx%d]\n", img_size.x, img_size.y);
+        fprintf(stderr, "[ERR] Can't calloc buffer for current/new image [%dx%d]", img_size.x, img_size.y);
     }
 
     frame = Frame<Color, Vec3d, double>(img_size.x, img_size.y);
@@ -69,7 +69,7 @@ void SFML_Interface::render_frame_threaded() {
     render_threader.perform();
     timer.stop();
 
-    LOGGER.log("TMR", "timer", "%lldms", timer.elapsed);
+    logger.log("TMR", "timer", "%lldms", timer.elapsed);
 }
 
 void SFML_Interface::render_frame_portion() {
@@ -118,7 +118,7 @@ void SFML_Interface::handle_events() {
                 auto filename = strdup(("scrsht_" + std::to_string(config.sysinf.timestamp) + "_" + std::to_string(consecutive_frames_cnt) + ".png").c_str());
                 screenshot_to_file(filename);
 
-                LOGGER.log("SCR", "sfml_interface", "screenshot (%s) saved\n", filename);
+                logger.log("SCR", "sfml_interface", "screenshot (%s) saved", filename);
                 free(filename);
             }
         }

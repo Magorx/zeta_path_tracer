@@ -43,6 +43,8 @@ int main(int argc, char* argv[]) {
 	Brans::srand_sse(time(NULL));
 	srand(time(NULL));
 
+	logger.page_cut();
+
 	conf_Render conf_render(REAL_SCREEN_WIDTH * RESOLUTION_COEF, REAL_SCREEN_HEIGHT * RESOLUTION_COEF,
 							MAX_TRACE_DEPTH,
 							PIXEL_SAMPLING,
@@ -53,22 +55,26 @@ int main(int argc, char* argv[]) {
     conf_SystemInfo conf_sysinf(vec3d_randlong() % 10000, DEFAULT_THREADS_CNT, nullptr);
     conf_PathTracer conf_pt(conf_render, conf_verbos, conf_sysinf);
 
-	LOGGER.log("INF", "PathTracer", "process (%d) started", conf_pt.sysinf.timestamp);
+	logger.info("PathTracer", "process (%d) started", conf_pt.sysinf.timestamp);
 
     conf_pt.update_from_command_line_args(argc, argv);
  
-    if (VERBOSITY >= 2) LOGGER.log("INF", "PathTracer", "using (%d) threads", conf_pt.sysinf.kernel_cnt);
+    logger.info("PathTracer", "using (%d) threads", conf_pt.sysinf.kernel_cnt);
 
     Scene *scene = cornell_box_scene();
 
 	SFML_Interface interface("zether", scene, conf_pt, WINDOW_WIDTH, WINDOW_HEIGHT, PIXEL_SAMPLING);
 
-	if (VERBOSITY >= 1) LOGGER.log("INF", "sfml_interface", "launching, press F to make a screenshot");
+	logger.info("sfml_interface", "launching, press F to make a screenshot");
+
+	logger.page_cut("interface.run()");
 
 	interface.run();
 	interface.stop();
 
-	if (VERBOSITY >= 1) LOGGER.log("INF", "PathTracing", "process [%d] finished", conf_pt.sysinf.timestamp);
+	logger.page_cut();
+
+	logger.info("PathTracing", "process [%d] finished", conf_pt.sysinf.timestamp);
 
 	return 0;
 }
