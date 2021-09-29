@@ -1,5 +1,6 @@
 #include "interface.h"
 
+
 SFML_Interface::SFML_Interface(const char *window_name, Scene *scene_, const conf_PathTracer config_, int scr_w_, int scr_h_, int pixel_sampling_per_render_):
 window(sf::VideoMode(scr_w_, scr_h_), window_name),
 image_texture(),
@@ -66,8 +67,9 @@ void SFML_Interface::render_frame_threaded() {
     Timer timer;
 
     render_threader.perform();
-    
-    timer.print();
+    timer.stop();
+
+    LOGGER.log("TMR", "timer", "%lldms", timer.elapsed);
 }
 
 void SFML_Interface::render_frame_portion() {
@@ -97,10 +99,6 @@ void SFML_Interface::render_frame_portion() {
 }
 
 void SFML_Interface::flush_to_texture() {
-    if (!scene || !scene->camera) {
-        printf("[ERR] BAD scene or scene->camera in sfml_interface during flush_to_texture()");
-    }
-
     image_texture.update((sf::Uint8*) cur_image);
 }
 
@@ -119,7 +117,9 @@ void SFML_Interface::handle_events() {
             if (event.key.code == sf::Keyboard::F) {
                 auto filename = strdup(("scrsht_" + std::to_string(config.sysinf.timestamp) + "_" + std::to_string(consecutive_frames_cnt) + ".png").c_str());
                 screenshot_to_file(filename);
-                printf("[SCR] screenshot <%s> saved\n", filename);
+
+                LOGGER.log("SCR", "sfml_interface", "screenshot (%s) saved\n", filename);
+                free(filename);
             }
         }
     }

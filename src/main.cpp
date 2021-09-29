@@ -10,8 +10,8 @@ const int VERBOSITY = 2; // 2 for detailed log of some things
 const int WINDOW_WIDTH  = 1000;
 const int WINDOW_HEIGHT = 1000;
 
-const int PIXEL_SCREEN_WIDTH  = 200;
-const int PIXEL_SCREEN_HEIGHT = 200;
+const int PIXEL_SCREEN_WIDTH  = 150;
+const int PIXEL_SCREEN_HEIGHT = 150;
 
 const int 	 PIXEL_SAMPLING   = 1;
 const int 	 MAX_TRACE_DEPTH  = 7;
@@ -40,24 +40,6 @@ Scene 		 *cornell_box_scene();
 // ============================================================================
 
 int main(int argc, char* argv[]) {
-	LOGGER.log("INFO", "main", "info [%d] message [%s]", 7, "done");
-	LOGGER.log("BEBIS", "your mom", "info [%d] message [%s]", 7, "ahhhh");
-	LOGGER.log("BEBIS", "your mom", "info [%d] message [%s]", 7, "ahhhh");
-	LOGGER.log("BEBIS", "your mom", "info [%d] message [%s]", 7, "ahhhh");
-	LOGGER.log("BEBIS", "main", "info [%d] message [%s]", 7, "done");
-
-	LOGGER.n();
-
-	LOGGER.log("INFO", "main", "amogus");
-	LOGGER.log("INFO", "main", "amogusan");
-	LOGGER.log("BACK", "main", "amogus");
-	LOGGER.log("BACK", "main", "amogus");
-	LOGGER.log("BACK", "zurandas", "amogus");
-	LOGGER.log("INFO", "zurandas", "amogus");
-	LOGGER.log("BACK", "zurandas", "amogus");
-
-	return 0;
-
 	Brans::srand_sse(time(NULL));
 	srand(time(NULL));
 
@@ -71,22 +53,22 @@ int main(int argc, char* argv[]) {
     conf_SystemInfo conf_sysinf(vec3d_randlong() % 10000, DEFAULT_THREADS_CNT, nullptr);
     conf_PathTracer conf_pt(conf_render, conf_verbos, conf_sysinf);
 
-	if (VERBOSITY >= 1) printf("[INF] PathTracing process [%d] started\n", conf_pt.sysinf.timestamp);
+	LOGGER.log("INF", "PathTracer", "process (%d) started", conf_pt.sysinf.timestamp);
 
     conf_pt.update_from_command_line_args(argc, argv);
  
-    if (VERBOSITY >= 2) printf("[INF] threads: %d\n", conf_pt.sysinf.kernel_cnt);
+    if (VERBOSITY >= 2) LOGGER.log("INF", "PathTracer", "using (%d) threads", conf_pt.sysinf.kernel_cnt);
 
     Scene *scene = cornell_box_scene();
 
 	SFML_Interface interface("zether", scene, conf_pt, WINDOW_WIDTH, WINDOW_HEIGHT, PIXEL_SAMPLING);
 
-	if (VERBOSITY >= 1) printf("[INF] launching sfml interface, press F to make a screenshot\n");
+	if (VERBOSITY >= 1) LOGGER.log("INF", "sfml_interface", "launching, press F to make a screenshot");
 
 	interface.run();
 	interface.stop();
 
-	if (VERBOSITY >= 1) printf("[INF] PathTracing process [%d] finished\n", conf_pt.sysinf.timestamp);
+	if (VERBOSITY >= 1) LOGGER.log("INF", "PathTracing", "process [%d] finished", conf_pt.sysinf.timestamp);
 
 	return 0;
 }

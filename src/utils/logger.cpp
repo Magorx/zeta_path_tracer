@@ -29,9 +29,19 @@ void Logger::print_nullptr_passed_error() const {
 
 void Logger::tick() {
     ++tick_timer;
-    if (tick_timer % reset_max_lens_counter == 0) {
+    if ((tick_timer % reset_max_lens_counter) == 0) {
         max_code_len = 0;
         max_announcer_len = 0;
+
+        if (last_announcer) {
+            free(last_announcer);
+            last_announcer = nullptr;
+        }
+
+        if (last_code) {
+            free(last_code);
+            last_code = nullptr;
+        }
     }
 }
 
@@ -79,6 +89,8 @@ void Logger::log(const char* code, const char* announcer, const char *message, .
         print_nullptr_passed_error();
         return;
     }
+
+    tick();
 
     update_announcer(announcer);
     update_code(code);

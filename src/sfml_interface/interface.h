@@ -10,6 +10,7 @@
 #include "image/frame.h"
 
 #include "utils/timer.h"
+#include "utils/logger.h"
 
 class SFML_Interface {
     sf::RenderWindow window;
