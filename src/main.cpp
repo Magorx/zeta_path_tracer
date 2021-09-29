@@ -1,6 +1,8 @@
 #include "PathTracer.hpp"
 #include "sfml_interface/interface.h"
 
+#include "utils/logger.h"
+
 // settings ===================================================================
 
 const int VERBOSITY = 2; // 2 for detailed log of some things
@@ -38,6 +40,24 @@ Scene 		 *cornell_box_scene();
 // ============================================================================
 
 int main(int argc, char* argv[]) {
+	LOGGER.log("INFO", "main", "info [%d] message [%s]", 7, "done");
+	LOGGER.log("BEBIS", "your mom", "info [%d] message [%s]", 7, "ahhhh");
+	LOGGER.log("BEBIS", "your mom", "info [%d] message [%s]", 7, "ahhhh");
+	LOGGER.log("BEBIS", "your mom", "info [%d] message [%s]", 7, "ahhhh");
+	LOGGER.log("BEBIS", "main", "info [%d] message [%s]", 7, "done");
+
+	LOGGER.n();
+
+	LOGGER.log("INFO", "main", "amogus");
+	LOGGER.log("INFO", "main", "amogusan");
+	LOGGER.log("BACK", "main", "amogus");
+	LOGGER.log("BACK", "main", "amogus");
+	LOGGER.log("BACK", "zurandas", "amogus");
+	LOGGER.log("INFO", "zurandas", "amogus");
+	LOGGER.log("BACK", "zurandas", "amogus");
+
+	return 0;
+
 	Brans::srand_sse(time(NULL));
 	srand(time(NULL));
 

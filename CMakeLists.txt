@@ -41,6 +41,7 @@ add_executable(zepthir
         src/utils/vec3d.cpp
         src/utils/ray.cpp
         src/utils/timer.cpp
+        src/utils/logger.cpp
 
         src/tracer/path_tracer.cpp
 
