@@ -32,6 +32,7 @@ Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &confi
 	HitRecord hitrec;
     hitrec.dist = INFINITY;
     hittable->hit(ray, &hitrec);
+	hitrec.normal.normalize();
 
 	if (hitrec.dist == INFINITY || hitrec.dist < 0) {
 		return config.render.BACKGROUND_COLOR;
@@ -41,10 +42,10 @@ Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &confi
 		}
 
 		if (normal_vec) {
-			*normal_vec = (hitrec.normal + Vec3d(1, 1, 1)) / 2 * d_MAXRGB;
+			*normal_vec += hitrec.normal;
 		}
 		if (depth) {
-			*depth = hitrec.dist;
+			*depth += hitrec.dist;
 		}
 
 		Ray scattered_ray;
@@ -70,6 +71,10 @@ Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_
 
 	Ray central_ray = camera->get_sample_ray((double) px_x, (double) px_y);
 	accumulator += trace_ray(central_ray, hittable, config, 1, normal, depth);
+
+	*normal /= (double) config.render.PIXEL_SAMPLING;
+	normal->normalize();
+	*depth  /= (double) config.render.PIXEL_SAMPLING;
 
 	return accumulator / config.render.PIXEL_SAMPLING;
 }

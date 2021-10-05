@@ -123,7 +123,7 @@ private:
 
     void normals_to_final_image(const int) {
         for (size_t i = 0; i < pixel_cnt; ++i) {
-            final_image[i] = data_normal[i];
+            final_image[i] = (data_normal[i] + Vec3d(1, 1, 1)) / 2 * d_MAXRGB;;
         }
     }
 

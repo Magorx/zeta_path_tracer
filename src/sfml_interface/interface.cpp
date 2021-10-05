@@ -88,6 +88,7 @@ void SFML_Interface::render_frame_portion() {
     
     memcpy(frame.data_normal, new_frame.data_normal, frame.pixel_cnt * sizeof(Vec3d));
     memcpy(frame.data_depth, new_frame.data_depth, frame.pixel_cnt * sizeof(double));
+
     if (!consecutive_frames_cnt) {
         memcpy(frame.data_color, new_frame.data_color, pixel_cnt * sizeof(Color));
     } else {
@@ -98,7 +99,7 @@ void SFML_Interface::render_frame_portion() {
     }
 
     frame.set_post_processing(FramePostproc::copy);
-    frame.postproc(2);
+    frame.postproc(1);
     color_to_rgb_buffer(frame.final_image, cur_image, config.render.GAMMA_CORRECTION, pixel_cnt);
 
     ++consecutive_frames_cnt;

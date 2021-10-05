@@ -110,6 +110,10 @@ struct Vec3d {
     Vec3d &rotx(double ang);
     Vec3d &roty(double ang);
     Vec3d &rotz(double ang);
+
+    inline double x() const { return content[0]; }
+    inline double y() const { return content[1]; }
+    inline double z() const { return content[2]; }
 };
 
 extern const Vec3d VEC3D_ZERO;
