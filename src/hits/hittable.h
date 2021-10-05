@@ -18,6 +18,14 @@ struct Hittable {
     virtual bool get_surface_coords(const Vec3d &point, double &sx, double &sy) const;
 
     virtual Hittable* get_bvh_tree();
+
+    virtual void dump_bvh(int depth) {
+        for (int i = 0; i < depth; ++i) {
+            putchar(' ');
+            putchar(' ');
+        }
+        printf("leaf\n");
+    }
 };
 
 #endif // HITTABLE

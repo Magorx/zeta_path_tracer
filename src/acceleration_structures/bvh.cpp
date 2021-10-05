@@ -128,3 +128,24 @@ bool BVH_Node::bounding_box(AABB &output_box) const {
 	output_box = box;
     return true;
 }
+
+void BVH_Node::dump_bvh(int depth) {
+	for (int i = 0; i < depth; ++i) {
+		putchar(' ');
+		putchar(' ');
+	}
+	printf("node {\n");
+
+	if (left) {
+		left->dump_bvh(depth + 1);
+	}
+	if (right) {
+		right->dump_bvh(depth + 1);
+	}
+
+	for (int i = 0; i < depth; ++i) {
+		putchar(' ');
+		putchar(' ');
+	}
+	printf("} \n");
+}

@@ -69,6 +69,8 @@ int main(int argc, char* argv[]) {
 
 	logger.page_cut("interface.run()");
 
+	scene->objects->dump_bvh(0);
+
 	interface.run();
 	interface.stop();
 
