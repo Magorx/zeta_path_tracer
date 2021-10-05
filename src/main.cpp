@@ -55,15 +55,15 @@ int main(int argc, char* argv[]) {
     conf_SystemInfo conf_sysinf(vec3d_randlong() % 10000, DEFAULT_THREADS_CNT, nullptr);
     conf_PathTracer conf_pt(conf_render, conf_verbos, conf_sysinf);
 
-	logger.info("PathTracer", "process (%d) started", conf_pt.sysinf.timestamp);
+	conf_pt.update_from_command_line_args(argc, argv);
 
-    conf_pt.update_from_command_line_args(argc, argv);
- 
-    logger.info("PathTracer", "using (%d) threads", conf_pt.sysinf.kernel_cnt);
+	logger.info("Zepher", "process (%d) started", conf_pt.sysinf.timestamp);
+    logger.info("Zepher", "using (%d) threads", conf_pt.sysinf.kernel_cnt);
 
     Scene *scene = cornell_box_scene();
+	logger.info("Zepher", "scene prepared");
 
-	SFML_Interface interface("zether", scene, conf_pt, WINDOW_WIDTH, WINDOW_HEIGHT, PIXEL_SAMPLING);
+	SFML_Interface interface("Zepher", scene, conf_pt, WINDOW_WIDTH, WINDOW_HEIGHT, PIXEL_SAMPLING);
 
 	logger.info("sfml_interface", "launching, press F to make a screenshot");
 
@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
 
 	logger.page_cut();
 
-	logger.info("PathTracing", "process [%d] finished", conf_pt.sysinf.timestamp);
+	logger.info("Zepher", "process [%d] finished", conf_pt.sysinf.timestamp);
 
 	return 0;
 }
@@ -158,18 +158,25 @@ HittableList *cornell_box_objects() {
 	scene->insert(rect_rwall);
 
 	scene->insert(rect_light);
-	scene->insert(rect_light_floor);
+	// scene->insert(rect_light_floor);
 
-	Hittable *model = new Model("../models/bobs.obj", {m_glass2}, {0, 0, 0}, 10); // remove ../ if you build tracer NOT in build dir
-	model = new inst_RotZ(new inst_RotX(model, Pi / 2.3), Pi/4);
+	Hittable *model = new Model("../models/ship.obj", {m_glass2}, {0, 0, 0}, 5.5); // remove ../ if you build tracer NOT in build dir
+	model = new inst_RotZ(new inst_RotX(model, 0), Pi/2);
 	model = new inst_Translate(model, {35, 45, 40});
 	
 	scene->insert(model);
+
+	// Material *mat = new m_Lambertian(new t_Checkered(Color{125, 175, 225}, VEC3D_ZERO, VEC3D_ONE * 0.25));
+	// Light *lig = new l_Diffuse({255, 255, 255});
+	// mat->set_emitter(lig);
+	// Hittable *sphere = new h_Sphere({depth / 2, width / 3, heigh / 3}, heigh / 4, mat);
+	// scene->insert(sphere);
 
 	if (0) { // so not to see "unused" warnings
 		scene->insert(rot_box_1);
 		scene->insert(rot_box_2);
 		scene->insert(rot_box_3);
+		scene->insert(rect_light_floor);
 	}
 
 	return scene;

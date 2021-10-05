@@ -118,7 +118,7 @@ void SFML_Interface::handle_events() {
                 auto filename = strdup(("scrsht_" + std::to_string(config.sysinf.timestamp) + "_" + std::to_string(consecutive_frames_cnt) + ".png").c_str());
                 screenshot_to_file(filename);
 
-                logger.log("SCR", "sfml_interface", "screenshot (%s) saved", filename);
+                logger.logr("SCR", "sfml_interface", "screenshot (%s) saved", filename);
                 free(filename);
             }
         }

@@ -22,6 +22,8 @@ Vec3d::Vec3d(double x_, double y_, double z_) {
     content = {x_, y_, z_};
 }
 
+Vec3d::Vec3d(content3 newContent) : content(newContent) {}
+
 [[maybe_unused]] Vec3d Vec3d::orient(const Vec3d &axis) {
     if(axis.dot(*this) < 0) {
         *this *= -1.0;
@@ -37,7 +39,58 @@ Vec3d &Vec3d::abs() {
     return *this;
 }
 
-Vec3d::Vec3d(content3 newContent) : content(newContent) {}
+Vec3d &Vec3d::rotx(double ang) {
+    double x = content[0];
+    double y = content[1] * cos(ang) - content[2] * sin(ang);
+    double z = content[2] * cos(ang) + content[1] * sin(ang);
+    
+    content[0] = x;
+    content[1] = y;
+    content[2] = z;
+
+    return *this;
+}
+
+Vec3d &Vec3d::roty(double ang) {
+    double x = content[0] * cos(ang) + content[2] * sin(ang);
+    double y = content[1];
+    double z = content[2] * cos(ang) - content[0] * sin(ang);
+    
+    content[0] = x;
+    content[1] = y;
+    content[2] = z;
+
+    return *this;
+}
+
+Vec3d &Vec3d::rotz(double ang) {
+    double x = content[0] * cos(ang) - content[1] * sin(ang);
+    double y = content[1] * cos(ang) - content[0] * sin(ang);
+    double z = content[2];
+    
+    content[0] = x;
+    content[1] = y;
+    content[2] = z;
+
+    return *this;
+}
+
+Vec3d Vec3d::random_in_unit_sphere() {
+    unsigned int random_values[4];
+    Brans::rand_sse(random_values);
+
+    double phi = ((double)(int)random_values[0] / (double)INT32_MAX) * M_PI;
+    double psi = ((double)(int)random_values[1] / (double)INT32_MAX) * M_PI / 2;
+
+    // double phi = vec3d_randdouble(-M_PI, M_PI);
+    // double psi = vec3d_randdouble(-M_PI/2, M_PI/2);
+
+    Vec3d rv(1, 0, 0);
+    rv.roty(psi).rotz(phi);
+
+    return rv;
+}
+
 
 Vec3d rotx(const Vec3d vec, double ang) {
     double x = vec.content[0];

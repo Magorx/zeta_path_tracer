@@ -1,16 +1,16 @@
 ~~~ soon ~~~
 Scene.is_ready()
-.obj file textures and normals usage
 
 --- not soon ---
 marble texture
 plane hittable
 fix denoiser
 fix all the memory leaks
+interface overhaul
 
 === NOT soon ===
+.obj file textures and normals usage
 separate thread for the interface
-interface overhaul
 scene editor
 model editor
 

@@ -44,10 +44,13 @@ class Logger {
     void _log(bool to_ignore_log_level, const char* code, const char* announcer, const char *message, va_list arglist);
 
 public:
+    int paging_mode;
+
     Logger(FILE *fileptr = stdout, int log_level=5, int reset_max_lens_counter = 50);
 
-    void log(const char* code, const char* announcer, const char *message, ...);
+    void log(const char* code, const char* announcer, const char *message, ...); // normal logging
     void log(int override_log_level, const char* code, const char* announcer, const char *message, ...);
+    void logr(const char* code, const char* announcer, const char *message, ...); // reset maxlens and lasts
     
     void error   (const char* announcer, const char *message, ...);
     void ERROR   (const char* announcer, const char *message, ...);
@@ -58,11 +61,19 @@ public:
     void n();
     void page_cut(const char *page_name = nullptr, int page_len = 80, char symb = '=');
 
+    inline void resets() {
+        reset_lasts();
+        reset_max_lens();
+        tick_timer = 0;
+    }
+
     int  get_log_level() const;
     void set_log_level(int log_level_);
 
     int  get_verb_level() const;
     void set_verb_level(int verb_level_);
+
+    void reset_max_lens();
 };
 
 extern Logger logger;

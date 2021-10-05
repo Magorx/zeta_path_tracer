@@ -101,19 +101,15 @@ struct Vec3d {
         return {x, y, z};
     }
 
-    inline static Vec3d random_in_unit_sphere() {
-        Vec3d rv = Vec3d::random(-1, 1);
-        for(int i = 0; i < VEC3_MAX_RANDOM_TRIES_CNT && rv.len_squared() > 1; ++i, rv = Vec3d::random(-1, 1));
-        return rv;
-    }
-
-    inline static Vec3d random_unit() {
-        return Vec3d::random(-1, 1).normal();
-    }
+    static Vec3d random_in_unit_sphere();
 
     inline static double sign(const double x) {
         return fabs(x) < VEC3_EPS ? 0 : x > 0 ? 1 : -1;
     }
+
+    Vec3d &rotx(double ang);
+    Vec3d &roty(double ang);
+    Vec3d &rotz(double ang);
 };
 
 extern const Vec3d VEC3D_ZERO;

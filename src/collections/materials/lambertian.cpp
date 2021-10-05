@@ -14,7 +14,7 @@ to_affect_emitter(1)
 
 bool m_Lambertian::scatter(const Ray &, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
 	Vec3d scatter_direction = hitrec.normal;
-    scatter_direction += Vec3d::random_unit(); // TODO plz
+    scatter_direction += Vec3d::random_in_unit_sphere(); // TODO plz
 	if (scatter_direction.is_zero()) {
 		scatter_direction = hitrec.normal;
 	}

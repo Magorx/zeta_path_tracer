@@ -18,7 +18,8 @@ reset_max_lens_counter(reset_max_lens_counter),
 tick_timer(0),
 log_level(log_level),
 verb_level(5),
-page_cnt(0)
+page_cnt(0),
+paging_mode(0)
 {
     if (!reset_max_lens_counter) {
         reset_max_lens_counter = 1;
@@ -34,11 +35,15 @@ void Logger::print_nullptr_passed_error() const {
     fprintf(stderr, "[ERR] logger called with something == nullptr, it will crush your programm\n");
 }
 
+void Logger::reset_max_lens() {
+    max_code_len = 0;
+    max_announcer_len = 0;
+}
+
 void Logger::tick() {
     ++tick_timer;
     if ((tick_timer % reset_max_lens_counter) == 0) {
-        max_code_len = 0;
-        max_announcer_len = 0;
+        reset_max_lens();
 
         reset_lasts();
     }
@@ -144,6 +149,15 @@ void Logger::log(const char* code, const char* announcer, const char *message, .
     va_end(args);
 }
 
+void Logger::logr(const char* code, const char* announcer, const char *message, ...) {
+    va_list args;
+    va_start(args, message);
+    _log(false, code, announcer, message, args);
+    va_end(args);
+
+    resets();
+}
+
 void Logger::log(int override_log_level, const char* code, const char* announcer, const char *message, ...) {
     if (override_log_level < verb_level) return;
 
@@ -195,11 +209,14 @@ void Logger::n() {
 void Logger::page_cut(const char *page_name, int page_len, char symb) {
     while (page_len-- > 0) fputc(symb, fileptr);
     
-    if (page_name)
+    if (page_name) {
         fprintf(fileptr, " [%d] %s", page_cnt++, page_name);
+    } else if (paging_mode) {
+        fprintf(fileptr, " [%d]", page_cnt++);
+    }
     n();
 
-    reset_lasts();
+    resets();
 }
 
 int  Logger::get_log_level() const {
