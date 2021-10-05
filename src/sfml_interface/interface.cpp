@@ -22,7 +22,10 @@ new_frame(),
 
 consecutive_frames_cnt(0),
 
-render_threader(config_.sysinf.kernel_cnt, render_threaded)
+render_threader(config_.sysinf.kernel_cnt, render_threaded),
+
+average_frame_ms(0),
+average_frame_cnt(0)
 {   
     if (!scene) {
         fprintf(stderr, "[ERR] scene is nullptr, aborting");
@@ -69,7 +72,10 @@ void SFML_Interface::render_frame_threaded() {
     render_threader.perform();
     timer.stop();
 
-    logger.log("TMR", "timer", "%lldms", timer.elapsed);
+    average_frame_ms += timer.elapsed;
+    average_frame_cnt++;
+
+    logger.log("TMR", "timer", "%lldms | mean = %lldms", timer.elapsed, average_frame_ms / average_frame_cnt);
 }
 
 void SFML_Interface::render_frame_portion() {

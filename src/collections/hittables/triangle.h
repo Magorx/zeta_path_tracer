@@ -5,8 +5,12 @@
 
 struct Triangle : Hittable {
     Vec3d p0;
-    Vec3d p1;
-    Vec3d p2;
+
+    Vec3d e1;
+    Vec3d e2;
+
+    inline Vec3d p1() const { return p0 + e1; }
+    inline Vec3d p2() const { return p0 + e2; }
 
     Triangle();
     Triangle(const Vec3d &point_0, const Vec3d &point_1, const Vec3d &point_2, Material *material_);

@@ -3,38 +3,42 @@
 Triangle::Triangle():
 Hittable(),
 p0(0, 0, 0),
-p1(1, 0, 0),
-p2(0, 1, 0)
+e1(1, 0, 0),
+e2(0, 1, 0)
 {}
 
 Triangle::Triangle(const Vec3d &point_0, const Vec3d &point_1, const Vec3d &point_2, Material *material_):
 Hittable(material_),
 p0(point_0),
-p1(point_1),
-p2(point_2)
+e1(point_1 - point_0),
+e2(point_2 - point_0)
 {}
 
 bool Triangle::hit(Ray &ray, HitRecord* hit_record) const {
     Vec3d edge1, edge2, h, s, q;
-    double a, f, u, v;
+    double a, u, v;
 
-    edge1 = p1 - p0;
-    edge2 = p2 - p0;
+    edge1 = e1;
+    edge2 = e2;
     h = ray.dir.cross(edge2);
     a = edge1.dot(h);
+
     if (a > -VEC3_EPS && a < VEC3_EPS)
         return false;    // This ray is parallel to this triangle.
-    f = 1.0 / a;
-    s = ray.orig - p0;
-    u = f * s.dot(h);
+
+    s = ray.orig;
+    s -= p0;
+    s /= a;
+
+    u = s.dot(h);
     if (u < 0.0 || u > 1.0)
         return false;
     q = s.cross(edge1);
-    v = f * ray.dir.dot(q);
+    v = ray.dir.dot(q);
     if (v < 0.0 || u + v > 1.0)
         return false;
     // At this stage we can compute t to find out where the intersection point is on the line.
-    double t = f * edge2.dot(q);
+    double t = edge2.dot(q);
     if (t > VEC3_EPS && t < hit_record->dist) // ray intersection
     {
         hit_record->point = ray.cast(t);
@@ -53,13 +57,16 @@ bool Triangle::hit(Ray &ray, HitRecord* hit_record) const {
 }
 
 bool Triangle::bounding_box(AABB &box) const {
-    box =  AABB({std::min(p0[0], std::min(p1[0], p2[0])),
-                 std::min(p0[1], std::min(p1[1], p2[1])),
-                 std::min(p0[2], std::min(p1[2], p2[2]))},
+    Vec3d P1 = p1();
+    Vec3d P2 = p2();
+
+    box =  AABB({std::min(p0[0], std::min(P1[0], P2[0])),
+                 std::min(p0[1], std::min(P1[1], P2[1])),
+                 std::min(p0[2], std::min(P1[2], P2[2]))},
                 {
-                 std::max(p0[0], std::max(p1[0], p2[0])),
-                 std::max(p0[1], std::max(p1[1], p2[1])),
-                 std::max(p0[2], std::max(p1[2], p2[2]))
+                 std::max(p0[0], std::max(P1[0], P2[0])),
+                 std::max(p0[1], std::max(P1[1], P2[1])),
+                 std::max(p0[2], std::max(P1[2], P2[2]))
                 });
     return true;
 }

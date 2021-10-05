@@ -10,15 +10,15 @@ const int VERBOSITY = 2; // 2 for detailed log of some things
 const int WINDOW_WIDTH  = 1000;
 const int WINDOW_HEIGHT = 1000;
 
-const int PIXEL_SCREEN_WIDTH  = 150;
-const int PIXEL_SCREEN_HEIGHT = 150;
+const int PIXEL_SCREEN_WIDTH  = 200;
+const int PIXEL_SCREEN_HEIGHT = 200;
 
 const int 	 PIXEL_SAMPLING   = 1;
 const int 	 MAX_TRACE_DEPTH  = 7;
 
 const double GAMMA_CORRECTION = 0.37;
 
-const int DEFAULT_THREADS_CNT = 1;
+const int DEFAULT_THREADS_CNT = 4;
 
 // ============================================================================
 
@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
 
 	logger.page_cut("interface.run()");
 
-	scene->objects->dump_bvh(0);
+	// scene->objects->dump_bvh(0);
 
 	interface.run();
 	interface.stop();
@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
 
 Scene *cornell_box_scene() {
 	Camera *camera = new Camera({-100, 50, 50}, {1, 0, 0}, 
-    							100,
+    							200,
     							REAL_SCREEN_WIDTH, REAL_SCREEN_HEIGHT,
     							RESOLUTION_COEF);
 	HittableList *objects = cornell_box_objects();
@@ -160,11 +160,13 @@ HittableList *cornell_box_objects() {
 	scene->insert(rect_rwall);
 
 	scene->insert(rect_light);
-	// scene->insert(rect_light_floor);
 
-	Hittable *model = new Model("../models/ship.obj", {m_glass2}, {0, 0, 0}, 5.5); // remove ../ if you build tracer NOT in build dir
-	model = new inst_RotZ(new inst_RotX(model, 0), Pi/2);
-	model = new inst_Translate(model, {35, 45, 40});
+
+	Material *m_model = new m_Lambertian({255, 255, 30});	
+
+	Hittable *model = new Model("../models/WhipperNude.obj", {m_model}, {0, 0, 0}, 17); // remove ../ if you build tracer NOT in build dir
+	model = new inst_RotZ(new inst_RotX(model, -Pi/2), Pi/2);
+	model = new inst_Translate(model, {60, 50, 0});
 	
 	scene->insert(model);
 

@@ -34,6 +34,9 @@ class SFML_Interface {
 
     Threader<ThreadRenderTask> render_threader;
 
+    long average_frame_ms;
+    long average_frame_cnt;
+
     void render_frame_portion();
     void render_frame_threaded();
     void flush_to_texture();

@@ -11,7 +11,7 @@ set(WARNING_FLAGS "-Wall -Wextra -Wno-multichar -Wno-unused-result")
 include_directories(src)
 
 set(CMAKE_EXE_LINKER_FLAGS "-pthread")
-set(CMAKE_CXX_FLAGS   "-O3 -g ${WARNING_FLAGS} -fdeclspec -march=native")
+set(CMAKE_CXX_FLAGS   "-O3 ${WARNING_FLAGS} -fdeclspec -march=native")
 
 find_package(SFML 2 COMPONENTS system window graphics network audio REQUIRED)
 
