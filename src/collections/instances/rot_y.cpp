@@ -3,7 +3,7 @@
 
 inst_RotY::inst_RotY(Hittable *obj_, const double angle): inst_RotY(obj_, sin(angle), cos(angle)) {}
 inst_RotY::inst_RotY(Hittable *obj_, const double sin_a, const double cos_a):
-obj(obj_),
+Instance(obj_),
 cos_a(cos_a),
 sin_a(sin_a),
 has_bbox(false),

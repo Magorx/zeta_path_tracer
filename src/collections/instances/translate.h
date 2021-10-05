@@ -3,9 +3,8 @@
 
 #include "utils_header.h"
 
-class inst_Translate : public Hittable {
+class inst_Translate : public Instance {
 public:
-	Hittable *obj;
 	Vec3d offset;
 
 	inst_Translate(Hittable *obj_, const Vec3d &offset_);

@@ -24,20 +24,14 @@ public:
     Hittable* get_bvh_tree() override;
 
 	virtual void dump_bvh(int depth) override {
-        for (int i = 0; i < depth; ++i) {
-            putchar(' ');
-            putchar(' ');
-        }
+        dump_spaces(depth);
         printf("hitlist {\n");
 
 		for (auto obj : hittables) {
 			obj->dump_bvh(depth + 1);
 		}
 
-		for (int i = 0; i < depth; ++i) {
-            putchar(' ');
-            putchar(' ');
-        }
+		dump_spaces(depth);
         printf("} \n");
     }
 };

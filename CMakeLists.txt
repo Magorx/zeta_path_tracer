@@ -62,6 +62,7 @@ add_executable(zepher
         src/collections/hittables/model.cpp
 
         src/collections/instances/translate.cpp
+        src/collections/instances/instance.cpp
         src/collections/instances/rot_x.cpp
         src/collections/instances/rot_y.cpp
         src/collections/instances/rot_z.cpp

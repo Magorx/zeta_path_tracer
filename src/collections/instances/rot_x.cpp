@@ -3,11 +3,12 @@
 
 inst_RotX::inst_RotX(Hittable *obj_, const double angle): inst_RotX(obj_, sin(angle), cos(angle)) {}
 inst_RotX::inst_RotX(Hittable* obj_, const double sin_a, const double cos_a):
-        obj(obj_),
-        cos_a(cos_a),
-        sin_a(sin_a),
-        has_bbox(false),
-        bbox() {
+Instance(obj_),
+cos_a(cos_a),
+sin_a(sin_a),
+has_bbox(false),
+bbox()
+{
     has_bbox = obj->bounding_box(bbox);
 
     Vec3d mn( VEC3D_INF,  VEC3D_INF,  VEC3D_INF);

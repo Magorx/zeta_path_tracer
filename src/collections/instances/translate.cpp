@@ -1,7 +1,7 @@
 #include "translate.h"
 
 inst_Translate::inst_Translate(Hittable *obj_, const Vec3d &offset_):
-obj(obj_),
+Instance(obj_),
 offset(offset_)
 {}
 

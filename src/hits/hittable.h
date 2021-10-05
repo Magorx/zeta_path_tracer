@@ -19,11 +19,15 @@ struct Hittable {
 
     virtual Hittable* get_bvh_tree();
 
-    virtual void dump_bvh(int depth) {
+    void dump_spaces(int depth) {
         for (int i = 0; i < depth; ++i) {
             putchar(' ');
             putchar(' ');
         }
+    }
+
+    virtual void dump_bvh(int depth) {
+        dump_spaces(depth);
         printf("leaf\n");
     }
 };

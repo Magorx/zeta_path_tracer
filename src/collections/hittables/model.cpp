@@ -62,10 +62,3 @@ bool Model::load(const char *filename, std::vector<Material*> matrs, const Vec3d
     return true;
 }
 
-void Model::dump_bvh(int depth) {
-    for (int i = 0; i < depth; ++i) {
-        putchar(' ');
-        putchar(' ');
-    }
-    printf("leaf\n");
-}

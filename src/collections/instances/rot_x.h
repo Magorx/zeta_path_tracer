@@ -3,9 +3,8 @@
 
 #include "utils_header.h"
 
-class inst_RotX : public Hittable {
+class inst_RotX : public Instance {
 public:
-	Hittable *obj;
 	double cos_a;
 	double sin_a;
 	bool has_bbox;
