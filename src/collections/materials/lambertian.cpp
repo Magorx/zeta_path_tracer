@@ -1,5 +1,6 @@
 #include "lambertian.h"
 
+
 m_Lambertian::m_Lambertian(const Color &albedo_):
 Material(),
 albedo(new t_SolidColor(albedo_)),
@@ -14,7 +15,7 @@ to_affect_emitter(1)
 
 bool m_Lambertian::scatter(const Ray &, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
 	Vec3d scatter_direction = hitrec.normal;
-    scatter_direction += Vec3d::random_in_unit_sphere(); // TODO plz
+    scatter_direction += Vec3d::random_in_unit_sphere();
 	if (scatter_direction.is_zero()) {
 		scatter_direction = hitrec.normal;
 	}
