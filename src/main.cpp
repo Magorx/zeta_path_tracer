@@ -83,8 +83,8 @@ int main(int argc, char* argv[]) {
 //=============================================================================
 
 Scene *cornell_box_scene() {
-	Camera *camera = new Camera({-100, 50, 60}, {1, 0, 0}, 
-    							300,
+	Camera *camera = new Camera({-100, 50, 50}, {1, 0, 0}, 
+    							100,
     							REAL_SCREEN_WIDTH, REAL_SCREEN_HEIGHT,
     							RESOLUTION_COEF);
 	HittableList *objects = cornell_box_objects();
@@ -103,7 +103,7 @@ HittableList *cornell_box_objects() {
 	Material *m_green = new m_Lambertian({  0, 255,   0});
 
     Material *m_mirror = new m_Metal({255, 255, 125}, 0.05);
-    Material *m_glass  = new m_Dielectric({125, 255, 200}, 1.1);
+    Material *m_glass  = new m_Dielectric({255, 255, 255}, 1.1, 0);
     Material *m_glass2  = new m_Dielectric({130, 130, 255}, 2.4);
 
 	// Material *m_box_1 = new m_Lambertian({255, 255, 255}); ^^^^^^^^^^^^^
@@ -171,7 +171,10 @@ HittableList *cornell_box_objects() {
 	model = new inst_RotZ(new inst_RotX(model, -Pi/2), Pi/2);
 	model = new inst_Translate(model, {60, 50, 0});
 	
-	scene->insert(model);
+	// scene->insert(model);
+
+	Hittable *sp = new h_Sphere({50, 50, 25}, 15, m_glass);
+	scene->insert(sp);
 
 	// Material *mat = new m_Lambertian(new t_Checkered(Color{125, 175, 225}, VEC3D_ZERO, VEC3D_ONE * 0.25));
 	// Light *lig = new l_Diffuse({255, 255, 255});

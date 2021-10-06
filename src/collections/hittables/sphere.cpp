@@ -43,10 +43,10 @@ bool h_Sphere::hit(Ray &ray, HitRecord* hit_record) const {
 
     Vec3d point = ray.cast(d);
     hit_record->mat = material;
-    hit_record->set_normal_orientation(ray.dir);
     hit_record->point = point;
     hit_record->dist = d;
     hit_record->normal = this->normal(point);
+    hit_record->set_normal_orientation(ray.dir);
     get_surface_coords(point, hit_record->surf_x, hit_record->surf_y);
     return true;
 }
