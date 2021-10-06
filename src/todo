@@ -10,7 +10,7 @@ interface overhaul
 ? refactor bvh
 
 === NOT soon ===
-.obj file textures and normals usage
+smolobj - small object library
 separate thread for the interface
 scene editor
 model editor

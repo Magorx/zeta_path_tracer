@@ -10,8 +10,8 @@ const int VERBOSITY = 2; // 2 for detailed log of some things
 const int WINDOW_WIDTH  = 1000;
 const int WINDOW_HEIGHT = 1000;
 
-const int PIXEL_SCREEN_WIDTH  = 200;
-const int PIXEL_SCREEN_HEIGHT = 200;
+const int PIXEL_SCREEN_WIDTH  = 1000;
+const int PIXEL_SCREEN_HEIGHT = 1000;
 
 const int 	 PIXEL_SAMPLING   = 1;
 const int 	 MAX_TRACE_DEPTH  = 7;
@@ -25,8 +25,7 @@ const int DEFAULT_THREADS_CNT = 4;
 const int REAL_SCREEN_WIDTH   = 100;
 const int REAL_SCREEN_HEIGHT  = 100;
 
-const double RESOLUTION_COEF  =   (double) PIXEL_SCREEN_WIDTH * (double) PIXEL_SCREEN_HEIGHT 
-							    / (double)  REAL_SCREEN_WIDTH / (double)  REAL_SCREEN_HEIGHT;
+const double RESOLUTION_COEF  =  (double) PIXEL_SCREEN_WIDTH / (double)  REAL_SCREEN_WIDTH;
 
 const Vec3d  BACKGROUND_COLOR = {0, 0, 0};
 
@@ -84,8 +83,8 @@ int main(int argc, char* argv[]) {
 //=============================================================================
 
 Scene *cornell_box_scene() {
-	Camera *camera = new Camera({-100, 50, 50}, {1, 0, 0}, 
-    							200,
+	Camera *camera = new Camera({-100, 50, 60}, {1, 0, 0}, 
+    							300,
     							REAL_SCREEN_WIDTH, REAL_SCREEN_HEIGHT,
     							RESOLUTION_COEF);
 	HittableList *objects = cornell_box_objects();
@@ -164,7 +163,7 @@ HittableList *cornell_box_objects() {
 
 	Material *m_model = new m_Lambertian({255, 255, 30});	
 
-	Hittable *model = new Model("../models/WhipperNude.obj", {m_model}, {0, 0, 0}, 17); // remove ../ if you build tracer NOT in build dir
+	Hittable *model = new Model("../models/WhipperNude.obj", {m_model}, {0, 0, 0}, 17,true); // remove ../ if you build tracer NOT in build dir
 	model = new inst_RotZ(new inst_RotX(model, -Pi/2), Pi/2);
 	model = new inst_Translate(model, {60, 50, 0});
 	

@@ -11,7 +11,11 @@ Triangle::Triangle(const Vec3d &point_0, const Vec3d &point_1, const Vec3d &poin
 Hittable(material_),
 p0(point_0),
 e1(point_1 - point_0),
-e2(point_2 - point_0)
+e2(point_2 - point_0),
+n1(),
+n2(),
+n3(),
+to_phong_normals(false)
 {}
 
 bool Triangle::hit(Ray &ray, HitRecord* hit_record) const {
@@ -44,8 +48,7 @@ bool Triangle::hit(Ray &ray, HitRecord* hit_record) const {
         hit_record->point = ray.cast(t);
         hit_record->dist = t;
         hit_record->mat = material;
-        hit_record->normal = edge1.cross(edge2);
-        hit_record->normal.normalize();
+        hit_record->normal = to_phong_normals ? calc_normal(u, v) : edge1.cross(edge2).normal();
         hit_record->set_normal_orientation(ray.dir);
         hit_record->front_hit = true;
         hit_record->surf_x = 0;
@@ -69,4 +72,8 @@ bool Triangle::bounding_box(AABB &box) const {
                  std::max(p0[2], std::max(P1[2], P2[2]))
                 });
     return true;
+}
+
+Vec3d Triangle::calc_normal(double u, double v) const {
+    return (n1 * (1 - u - v) + n2 * u + n3 * v).normal();
 }

@@ -75,7 +75,7 @@ void SFML_Interface::render_frame_threaded() {
     average_frame_ms += timer.elapsed;
     average_frame_cnt++;
 
-    logger.log("TMR", "timer", "%lldms | mean = %lldms", timer.elapsed, average_frame_ms / average_frame_cnt);
+    logger.log("TMR", "timer", "frame[%d] %lldms | mean = %lldms", consecutive_frames_cnt, timer.elapsed, average_frame_ms / average_frame_cnt);
 }
 
 void SFML_Interface::render_frame_portion() {
