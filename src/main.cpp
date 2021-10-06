@@ -10,8 +10,8 @@ const int VERBOSITY = 2; // 2 for detailed log of some things
 const int WINDOW_WIDTH  = 1000;
 const int WINDOW_HEIGHT = 1000;
 
-const int PIXEL_SCREEN_WIDTH  = 1000;
-const int PIXEL_SCREEN_HEIGHT = 1000;
+const int PIXEL_SCREEN_WIDTH  = 200;
+// const int PIXEL_SCREEN_HEIGHT = 1000;
 
 const int 	 PIXEL_SAMPLING   = 1;
 const int 	 MAX_TRACE_DEPTH  = 7;
@@ -151,6 +151,10 @@ HittableList *cornell_box_objects() {
 	Hittable *rot_box_2 = new inst_Translate(new inst_RotZ(box_2, -Pi/3), {30, 25, 0});
     Hittable *rot_box_3 = new inst_Translate(box_3, {depth / 2 - l_d / 2 + 6, width / 2 - l_w / 2 + 16.5, l_h - 22.5});
 
+	// cenzure for the girl pic
+	// Material *m_cenzure = new m_Dielectric({255, 255, 255}, 1, -1, 0.2);
+	// Hittable *rect_cenze1 = new h_RectYZ({50, 44, 58}, {50, 56, 64}, m_cenzure);
+	// scene->insert(rect_cenze1);
 
 	scene->insert(rect_ceil );
 	scene->insert(rect_floor);
@@ -161,7 +165,7 @@ HittableList *cornell_box_objects() {
 	scene->insert(rect_light);
 
 
-	Material *m_model = new m_Lambertian({255, 255, 30});	
+	Material *m_model = new m_Metal({255, 255, 30}, 0.1);	
 
 	Hittable *model = new Model("../models/WhipperNude.obj", {m_model}, {0, 0, 0}, 17,true); // remove ../ if you build tracer NOT in build dir
 	model = new inst_RotZ(new inst_RotX(model, -Pi/2), Pi/2);

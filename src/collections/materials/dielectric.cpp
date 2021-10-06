@@ -1,18 +1,20 @@
 #include "dielectric.h"
 
-m_Dielectric::m_Dielectric(const Color &albedo_, const double refrac_coef_, const double roughness_):
+m_Dielectric::m_Dielectric(const Color &albedo_, const double refrac_coef_, const double roughness_, const double fuzziness):
 Material(),
 albedo(new t_SolidColor(albedo_)),
 refrac_coef(refrac_coef_),
 roughness(roughness_),
+fuzziness(fuzziness),
 to_affect_emitter(1)
 {}
 
-m_Dielectric::m_Dielectric(Texture *texture_,    const double refrac_coef_, const double roughness_):
+m_Dielectric::m_Dielectric(Texture *texture_,    const double refrac_coef_, const double roughness_, const double fuzziness):
 Material(),
 albedo(texture_),
 refrac_coef(refrac_coef_),
 roughness(roughness_),
+fuzziness(fuzziness),
 to_affect_emitter(1)
 {}
 
@@ -36,6 +38,10 @@ bool m_Dielectric::scatter(const Ray &ray, const HitRecord &hitrec, Color &atten
 	} else {
 		scatter_direction = refract(ray.dir, hitrec.normal, rc);
 	}
+
+	Vec3d fuzz_scatter = Vec3d::random_in_unit_sphere();
+    fuzz_scatter *= fuzziness;
+	scatter_direction += fuzz_scatter;
 
 	scattered = Ray(hitrec.point, scatter_direction);
 
