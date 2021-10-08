@@ -73,7 +73,7 @@ int main(int argc, char* argv[]) {
     Scene *scene = cornell_box_scene();
 	logger.info("Zepher", "scene prepared");
 
-	SFML_Interface interface("Zepher", scene, conf_pt, WINDOW_WIDTH, WINDOW_HEIGHT, PIXEL_SAMPLING);
+	SFML_Interface *interface = new SFML_Interface("Zepher", scene, conf_pt, WINDOW_WIDTH, WINDOW_HEIGHT, PIXEL_SAMPLING);
 
 	logger.info("sfml_interface", "launching, press F to make a screenshot");
 
@@ -81,15 +81,16 @@ int main(int argc, char* argv[]) {
 
 	// scene->objects->dump_bvh(0);
 
-	interface.set_postprocs(ACCUMULATOR_FRAME_POSTPROC,
-							RENDERED_FRAME_POSTPROC,
-							ACCUMULATOR_FRAME_POSTPROC_RADIUS,
-							RENDERED_FRAME_POSTPROC_RADIUS);
+	interface->set_postprocs(ACCUMULATOR_FRAME_POSTPROC,
+							 RENDERED_FRAME_POSTPROC,
+							 ACCUMULATOR_FRAME_POSTPROC_RADIUS,
+							 RENDERED_FRAME_POSTPROC_RADIUS);
 
-	interface.interaction_loop();
+	auto interface_interactor = new std::thread(&SFML_Interface::run, interface);
 
-	auto interface_interactor = new std::thread(&SFML_Interface::run, &interface);
-	interface.stop();
+	// interface->interaction_loop();
+
+	interface->stop();
 
 	// interface_interactor->join();
 

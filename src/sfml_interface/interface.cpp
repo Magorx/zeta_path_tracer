@@ -137,7 +137,7 @@ void SFML_Interface::tick() {
 void SFML_Interface::run() {
     is_run = true;
 
-    while (window.isOpen())
+    while (is_run)
     {
         // handle_events();
         
