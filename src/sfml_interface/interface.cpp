@@ -83,8 +83,8 @@ void SFML_Interface::render_frame_portion() {
     config.render.PIXEL_SAMPLING = pixel_sampling_per_render;
     render_frame_threaded();
 
-    new_frame.set_post_processing(FramePostproc::copy);
-    new_frame.postproc(1);
+    new_frame.set_post_processing(rendered_frame_postproc);
+    new_frame.postproc(rendered_frame_postproc_radius);
     
     memcpy(frame.data_normal, new_frame.data_normal, frame.pixel_cnt * sizeof(Vec3d));
     memcpy(frame.data_depth, new_frame.data_depth, frame.pixel_cnt * sizeof(double));
@@ -98,8 +98,8 @@ void SFML_Interface::render_frame_portion() {
         }
     }
 
-    frame.set_post_processing(FramePostproc::copy);
-    frame.postproc(1);
+    frame.set_post_processing(accumulator_frame_postproc);
+    frame.postproc(accumulator_frame_postproc_radius);
     color_to_rgb_buffer(frame.final_image, cur_image, config.render.GAMMA_CORRECTION, pixel_cnt);
 
     ++consecutive_frames_cnt;

@@ -22,6 +22,14 @@ const int DEFAULT_THREADS_CNT = 4;
 
 // ============================================================================
 
+const FramePostproc ACCUMULATOR_FRAME_POSTPROC = FramePostproc::copy;
+const FramePostproc RENDERED_FRAME_POSTPROC    = FramePostproc::copy;
+
+const double ACCUMULATOR_FRAME_POSTPROC_RADIUS = 1;
+const double RENDERED_FRAME_POSTPROC_RADIUS = 1;
+
+// ============================================================================
+
 const int REAL_SCREEN_WIDTH   = 100;
 const int REAL_SCREEN_HEIGHT  = 100;
 
@@ -72,6 +80,11 @@ int main(int argc, char* argv[]) {
 	logger.page_cut("interface.run()");
 
 	// scene->objects->dump_bvh(0);
+
+	interface.set_postprocs(ACCUMULATOR_FRAME_POSTPROC,
+							RENDERED_FRAME_POSTPROC,
+							ACCUMULATOR_FRAME_POSTPROC_RADIUS,
+							RENDERED_FRAME_POSTPROC_RADIUS);
 
 	interface.run();
 	interface.stop();

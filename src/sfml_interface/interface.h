@@ -37,6 +37,12 @@ class SFML_Interface {
     long average_frame_ms;
     long average_frame_cnt;
 
+    FramePostproc accumulator_frame_postproc;
+    FramePostproc rendered_frame_postproc;
+
+    double accumulator_frame_postproc_radius = 1;
+    double rendered_frame_postproc_radius = 1;
+
     void render_frame_portion();
     void render_frame_threaded();
     void flush_to_texture();
@@ -54,6 +60,16 @@ public:
     void run();
 
     void stop();
+
+    inline void set_postprocs(FramePostproc accum_postproc    = FramePostproc::copy, 
+                              FramePostproc rendered_postproc = FramePostproc::copy,
+                              double accum_radius    = 1, 
+                              double postproc_radius = 1) {
+        accumulator_frame_postproc = accum_postproc;
+        rendered_frame_postproc = rendered_postproc;
+        accumulator_frame_postproc_radius = accum_radius;
+        rendered_frame_postproc_radius = postproc_radius;
+    }
 };
 
 #endif // SFML_INTERFACE
