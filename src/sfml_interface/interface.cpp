@@ -78,6 +78,14 @@ void SFML_Interface::render_frame_threaded() {
     logger.log("TMR", "timer", "frame[%d] %lldms | mean = %lldms", consecutive_frames_cnt, timer.elapsed, average_frame_ms / average_frame_cnt);
 }
 
+void SFML_Interface::render_depth_buffer() {
+    new_frame.clear();
+    config.render.PIXEL_SAMPLING = 1;
+    render_frame_threaded();
+
+    memcpy(frame.data_color, new_frame.data_color, pixel_cnt * sizeof(Color));
+}
+
 void SFML_Interface::render_frame_portion() {
     new_frame.clear();
     config.render.PIXEL_SAMPLING = pixel_sampling_per_render;
@@ -85,7 +93,9 @@ void SFML_Interface::render_frame_portion() {
 
     new_frame.set_post_processing(rendered_frame_postproc);
     new_frame.postproc(rendered_frame_postproc_radius);
-    
+}
+
+void SFML_Interface::accumulate_frame_portion() {
     memcpy(frame.data_normal, new_frame.data_normal, frame.pixel_cnt * sizeof(Vec3d));
     memcpy(frame.data_depth, new_frame.data_depth, frame.pixel_cnt * sizeof(double));
 
@@ -113,8 +123,47 @@ void SFML_Interface::flush_to_window() {
     window.draw(image_sprite);
 }
 
+void SFML_Interface::tick() {
+    window.clear();
+
+    render_frame_portion();
+    accumulate_frame_portion();
+
+    flush_to_texture();
+
+    flush_to_window();
+}
+
+void SFML_Interface::run() {
+    is_run = true;
+
+    while (window.isOpen())
+    {
+        // handle_events();
+        
+        tick();
+
+        window.display();
+    }
+}
+
+void SFML_Interface::stop() {
+    render_threader.join();
+    is_run = false;
+}
+
+void SFML_Interface::screenshot_to_file(const char *filename) {
+    if (!filename) {
+        printf("[ERR] can't screenshot to nullptr filename, will save to SCRSHT.png");
+        filename = "SCRSHT.png";
+    }
+
+    image_texture.copyToImage().saveToFile(filename);
+}
+
 void SFML_Interface::handle_events() {
     sf::Event event;
+    printf("hm\n");
     while (window.pollEvent(event))
     {
         if (event.type == sf::Event::Closed)
@@ -132,36 +181,44 @@ void SFML_Interface::handle_events() {
     }
 }
 
-void SFML_Interface::tick() {
-    window.clear();
+void SFML_Interface::handle_movement() {
+    static FramePostproc preserved_frame_postproc;
 
-    render_frame_portion();
+    bool moved = false;
 
-    flush_to_texture();
-
-    flush_to_window();
-}
-
-void SFML_Interface::run() {
-    while (window.isOpen())
-    {
-        handle_events();
-        
-        tick();
-
-        window.display();
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+        scene->camera->orig += Vec3d(1, 0, 0);
+        moved = true;
     }
-}
-
-void SFML_Interface::stop() {
-    render_threader.join();
-}
-
-void SFML_Interface::screenshot_to_file(const char *filename) {
-    if (!filename) {
-        printf("[ERR] can't screenshot to nullptr filename, will save to SCRSHT.png");
-        filename = "SCRSHT.png";
+    
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+        scene->camera->orig += Vec3d(-1, 0, 0);
+        moved = true;
     }
 
-    image_texture.copyToImage().saveToFile(filename);
+    if (moved) {
+        consecutive_frames_cnt = 0;
+        if (!is_moving) {
+            preserved_frame_postproc = frame.postproc_id;
+            frame.set_post_processing(FramePostproc::depth);
+        }
+    } else {
+        if (is_moving) {
+            frame.set_post_processing(preserved_frame_postproc);
+        }
+    }
+
+    is_moving = moved;
+    // printf("%s\n", is_moving ? "mov" : "not move");
+}
+
+void SFML_Interface::interaction_loop(SFML_Interface *interface) {
+    while (interface->is_run) {
+        interface->handle_events();
+        interface->handle_movement();
+
+        using namespace std::chrono_literals;
+        // std::this_thread::sleep_for(500ms);
+        // printf("ok\n");
+    }
 }

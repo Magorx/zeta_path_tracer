@@ -27,6 +27,8 @@ class Threader {
     bool running;
 
     void thread_main_loop(int thread_id) {
+        // printf("%p\n", this);
+        // printf("%p | %p | %p\n", sems_start, sems_stop, tasks);
         while (running) {
             sems_start[thread_id]->wait();
             if (!running) {

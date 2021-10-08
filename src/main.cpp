@@ -10,7 +10,7 @@ const int VERBOSITY = 2; // 2 for detailed log of some things
 const int WINDOW_WIDTH  = 1000;
 const int WINDOW_HEIGHT = 1000;
 
-const int PIXEL_SCREEN_WIDTH  = 500;
+const int PIXEL_SCREEN_WIDTH  = 200;
 // const int PIXEL_SCREEN_HEIGHT = 1000;
 
 const int 	 PIXEL_SAMPLING   = 1;
@@ -86,8 +86,12 @@ int main(int argc, char* argv[]) {
 							ACCUMULATOR_FRAME_POSTPROC_RADIUS,
 							RENDERED_FRAME_POSTPROC_RADIUS);
 
+	auto interface_interactor = new std::thread(interface.interaction_loop, &interface);
+
 	interface.run();
 	interface.stop();
+
+	// interface_interactor->join();
 
 	logger.page_cut();
 
@@ -205,8 +209,8 @@ HittableList *cornell_box_objects() {
 	// scene->insert(sp);
 
 	Material *mt = new m_Dielectric({255, 0.874 * 255, 0.768 * 255}, 2);
-	Hittable *sp = new h_Sphere({50, 50, 30}, 20, mt);
-	scene->insert(sp);
+	Hittable *sp = new h_RectYZ({0, 30, 30}, {0, 70, 70}, mt);
+	scene->insert(new inst_Translate(new inst_RotY(sp, -Pi/3), {30, 0, 0}));
 
 	// Material *mat = new m_Lambertian(new t_Checkered(Color{125, 175, 225}, VEC3D_ZERO, VEC3D_ONE * 0.25));
 	// Light *lig = new l_Diffuse({255, 255, 255});

@@ -12,7 +12,7 @@
 #include "utils/timer.h"
 #include "utils/logger.h"
 
-class SFML_Interface {
+class SFML_Interface { // a trashcan for everything, should be rewriten
     sf::RenderWindow window;
     sf::Texture      image_texture;
     sf::Sprite       image_sprite;
@@ -43,13 +43,22 @@ class SFML_Interface {
     double accumulator_frame_postproc_radius = 1;
     double rendered_frame_postproc_radius = 1;
 
+    bool is_moving;
+
+    void render_depth_buffer();
     void render_frame_portion();
+
+    void accumulate_frame_portion();
+
     void render_frame_threaded();
     void flush_to_texture();
 
     void handle_events();
+    void handle_movement();
 
 public:
+    bool is_run;
+
     SFML_Interface(const char *window_name, Scene *scene_, const conf_PathTracer config_, int scr_w_, int scr_h_, int pixel_sampling_per_render_=1);
 
     void flush_to_window();
@@ -70,6 +79,8 @@ public:
         accumulator_frame_postproc_radius = accum_radius;
         rendered_frame_postproc_radius = postproc_radius;
     }
+
+    static void interaction_loop(SFML_Interface *interface);
 };
 
 #endif // SFML_INTERFACE

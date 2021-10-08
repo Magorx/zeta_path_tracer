@@ -23,6 +23,7 @@ struct Frame {
 
     size_t pixel_cnt;
 
+    FramePostproc postproc_id;
     void (Frame::*post_processing)(const int sample_rad);
 
 public:
@@ -34,6 +35,7 @@ public:
     size_x(0),
     size_y(0),
     pixel_cnt(0),
+    postproc_id(FramePostproc::copy),
     post_processing(&Frame::colors_to_final_image)
     {}
 
@@ -45,6 +47,7 @@ public:
     size_x(size_x_),
     size_y(size_y_),
     pixel_cnt(size_x_ * size_y_),
+    postproc_id(FramePostproc::copy),
     post_processing(&Frame::colors_to_final_image)
     {}
 
@@ -56,6 +59,7 @@ public:
     size_x(size_x_),
     size_y(size_y_),
     pixel_cnt(size_x_ * size_y_),
+    postproc_id(FramePostproc::copy),
     post_processing(&Frame::colors_to_final_image)
     {
         memcpy(data_color, colors, pixel_cnt);
@@ -81,6 +85,8 @@ public:
     }
 
     void set_post_processing(FramePostproc proc) {
+        postproc_id = proc;
+
         switch (proc)
         {
         case FramePostproc::copy:
