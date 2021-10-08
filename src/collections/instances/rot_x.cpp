@@ -58,15 +58,15 @@ bool inst_RotX::hit(Ray &ray, HitRecord* hit_record) const {
     Vec3d p = hit_record->point;
     Vec3d normal = hit_record->normal;
 
-    p.set(1, cos_a*hit_record->point[1] + sin_a * hit_record->point[2]);
+    p.set(1,  cos_a*hit_record->point[1] + sin_a * hit_record->point[2]);
     p.set(2, -sin_a*hit_record->point[1] + cos_a * hit_record->point[2]);
 
-    normal.set(1, cos_a*hit_record->normal[1] + sin_a * hit_record->normal[2]);
+    normal.set(1,  cos_a*hit_record->normal[1] + sin_a * hit_record->normal[2]);
     normal.set(2, -sin_a*hit_record->normal[1] + cos_a * hit_record->normal[2]);
 
     hit_record->point = p;
     hit_record->normal = normal;
-    hit_record->set_normal_orientation(rot_ray.dir);
+    hit_record->set_normal_orientation(ray.dir);
     // fprintf(stderr, "dist %lg\normal", hitrec.dist);
 
     return true;

@@ -37,7 +37,6 @@ bbox()
     }
 
     bbox = AABB(mn, mx);
-    // fprintf(stderr, "bbox [%lg %lg %lg] [%lg %lg %lg]\normal", bbox.mn.x, bbox.mn.y, bbox.mn.z, bbox.mx.x, bbox.mx.y, bbox.mx.z);
 }
 
 bool inst_RotY::hit(Ray &ray, HitRecord* hit_record) const {
@@ -62,12 +61,12 @@ bool inst_RotY::hit(Ray &ray, HitRecord* hit_record) const {
     p.set(0,  cos_a*hit_record->point[0] + sin_a * hit_record->point[2]);
     p.set(2, -sin_a*hit_record->point[0] + cos_a * hit_record->point[2]);
 
-    normal.set(0, cos_a*hit_record->normal[0] + sin_a * hit_record->normal[2]);
+    normal.set(0,  cos_a*hit_record->normal[0] + sin_a * hit_record->normal[2]);
     normal.set(2, -sin_a*hit_record->normal[0] + cos_a * hit_record->normal[2]);
 
     hit_record->point = p;
     hit_record->normal = normal;
-    hit_record->set_normal_orientation(rot_ray.dir);
+    hit_record->set_normal_orientation(ray.dir);
     // fprintf(stderr, "dist %lg\normal", hitrec.dist);
 
     return true;

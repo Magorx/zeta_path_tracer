@@ -30,7 +30,7 @@ bool m_Dielectric::scatter(const Ray &ray, const HitRecord &hitrec, Color &atten
 
     unsigned int random_values[4];
     Brans::rand_sse(random_values);
-    double first_random_value = (double) random_values[0] / (double) UINT32_MAX;
+    double first_random_value  = (double) random_values[0] / (double) UINT32_MAX;
     double second_random_value = (double) random_values[1] / (double) UINT32_MAX;
 
 	if (cannot_refract || reflectance(cos_theta, rc) > first_random_value || (roughness > 0 && second_random_value < roughness)) {

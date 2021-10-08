@@ -79,15 +79,17 @@ Vec3d Vec3d::random_in_unit_sphere() {
     unsigned int random_values[4];
     Brans::rand_sse(random_values);
 
-    double phi = ((double)(int)random_values[0] / (double)INT32_MAX) * M_PI;
-    double psi = ((double)(int)random_values[1] / (double)INT32_MAX) * M_PI / 2;
+    double rnd1 = ((double)(int)random_values[0] / (double)INT32_MAX);
+    double rnd2 = ((double)(int)random_values[1] / (double)INT32_MAX);
 
-    // double phi = vec3d_randdouble(-M_PI, M_PI);
-    // double psi = vec3d_randdouble(-M_PI/2, M_PI/2);
+    double a = rnd1 * M_PI;
+    Vec3d rv(cos(a), sin(a), 0);
+    double h = rnd2;
+    float rad = sqrt(1 - h * h);
 
-    Vec3d rv(1, 0, 0);
-    rv.roty(psi).rotz(phi);
-
+    rv *= Vec3d(rad, rad, 0);
+    rv.set(2, h);
+    
     return rv;
 }
 

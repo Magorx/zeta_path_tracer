@@ -37,7 +37,6 @@ bbox()
     }
 
     bbox = AABB(mn, mx);
-    // fprintf(stderr, "bbox [%lg %lg %lg] [%lg %lg %lg]\normal", bbox.mn.x, bbox.mn.y, bbox.mn.z, bbox.mx.x, bbox.mx.y, bbox.mx.z);
 }
 
 bool inst_RotZ::hit(Ray &ray, HitRecord* hit_record) const {
@@ -59,7 +58,7 @@ bool inst_RotZ::hit(Ray &ray, HitRecord* hit_record) const {
     Vec3d p = hit_record->point;
     Vec3d normal = hit_record->normal;
 
-    p.set(0, cos_a*hit_record->point[0] + sin_a * hit_record->point[1]);
+    p.set(0,  cos_a*hit_record->point[0] + sin_a * hit_record->point[1]);
     p.set(1, -sin_a*hit_record->point[0] + cos_a * hit_record->point[1]);
 
     normal.set(0,  cos_a*hit_record->normal[0] + sin_a * hit_record->normal[1]);
@@ -67,7 +66,7 @@ bool inst_RotZ::hit(Ray &ray, HitRecord* hit_record) const {
 
     hit_record->point = p;
     hit_record->normal = normal;
-    hit_record->set_normal_orientation(rot_ray.dir);
+    hit_record->set_normal_orientation(ray.dir);
     // fprintf(stderr, "dist %lg\normal", hitrec.dist);
 
     return true;

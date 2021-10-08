@@ -10,13 +10,13 @@ const int VERBOSITY = 2; // 2 for detailed log of some things
 const int WINDOW_WIDTH  = 1000;
 const int WINDOW_HEIGHT = 1000;
 
-const int PIXEL_SCREEN_WIDTH  = 200;
+const int PIXEL_SCREEN_WIDTH  = 500;
 // const int PIXEL_SCREEN_HEIGHT = 1000;
 
 const int 	 PIXEL_SAMPLING   = 1;
-const int 	 MAX_TRACE_DEPTH  = 7;
+const int 	 MAX_TRACE_DEPTH  = 10;
 
-const double GAMMA_CORRECTION = 0.37;
+const double GAMMA_CORRECTION = 0.36;
 
 const int DEFAULT_THREADS_CNT = 4;
 
@@ -24,6 +24,9 @@ const int DEFAULT_THREADS_CNT = 4;
 
 const int REAL_SCREEN_WIDTH   = 100;
 const int REAL_SCREEN_HEIGHT  = 100;
+
+const Vec3d  CAMERA_POS 	  = {-100, 50, 50};
+const double CAMERA_DIST 	  = 100;
 
 const double RESOLUTION_COEF  =  (double) PIXEL_SCREEN_WIDTH / (double)  REAL_SCREEN_WIDTH;
 
@@ -83,8 +86,8 @@ int main(int argc, char* argv[]) {
 //=============================================================================
 
 Scene *cornell_box_scene() {
-	Camera *camera = new Camera({-100, 50, 50}, {1, 0, 0}, 
-    							100,
+	Camera *camera = new Camera(CAMERA_POS, {1, 0, 0}, 
+    							CAMERA_DIST,
     							REAL_SCREEN_WIDTH, REAL_SCREEN_HEIGHT,
     							RESOLUTION_COEF);
 	HittableList *objects = cornell_box_objects();
@@ -103,7 +106,7 @@ HittableList *cornell_box_objects() {
 	Material *m_green = new m_Lambertian({  0, 255,   0});
 
     Material *m_mirror = new m_Metal({255, 255, 125}, 0.05);
-    Material *m_glass  = new m_Dielectric({255, 255, 255}, 1.1, 0);
+    Material *m_glass  = new m_Dielectric({255, 255, 255}, 2);
     Material *m_glass2  = new m_Dielectric({130, 130, 255}, 2.4);
 
 	// Material *m_box_1 = new m_Lambertian({255, 255, 255}); ^^^^^^^^^^^^^
@@ -151,6 +154,16 @@ HittableList *cornell_box_objects() {
 	Hittable *rot_box_2 = new inst_Translate(new inst_RotZ(box_2, -Pi/3), {30, 25, 0});
     Hittable *rot_box_3 = new inst_Translate(box_3, {depth / 2 - l_d / 2 + 6, width / 2 - l_w / 2 + 16.5, l_h - 22.5});
 
+
+	// Material *mat = new m_Lambertian({10, 145, 200});
+	// Hittable *box = new h_Box({ 0,  0, 0},
+	// 						  {7.5, 7.5, 150},
+	// 						   mat);
+	// box = new inst_RotX(new inst_RotZ(box, Pi/8), Pi/4);
+	// box = new inst_Translate(box, {70, 0, 0});
+
+	// scene->insert(box);
+
 	// cenzure for the girl pic
 	// Material *m_cenzure = new m_Dielectric({255, 255, 255}, 1, -1, 0.2);
 	// Hittable *rect_cenze1 = new h_RectYZ({50, 44, 58}, {50, 56, 64}, m_cenzure);
@@ -165,15 +178,21 @@ HittableList *cornell_box_objects() {
 	scene->insert(rect_light);
 
 
-	Material *m_model = new m_Metal({255, 255, 30}, 0.1);	
+	Material *m_model = new m_Metal({255, 255, 30}, 0.05);	
 
-	Hittable *model = new Model("../models/WhipperNude.obj", {m_model}, {0, 0, 0}, 17,true); // remove ../ if you build tracer NOT in build dir
+	Hittable *model = new Model("../models/whip.obj", {m_glass}, {0, 0, 0}, 17,false); // remove ../ if you build tracer NOT in build dir
 	model = new inst_RotZ(new inst_RotX(model, -Pi/2), Pi/2);
-	model = new inst_Translate(model, {60, 50, 0});
+	model = new inst_Translate(model, {10, 50, 0});
 	
 	// scene->insert(model);
 
-	Hittable *sp = new h_Sphere({50, 50, 25}, 15, m_glass);
+	// Hittable *sp = new h_Sphere({95, 25, 75}, 15, m_model);
+	// scene->insert(sp);
+	// sp = new h_Sphere({95, 75, 25}, 15, m_model);
+	// scene->insert(sp);
+
+	Material *mt = new m_Dielectric({255, 0.874 * 255, 0.768 * 255}, 2);
+	Hittable *sp = new h_Sphere({50, 50, 30}, 20, mt);
 	scene->insert(sp);
 
 	// Material *mat = new m_Lambertian(new t_Checkered(Color{125, 175, 225}, VEC3D_ZERO, VEC3D_ONE * 0.25));
