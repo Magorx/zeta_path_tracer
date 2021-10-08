@@ -87,12 +87,13 @@ int main(int argc, char* argv[]) {
 							 RENDERED_FRAME_POSTPROC_RADIUS);
 
 	auto interface_interactor = new std::thread(&SFML_Interface::run, interface);
+	// interface->run();
 
-	// interface->interaction_loop();
+	interface->interaction_loop();
 
 	interface->stop();
 
-	// interface_interactor->join();
+	interface_interactor->join();
 
 	logger.page_cut();
 

@@ -163,7 +163,6 @@ void SFML_Interface::screenshot_to_file(const char *filename) {
 
 void SFML_Interface::handle_events() {
     sf::Event event;
-    printf("hm\n");
     while (window.pollEvent(event))
     {
         if (event.type == sf::Event::Closed)
@@ -214,7 +213,7 @@ void SFML_Interface::handle_movement() {
 
 void SFML_Interface::interaction_loop() {
     while (is_run) {
-        // handle_events();
+        handle_events();
         // handle_movement();
 
         using namespace std::chrono_literals;
