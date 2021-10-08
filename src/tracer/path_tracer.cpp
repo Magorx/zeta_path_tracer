@@ -52,7 +52,7 @@ Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &confi
 		Color attenuation;
 		Color emmited = hitrec.mat->emit(hitrec.surf_x, hitrec.surf_y, hitrec.point);
 		if (hitrec.mat->scatter(ray, hitrec, attenuation, scattered_ray)) {
-			// return scattered_ray.dir * 15;
+			// return scattered_ray.dir * 255;
             attenuation *= trace_ray(scattered_ray, hittable, config, cur_trace_depth + 1);
             attenuation /= d_MAXRGB;
             emmited += attenuation;
@@ -64,6 +64,13 @@ Vec3d trace_ray(Ray &ray, const Hittable *hittable, const conf_PathTracer &confi
 Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_y, 
 							 const Hittable *hittable, const conf_PathTracer &config, 
 							 Vec3d *normal, double *depth) {
+    if (normal) {
+		memset(normal, 0, sizeof(Vec3d));
+	}
+	if (*depth) {
+		memset(depth, 0, sizeof(Vec3d));
+	}
+
 	Vec3d accumulator(0, 0, 0);
 	for (int sample_i = 0; sample_i < config.render.PIXEL_SAMPLING - 1; ++sample_i) {
 		Ray sample_ray = camera->get_sample_ray((double) px_x, (double) px_y);

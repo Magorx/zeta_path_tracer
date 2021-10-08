@@ -82,8 +82,6 @@ void SFML_Interface::render_depth_buffer() {
     new_frame.clear();
     config.render.PIXEL_SAMPLING = 1;
     render_frame_threaded();
-
-    memcpy(frame.data_color, new_frame.data_color, pixel_cnt * sizeof(Color));
 }
 
 void SFML_Interface::render_frame_portion() {
@@ -126,11 +124,6 @@ void SFML_Interface::flush_to_window() {
 void SFML_Interface::tick() {
     window.clear();
 
-    render_frame_portion();
-    accumulate_frame_portion();
-
-    flush_to_texture();
-
     flush_to_window();
 }
 
@@ -139,11 +132,16 @@ void SFML_Interface::run() {
 
     while (is_run)
     {
-        // handle_events();
-        
-        tick();
+        if (is_moving) {
+            consecutive_frames_cnt = 0;
+            render_depth_buffer();
+        } else {
+            render_frame_portion();
+        }
 
-        window.display();
+        accumulate_frame_portion();
+
+        render_done = true;
     }
 }
 
@@ -165,8 +163,10 @@ void SFML_Interface::handle_events() {
     sf::Event event;
     while (window.pollEvent(event))
     {
-        if (event.type == sf::Event::Closed)
+        if (event.type == sf::Event::Closed) {
+            is_run = false;
             window.close();
+        }
         
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::F) {
@@ -186,24 +186,75 @@ void SFML_Interface::handle_movement() {
     bool moved = false;
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-        scene->camera->orig += Vec3d(1, 0, 0);
+        scene->camera->orig += scene->camera->dir;
         moved = true;
     }
     
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-        scene->camera->orig += Vec3d(-1, 0, 0);
+        scene->camera->orig -= scene->camera->dir;
+        moved = true;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+        scene->camera->orig -= scene->camera->ort_w;
+        moved = true;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+        scene->camera->orig += scene->camera->ort_w;
+        moved = true;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+        scene->camera->orig += {0, 0, 1};
+        moved = true;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::C)) {
+        scene->camera->orig += {0, 0, -1};
+        moved = true;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+        scene->camera->z_ang += +Pi/60;
+        moved = true;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+        scene->camera->z_ang += -Pi/60;
+        moved = true;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+        scene->camera->y_ang += -Pi/60;
+        moved = true;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+        scene->camera->y_ang += +Pi/60;
+        moved = true;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+        scene->camera->orig += scene->camera->ort_h;
+        moved = true;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+        scene->camera->orig -= scene->camera->ort_h;
         moved = true;
     }
 
     if (moved) {
-        consecutive_frames_cnt = 0;
+        scene->camera->update();
+
         if (!is_moving) {
             preserved_frame_postproc = frame.postproc_id;
-            frame.set_post_processing(FramePostproc::depth);
+            accumulator_frame_postproc = FramePostproc::depth;
         }
     } else {
         if (is_moving) {
-            frame.set_post_processing(preserved_frame_postproc);
+            accumulator_frame_postproc = preserved_frame_postproc;
         }
     }
 
@@ -214,10 +265,18 @@ void SFML_Interface::handle_movement() {
 void SFML_Interface::interaction_loop() {
     while (is_run) {
         handle_events();
-        // handle_movement();
+        handle_movement();
 
         using namespace std::chrono_literals;
-        // std::this_thread::sleep_for(500ms);
+        std::this_thread::sleep_for(50ms);
         // printf("ok\n");
+
+        if (render_done) {
+            window.clear();
+            flush_to_texture();
+            flush_to_window();
+            window.display();
+            render_done = false;
+        }
     }
 }

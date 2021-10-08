@@ -65,7 +65,7 @@ Vec3d &Vec3d::roty(double ang) {
 
 Vec3d &Vec3d::rotz(double ang) {
     double x = content[0] * cos(ang) - content[1] * sin(ang);
-    double y = content[1] * cos(ang) - content[0] * sin(ang);
+    double y = content[1] * cos(ang) + content[0] * sin(ang);
     double z = content[2];
     
     content[0] = x;
@@ -110,7 +110,7 @@ Vec3d roty(const Vec3d vec, double ang) {
 
 Vec3d rotz(const Vec3d vec, double ang) {
     double x = vec.content[0] * cos(ang) - vec.content[1] * sin(ang);
-    double y = vec.content[1] * cos(ang) - vec.content[0] * sin(ang);
+    double y = vec.content[1] * cos(ang) + vec.content[0] * sin(ang);
     double z = vec.content[2];
     return {x, y, z};
 }

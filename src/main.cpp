@@ -34,6 +34,8 @@ const int REAL_SCREEN_WIDTH   = 100;
 const int REAL_SCREEN_HEIGHT  = 100;
 
 const Vec3d  CAMERA_POS 	  = {-100, 50, 50};
+const double CAMERA_VERTICAL_ROT   = 0;
+const double CAMERA_HORIZONTAL_ROT = 0;
 const double CAMERA_DIST 	  = 100;
 
 const double RESOLUTION_COEF  =  (double) PIXEL_SCREEN_WIDTH / (double)  REAL_SCREEN_WIDTH;
@@ -79,7 +81,8 @@ int main(int argc, char* argv[]) {
 
 	logger.page_cut("interface.run()");
 
-	// scene->objects->dump_bvh(0);
+	{
+	LogLevel loglvl(logger, 0, 10); // turn off the logging
 
 	interface->set_postprocs(ACCUMULATOR_FRAME_POSTPROC,
 							 RENDERED_FRAME_POSTPROC,
@@ -94,6 +97,7 @@ int main(int argc, char* argv[]) {
 	interface->stop();
 
 	interface_interactor->join();
+	}
 
 	logger.page_cut();
 
@@ -105,7 +109,7 @@ int main(int argc, char* argv[]) {
 //=============================================================================
 
 Scene *cornell_box_scene() {
-	Camera *camera = new Camera(CAMERA_POS, {1, 0, 0}, 
+	Camera *camera = new Camera(CAMERA_POS, CAMERA_HORIZONTAL_ROT, CAMERA_VERTICAL_ROT, 
     							CAMERA_DIST,
     							REAL_SCREEN_WIDTH, REAL_SCREEN_HEIGHT,
     							RESOLUTION_COEF);
@@ -210,9 +214,9 @@ HittableList *cornell_box_objects() {
 	// sp = new h_Sphere({95, 75, 25}, 15, m_model);
 	// scene->insert(sp);
 
-	Material *mt = new m_Dielectric({255, 0.874 * 255, 0.768 * 255}, 2);
-	Hittable *sp = new h_RectYZ({0, 30, 30}, {0, 70, 70}, mt);
-	scene->insert(new inst_Translate(new inst_RotY(sp, -Pi/3), {30, 0, 0}));
+	Material *mt = new m_Dielectric({255, 0.874 * 255, 0.768 * 255}, 2.42);
+	Hittable *sp = new h_RectXY({40, 40, 50}, {60, 60, 50}, mt);
+	scene->insert(sp);
 
 	// Material *mat = new m_Lambertian(new t_Checkered(Color{125, 175, 225}, VEC3D_ZERO, VEC3D_ONE * 0.25));
 	// Light *lig = new l_Diffuse({255, 255, 255});

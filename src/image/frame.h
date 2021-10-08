@@ -134,6 +134,7 @@ private:
     }
 
     void depths_to_final_image(const int) {
+        normalize_depth_map();
         for (size_t i = 0; i < pixel_cnt; ++i) {
             final_image[i] = Color(255, 255, 255) * (1 - data_depth[i]);
         }

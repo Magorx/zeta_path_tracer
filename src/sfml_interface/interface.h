@@ -44,6 +44,7 @@ class SFML_Interface { // a trashcan for everything, should be rewriten
     double rendered_frame_postproc_radius = 1;
 
     bool is_moving;
+    bool render_done;
 
     void render_depth_buffer();
     void render_frame_portion();

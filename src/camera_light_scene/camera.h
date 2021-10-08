@@ -17,11 +17,19 @@ struct Camera {
     Vec3d ort_h;
     Vec3d left_upper;
 
+    double z_ang;
+    double y_ang;
+
+    bool using_angles;
+
     Camera();
     Camera(const Vec3d origin, Vec3d direction, double distance, double width, double height, double res_coef);
+    Camera(const Vec3d origin, double z_ang_, double y_ang_, double distance, double width, double height, double res_coef);
 
     Ray get_ray(double x, double y) const;
     Ray get_sample_ray(double x, double y) const;
+
+    void update();
 };
 
 #endif // CAMERA
