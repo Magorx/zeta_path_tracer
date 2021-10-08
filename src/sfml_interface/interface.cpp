@@ -212,10 +212,10 @@ void SFML_Interface::handle_movement() {
     // printf("%s\n", is_moving ? "mov" : "not move");
 }
 
-void SFML_Interface::interaction_loop(SFML_Interface *interface) {
-    while (interface->is_run) {
-        interface->handle_events();
-        interface->handle_movement();
+void SFML_Interface::interaction_loop() {
+    while (is_run) {
+        // handle_events();
+        // handle_movement();
 
         using namespace std::chrono_literals;
         // std::this_thread::sleep_for(500ms);

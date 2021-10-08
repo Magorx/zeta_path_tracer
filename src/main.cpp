@@ -86,9 +86,9 @@ int main(int argc, char* argv[]) {
 							ACCUMULATOR_FRAME_POSTPROC_RADIUS,
 							RENDERED_FRAME_POSTPROC_RADIUS);
 
-	auto interface_interactor = new std::thread(interface.interaction_loop, &interface);
+	interface.interaction_loop();
 
-	interface.run();
+	auto interface_interactor = new std::thread(&SFML_Interface::run, &interface);
 	interface.stop();
 
 	// interface_interactor->join();

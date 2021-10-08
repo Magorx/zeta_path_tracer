@@ -80,7 +80,7 @@ public:
         rendered_frame_postproc_radius = postproc_radius;
     }
 
-    static void interaction_loop(SFML_Interface *interface);
+    void interaction_loop();
 };
 
 #endif // SFML_INTERFACE
