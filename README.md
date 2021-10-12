@@ -1,6 +1,6 @@
 # path_tracing as it is
 
-<img src="showcase/MOST_INVADED.png" alt="oops" width="600" height="600">
+<img src="showcase/MOST_INVADED.png" alt="oops" width="700" height="700">
 <img src="showcase/diamon_heart.png" alt="oops" width="600" height="600">
 <img src="showcase/glassy.png" alt="oops" width="600" height="600">
 <img src="showcase/cornell_box.png" alt="oops" width="600" height="600">
