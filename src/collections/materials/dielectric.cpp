@@ -23,7 +23,6 @@ bool m_Dielectric::scatter(const Ray &ray, const HitRecord &hitrec, Color &atten
 	double rc = hitrec.front_hit ? (1 / refrac_coef) : refrac_coef;
 
 	double cos_theta = fmin(-(ray.dir.dot(hitrec.normal)) / ray.dir.len(), 1.0);
-	return true;
 	double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
 
 	bool cannot_refract = rc * sin_theta > 1.0;

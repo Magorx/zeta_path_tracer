@@ -99,12 +99,10 @@ public:
         size_t threads_cnt = threads.size();
         size_t tasks_cnt = tasks.size();
         int threads_to_use = tasks_cnt < threads_cnt ? tasks_cnt : threads_cnt;
-        printf("hihi\n");
 
         for (int i = 0; i < threads_to_use; ++i) {
             sems_start[i]->post();
         }
-        printf("hihi\n");
 
         for (int i = 0; i < threads_to_use; ++i) {
             sems_stop[i]->wait();

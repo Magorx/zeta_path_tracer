@@ -214,16 +214,6 @@ inline Vec3d oriented(Vec3d axis, Vec3d other) {
     return other;
 }
 
-Vec3d rotx(const Vec3d vec, double ang);
-
-Vec3d roty(const Vec3d vec, double ang);
-
-Vec3d rotz(const Vec3d vec, double ang);
-
-Vec3d rotate(const Vec3d vec, double dx, double dy, double dz);
-
-Vec3d rotate(const Vec3d vec, const Vec3d &rotation);
-
 inline Vec3d reflect(Vec3d vec, Vec3d normal) {
     normal /= normal.len();
     normal *= vec.dot(normal) * 2;

@@ -93,36 +93,6 @@ Vec3d Vec3d::random_in_unit_sphere() {
     return rv;
 }
 
-
-Vec3d rotx(const Vec3d vec, double ang) {
-    double x = vec.content[0];
-    double y = vec.content[1] * cos(ang) - vec.content[2] * sin(ang);
-    double z = vec.content[2] * cos(ang) + vec.content[1] * sin(ang);
-    return {x, y, z};
-}
-
-Vec3d roty(const Vec3d vec, double ang) {
-    double x = vec.content[0] * cos(ang) + vec.content[2] * sin(ang);
-    double y = vec.content[1];
-    double z = vec.content[2] * cos(ang) - vec.content[0] * sin(ang);
-    return {x, y, z};
-}
-
-Vec3d rotz(const Vec3d vec, double ang) {
-    double x = vec.content[0] * cos(ang) - vec.content[1] * sin(ang);
-    double y = vec.content[1] * cos(ang) + vec.content[0] * sin(ang);
-    double z = vec.content[2];
-    return {x, y, z};
-}
-
-Vec3d rotate(const Vec3d vec, double dx, double dy, double dz) {
-    return rotz(roty(rotx(vec, dx), dy), dz);
-}
-
-Vec3d rotate(const Vec3d vec, const Vec3d rotation) {
-    return rotz(roty(rotx(vec, rotation.content[0]), rotation.content[1]), rotation.content[2]);
-}
-
 Vec3d refract(const Vec3d vec, const Vec3d &normal, const double eta_from_over_eta_to) {
     Vec3d uv = vec.normal();
     Vec3d n = normal.normal();
