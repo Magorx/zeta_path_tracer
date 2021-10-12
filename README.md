@@ -13,7 +13,7 @@
 3. Look for output in 'image.ppm'
 
 # Some results
-<img src="showcase/MOST_INVADED.png" alt="oops" width="700" height="700">
+<img src="showcase/MOST_INVADED.png" alt="oops" width="600" height="600">
 <img src="showcase/trio.png" alt="oops" width="600" height="600">
 <img src="showcase/1.png" alt="oops" width="600" height="600">
 <img src="showcase/2.png" alt="oops" width="600" height="600">
