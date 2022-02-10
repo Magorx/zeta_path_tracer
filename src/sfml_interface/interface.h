@@ -43,7 +43,7 @@ class SFML_Interface { // a trashcan for everything, should be rewriten
     double accumulator_frame_postproc_radius = 1;
     double rendered_frame_postproc_radius = 1;
 
-    bool is_moving;
+    bool is_moving = false;
     bool render_done;
 
     void render_depth_buffer();

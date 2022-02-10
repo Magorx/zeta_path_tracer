@@ -269,7 +269,6 @@ void SFML_Interface::interaction_loop() {
 
         using namespace std::chrono_literals;
         std::this_thread::sleep_for(50ms);
-        // printf("ok\n");
 
         if (render_done) {
             window.clear();

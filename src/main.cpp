@@ -30,8 +30,8 @@ const double RENDERED_FRAME_POSTPROC_RADIUS = 1;
 
 // ============================================================================
 
-const int REAL_SCREEN_WIDTH   = 100;
-const int REAL_SCREEN_HEIGHT  = 100;
+const int REAL_SCREEN_WIDTH   = 200;
+const int REAL_SCREEN_HEIGHT  = 200;
 
 const Vec3d  CAMERA_POS 	  = {-100, 50, 50};
 const double CAMERA_VERTICAL_ROT   = 0;
@@ -82,7 +82,7 @@ int main(int argc, char* argv[]) {
 	logger.page_cut("interface.run()");
 
 	{
-	LogLevel loglvl(logger, 0, 10); // turn off the logging
+	// LogLevel loglvl(logger, 0, 10); // turn off the logging
 
 	interface->set_postprocs(ACCUMULATOR_FRAME_POSTPROC,
 							 RENDERED_FRAME_POSTPROC,
@@ -91,10 +91,11 @@ int main(int argc, char* argv[]) {
 
 	auto interface_interactor = new std::thread(&SFML_Interface::run, interface);
 	// interface->run();
+	std::this_thread::sleep_for(std::chrono::seconds(1));
 
 	interface->interaction_loop();
 
-	interface->stop();
+	// interface->stop();
 
 	interface_interactor->join();
 	}
@@ -203,11 +204,11 @@ HittableList *cornell_box_objects() {
 
 	Material *m_model = new m_Metal({255, 255, 30}, 0.05);	
 
-	Hittable *model = new Model("../models/whip.obj", {m_glass}, {0, 0, 0}, 17,false); // remove ../ if you build tracer NOT in build dir
+	Hittable *model = new Model("../models/whip.obj", {m_glass}, {0, 0, 0}, 10, false); // remove ../ if you build tracer NOT in build dir
 	model = new inst_RotZ(new inst_RotX(model, -Pi/2), Pi/2);
 	model = new inst_Translate(model, {10, 50, 0});
 	
-	// scene->insert(model);
+	scene->insert(model);
 
 	// Hittable *sp = new h_Sphere({95, 25, 75}, 15, m_model);
 	// scene->insert(sp);
