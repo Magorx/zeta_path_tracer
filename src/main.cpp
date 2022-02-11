@@ -10,7 +10,7 @@ const int VERBOSITY = 2; // 2 for detailed log of some things
 const int WINDOW_WIDTH  = 1000;
 const int WINDOW_HEIGHT = 1000;
 
-const int PIXEL_SCREEN_WIDTH  = 200;
+const int PIXEL_SCREEN_WIDTH  = 1000;
 // const int PIXEL_SCREEN_HEIGHT = 1000;
 
 const int 	 PIXEL_SAMPLING   = 1;
@@ -18,7 +18,7 @@ const int 	 MAX_TRACE_DEPTH  = 10;
 
 const double GAMMA_CORRECTION = 0.36;
 
-const int DEFAULT_THREADS_CNT = 4;
+const int DEFAULT_THREADS_CNT = 10;
 
 // ============================================================================
 
