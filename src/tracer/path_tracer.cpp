@@ -67,7 +67,7 @@ Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_
     if (normal) {
 		memset(normal, 0, sizeof(Vec3d));
 	}
-	if (*depth) {
+	if (depth) {
 		memset(depth, 0, sizeof(Vec3d));
 	}
 
@@ -85,9 +85,13 @@ Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_
 	}
 	accumulator += trace_ray(central_ray, hittable, config, 1, normal, depth);
 
-	*normal /= (double) config.render.PIXEL_SAMPLING;
-	normal->normalize();
-	*depth  /= (double) config.render.PIXEL_SAMPLING;
+	if (normal) {
+		*normal /= (double) config.render.PIXEL_SAMPLING;
+		normal->normalize();
+	}
+	if (depth) {
+		*depth /= (double) config.render.PIXEL_SAMPLING;
+	}
 
 	return accumulator / config.render.PIXEL_SAMPLING;
 }
@@ -181,47 +185,30 @@ void render_from_rtask_file(Scene *scene, const conf_PathTracer &config) {
 		full_rtask.load(config.sysinf.rtask_filename);
 	}
 
-	Color *image_buffer = (Color*) calloc(full_rtask.width() * full_rtask.height(), sizeof(Color));
+	std::vector<Color> image_buffer(full_rtask.width() * full_rtask.height());
 
 	if (config.sysinf.kernel_cnt == 1) {
-		render_rtask(scene, config, full_rtask, image_buffer);
-		save_rgb_to_ppm_image("image.ppm", image_buffer, full_rtask.width(), full_rtask.height(), config.render.GAMMA_CORRECTION);
+		render_rtask(scene, config, full_rtask, image_buffer.data());
+		save_rgb_to_ppm_image("image.ppm", image_buffer.data(), full_rtask.width(), full_rtask.height(), config.render.GAMMA_CORRECTION);
 	} else {
 		int kernel_cnt = config.sysinf.kernel_cnt;
-		full_rtask.linear_split(kernel_cnt, config.sysinf.timestamp);
+		auto rtasks = full_rtask.linear_split(kernel_cnt);
 
 		if (config.verbos.VERBOSITY >= 2) printf("={ RenderTasks }=====\n");
 
-		std::vector<RenderTask> rtasks;
-		char rt_name[50];
-		for (int i = 0; i < kernel_cnt; ++i) {
-			sprintf(rt_name, "%d_%d.rt", i, config.sysinf.timestamp);
-			
-			RenderTask rtask;
-			rtask.load(rt_name);
-			if (config.verbos.VERBOSITY >= 2) {
-				rtask.dump();
-				if (i != kernel_cnt - 1) printf("-----\n");
-			}
-			rtasks.push_back(rtask);
-		}
-
-		if (config.verbos.VERBOSITY >= 2) printf("=====================\n");
-
 		int task_buffer_offset = rtasks[0].width() * rtasks[0].height();
-		std::thread **threads = (std::thread**) calloc(config.sysinf.kernel_cnt, sizeof(std::thread*));
+		std::vector<std::thread> threads;
 		for (int i = 0; i < config.sysinf.kernel_cnt; ++i) {
-			threads[i] = new std::thread(render_rtask, scene, config, rtasks[i], image_buffer + i * task_buffer_offset, !i);
+			threads.push_back(std::thread{render_rtask, scene, config, rtasks[i], image_buffer.data() + i * task_buffer_offset, !i});
 		}
-
 		for (int i = 0; i < kernel_cnt; ++i) {
-			threads[i]->join();
-			delete threads[i];
+			threads[i].join();
 		}
-		free(threads);
 
-		save_rgb_to_ppm_image("image.ppm", image_buffer, full_rtask.width(), full_rtask.height(), config.render.GAMMA_CORRECTION);
+		save_rgb_to_ppm_image("image.ppm", image_buffer.data(), full_rtask.width(), full_rtask.height(), config.render.GAMMA_CORRECTION);
 	}
+
+	// free(image_buffer);
 }
 
 conf_Render::conf_Render(const int screen_width, const int screen_height,

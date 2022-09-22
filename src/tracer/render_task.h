@@ -4,6 +4,7 @@
 #include "color/color.h"
 #include <cstdio>
 #include <cassert>
+#include <vector>
 
 struct RenderTask {
 	int id;
@@ -29,7 +30,7 @@ struct RenderTask {
 
 	void dump(FILE *fout = stdout);
 
-	void linear_split(const int parts_cnt, const int random_name_modifier);
+	std::vector<RenderTask> linear_split(const int parts_cnt);
 };
 
 void linear_render_task_split(const int width, const int height, const int parts_cnt, const char *rtask_ext = ".rt", 

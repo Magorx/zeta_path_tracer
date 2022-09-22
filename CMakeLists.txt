@@ -22,12 +22,6 @@ add_executable(zepher
         src/camera_light_scene/camera.cpp
         src/camera_light_scene/light.cpp
 
-        # src/collections/collection_hittables.cpp
-        # src/collections/collection_instances.cpp
-        # src/collections/collection_lights.cpp
-        # src/collections/collection_materials.cpp
-        # src/collections/collection_textures.cpp
-
         src/color/color.cpp
         src/color/rgba.cpp
 

@@ -6,10 +6,6 @@
 #include <chrono>
 #include <thread>
 
-#include "thread_render_task.h"
-#include "multithreading/semaphore.h"
-
-#include <thread>
 #include "multithreading/semaphore.h"
 
 
