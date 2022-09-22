@@ -1,5 +1,5 @@
 #include "PathTracer.hpp"
-#include "sfml_interface/interface.h"
+// #include "sfml_interface/interface.h"
 
 #include "utils/logger.h"
 
