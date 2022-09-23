@@ -5,9 +5,9 @@
 #include "rgba.h"
 #include <cstdio>
 
-extern const int 	i_MAXRGB;
+extern const int     i_MAXRGB;
 extern const double d_MAXRGB;
-extern const int 	i_MINRGB;
+extern const int     i_MINRGB;
 extern const double d_MINRGB;
 
 using Color = Vec3d;

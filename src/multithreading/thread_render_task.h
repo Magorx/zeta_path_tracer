@@ -1,17 +1,18 @@
-#ifndef THREAD_RENDER_TASK_H
-#define THREAD_RENDER_TASK_H
+#pragma once
 
 #include "PathTracer.hpp"
 
-struct ThreadRenderTask {
+namespace zephyr::threading {
+
+struct ThreadRenderTaskT {
     Scene &scene;
     
-    conf_PathTracer &config;
+    zephyr::tracer::config::FullT &config;
     RenderTask rtask;
 
     Frame<Color, Vec3d, double> &frame;
 
-    inline ThreadRenderTask(Scene &scene, conf_PathTracer &config, RenderTask rtask, Frame<Color, Vec3d, double> &frame) :
+    inline ThreadRenderTaskT(Scene &scene, zephyr::tracer::config::FullT &config, RenderTask rtask, Frame<Color, Vec3d, double> &frame) :
     scene(scene),
     config(config),
     rtask(rtask),
@@ -19,4 +20,4 @@ struct ThreadRenderTask {
     {}
 };
 
-#endif // THREAD_RENDER_TASK_H
+} // namespace zephyr::threading

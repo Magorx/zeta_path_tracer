@@ -5,13 +5,13 @@
 
 class t_SolidColor : public Texture {
 private:
-	Color color;
+    Color color;
 
 public:
-	t_SolidColor();
-	t_SolidColor(const Color &color_);
+    t_SolidColor();
+    t_SolidColor(const Color &color_);
 
-	virtual Color value(double sx, double sy, const Vec3d &p) const override;
+    virtual Color value(double sx, double sy, const Vec3d &p) const override;
 };
 
 #endif // TEXTURE_SOLID_COLOR_H

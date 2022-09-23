@@ -16,7 +16,7 @@ Vec3d h_Sphere::normal(const Vec3d &point) const {
     Vec3d result = point;
     result -= center;
     result.normalize();
-	return result;
+    return result;
 }
 
 bool h_Sphere::hit(Ray &ray, HitRecord* hit_record) const {

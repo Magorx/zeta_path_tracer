@@ -8,7 +8,7 @@
 #include "aabb.h"
 
 struct Hittable {
-	Material *material;
+    Material *material;
 
     Hittable();
     Hittable(Material *material_);

@@ -20,10 +20,10 @@ freq(freq_)
 {}
 
 Color t_Checkered::value(double sx, double sy, const Vec3d &point) const {
-	double sines = sin(point[0] * freq[0])* sin(point[1] * freq[1]) * sin(point[2] * freq[2]);
-	if (sines < 0) {
-		return  first->value(sx, sy, point);
-	} else {
-		return second->value(sx, sy, point);
-	}
+    double sines = sin(point[0] * freq[0])* sin(point[1] * freq[1]) * sin(point[2] * freq[2]);
+    if (sines < 0) {
+        return  first->value(sx, sy, point);
+    } else {
+        return second->value(sx, sy, point);
+    }
 }

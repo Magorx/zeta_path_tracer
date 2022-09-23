@@ -6,11 +6,6 @@
 
 #include "collections/Collections.h"
 
-// #include "collections/collection_hittables.h"
-// #include "collections/collection_materials.h"
-// #include "collections/collection_lights.h"
-// #include "collections/collection_instances.h"
-
 #include "image/denoiser.h"
 
 #include "multithreading/thread_render_task.h"

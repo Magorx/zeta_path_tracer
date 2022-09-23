@@ -40,7 +40,7 @@ bbox()
 }
 
 bool inst_RotX::hit(Ray &ray, HitRecord* hit_record) const {
-	Vec3d orig = ray.orig;
+    Vec3d orig = ray.orig;
     Vec3d dir  = ray.dir;
 
     orig.set(1, cos_a*ray.orig[1] - sin_a*ray.orig[2]);
@@ -73,8 +73,8 @@ bool inst_RotX::hit(Ray &ray, HitRecord* hit_record) const {
 }
 
 bool inst_RotX::bounding_box(AABB &box) const {
-	box = bbox;
-	return has_bbox;
+    box = bbox;
+    return has_bbox;
 }
 
 bool inst_RotX::get_surface_coords(const Vec3d&, double&, double&) const {

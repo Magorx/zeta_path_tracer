@@ -9,5 +9,5 @@ color(color_)
 {}
 
 Color t_SolidColor::value(double, double, const Vec3d&) const {
-	return color;
+    return color;
 }

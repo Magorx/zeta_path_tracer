@@ -14,13 +14,13 @@ to_affect_emitter(1)
 {}
 
 bool m_Lambertian::scatter(const Ray &, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
-	Vec3d scatter_direction = hitrec.normal;
+    Vec3d scatter_direction = hitrec.normal;
     scatter_direction += Vec3d::random_in_unit_sphere();
-	// Vec3d a = Vec3d::random_in_unit_sphere();
-	// printf("%g %g %g\n", a.x(), a.y(), a.z());
-	if (scatter_direction.is_zero()) {
-		scatter_direction = hitrec.normal;
-	}
+    // Vec3d a = Vec3d::random_in_unit_sphere();
+    // printf("%g %g %g\n", a.x(), a.y(), a.z());
+    if (scatter_direction.is_zero()) {
+        scatter_direction = hitrec.normal;
+    }
 
     scattered = Ray(hitrec.point, scatter_direction);
     attenuation = albedo->value(hitrec.surf_x, hitrec.surf_y, hitrec.point);
@@ -28,5 +28,5 @@ bool m_Lambertian::scatter(const Ray &, const HitRecord &hitrec, Color &attenuat
 }
 
 void m_Lambertian::affect_emitter(Vec3d &emitted, const double sx, const double sy, const Vec3d &point) const {
-	emitted *= albedo->value(sx, sy, point) / d_MAXRGB;
+    emitted *= albedo->value(sx, sy, point) / d_MAXRGB;
 }

@@ -8,12 +8,12 @@
 struct HitRecord;
 
 class Material {
-	Light *emitter;
+    Light *emitter;
 public:
-	Material();
+    Material();
 
-	void set_emitter(Light *emitter_);
-	Vec3d emit(const double surf_x, const double surf_y, const Vec3d &point) const;
+    void set_emitter(Light *emitter_);
+    Vec3d emit(const double surf_x, const double surf_y, const Vec3d &point) const;
 
     virtual bool scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const = 0;
     virtual void affect_emitter(Vec3d &emitted_color, const double surf_x, const double surf_y, const Vec3d &point) const = 0;

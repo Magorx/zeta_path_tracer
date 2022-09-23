@@ -19,33 +19,33 @@ to_affect_emitter(1)
 {}
 
 bool m_Dielectric::scatter(const Ray &ray, const HitRecord &hitrec, Color &attenuation, Ray &scattered) const {
-	attenuation = albedo->value(hitrec.surf_x, hitrec.surf_y, hitrec.point);
-	double rc = hitrec.front_hit ? (1 / refrac_coef) : refrac_coef;
+    attenuation = albedo->value(hitrec.surf_x, hitrec.surf_y, hitrec.point);
+    double rc = hitrec.front_hit ? (1 / refrac_coef) : refrac_coef;
 
-	double cos_theta = fmin(-(ray.dir.dot(hitrec.normal)) / ray.dir.len(), 1.0);
-	double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
+    double cos_theta = fmin(-(ray.dir.dot(hitrec.normal)) / ray.dir.len(), 1.0);
+    double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
 
-	bool cannot_refract = rc * sin_theta > 1.0;
-	Vec3d scatter_direction;
+    bool cannot_refract = rc * sin_theta > 1.0;
+    Vec3d scatter_direction;
 
     unsigned int random_values[4];
     Brans::rand_sse(random_values);
     double first_random_value  = (double) random_values[0] / (double) UINT32_MAX;
     double second_random_value = (double) random_values[1] / (double) UINT32_MAX;
 
-	// printf("refr %g\n", reflectance(cos_theta, rc));
+    // printf("refr %g\n", reflectance(cos_theta, rc));
 
-	if (cannot_refract || reflectance(cos_theta, rc) > first_random_value || (roughness > 0 && second_random_value < roughness)) {
-		scatter_direction = reflect(ray.dir, -hitrec.normal);
-	} else {
-		scatter_direction = refract(ray.dir, hitrec.normal, rc);
-	}
+    if (cannot_refract || reflectance(cos_theta, rc) > first_random_value || (roughness > 0 && second_random_value < roughness)) {
+        scatter_direction = reflect(ray.dir, -hitrec.normal);
+    } else {
+        scatter_direction = refract(ray.dir, hitrec.normal, rc);
+    }
 
-	Vec3d fuzz_scatter = Vec3d::random_in_unit_sphere();
+    Vec3d fuzz_scatter = Vec3d::random_in_unit_sphere();
     fuzz_scatter *= fuzziness;
-	scatter_direction += fuzz_scatter;
+    scatter_direction += fuzz_scatter;
 
-	scattered = Ray(hitrec.point, scatter_direction);
+    scattered = Ray(hitrec.point, scatter_direction);
 
     return true;
 }

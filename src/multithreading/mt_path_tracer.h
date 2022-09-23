@@ -4,6 +4,10 @@
 #include "threader.h"
 #include "thread_render_task.h"
 
-void render_threaded(ThreadRenderTask &task);
+namespace zephyr::threading {
+
+void render_threaded(ThreadRenderTaskT &task);
+
+} // namespace zephyr::threading
 
 #endif // MT_PATH_TRACER

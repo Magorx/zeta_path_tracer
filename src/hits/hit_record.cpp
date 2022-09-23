@@ -20,7 +20,7 @@ HitRecord::HitRecord(const Vec3d& point, double distance, const Vec3d& normal, M
         surf_y(0)
 {
     this->normal.normalize();
-	set_normal_orientation(ray_dir);
+    set_normal_orientation(ray_dir);
 }
 
 bool operator==(const HitRecord &first, const HitRecord &second) {

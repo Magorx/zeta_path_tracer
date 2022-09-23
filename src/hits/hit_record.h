@@ -19,7 +19,7 @@ struct HitRecord {
     HitRecord(const Vec3d& point, double distance, const Vec3d& normal, Material* material, const Vec3d& ray_dir);
 
     inline void set_normal_orientation(const Vec3d &ray_direction) {
-    	front_hit = normal.dot(ray_direction) < 0;
+        front_hit = normal.dot(ray_direction) < 0;
         normal *= front_hit * 2 - 1;
     }
 };

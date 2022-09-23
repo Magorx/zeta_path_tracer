@@ -6,7 +6,7 @@ offset(offset_)
 {}
 
 bool inst_Translate::hit(Ray &ray, HitRecord* hit_record) const {
-	Ray moved_r(ray.orig - offset, ray.dir);
+    Ray moved_r(ray.orig - offset, ray.dir);
 
     if (!obj->hit(moved_r, hit_record)) {
         return false;
@@ -19,7 +19,7 @@ bool inst_Translate::hit(Ray &ray, HitRecord* hit_record) const {
 }
 
 bool inst_Translate::bounding_box(AABB &box) const {
-	if (!obj->bounding_box(box))
+    if (!obj->bounding_box(box))
         return false;
 
     box = AABB(box.mn + offset, box.mx + offset);
@@ -27,5 +27,5 @@ bool inst_Translate::bounding_box(AABB &box) const {
 }
 
 bool inst_Translate::get_surface_coords(const Vec3d&, double&, double&) const {
-	return false;
+    return false;
 }
