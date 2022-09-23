@@ -79,7 +79,13 @@ public:
 
     void print(const char *message, ...);
 
-    void print_log_prefix(const char* code, const char* announcer);
+    void print_log_prefix(
+        const char* code,
+        const char* announcer,
+        bool to_tick=true,
+        bool force_code=false,
+        bool force_announcer=false
+    );
 
     void log(const char* code, const char* announcer, const char *message, ...); // normal logging
     void log(int override_log_level, const char* code, const char* announcer, const char *message, ...);

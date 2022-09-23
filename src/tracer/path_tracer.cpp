@@ -102,9 +102,10 @@ Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_
 }
 
 void render_image(Scene *scene, const config::FullT &config) {
-    ProgressBar prog_bar(stderr, 
-                         scene->camera->res_h * scene->camera->res_w,
-                         config.verbos.verbosity);
+    kctf::ProgressBar prog_bar( 
+        scene->camera->res_h * scene->camera->res_w,
+        config.verbos.verbosity
+    );
 
     int res_h = scene->camera->res_h;
     int res_w = scene->camera->res_w;
@@ -127,7 +128,7 @@ void render_rtask(Scene *scene, const config::FullT &config, RenderTask rtask, C
     int height = rtask.height();
     int width  = rtask.width();
 
-    ProgressBar prog_bar(stderr, height * width, config.verbos.verbosity && verbouse);
+    kctf::ProgressBar prog_bar(height * width, config.verbos.verbosity && verbouse);
 
     int min_x = std::max(rtask.min_x, 0);
     int min_y = std::max(rtask.min_y, 0);
@@ -145,8 +146,10 @@ void render_rtask(Scene *scene, const config::FullT &config, RenderTask rtask, C
 }
 
 void render_into_buffer(Scene *scene, const config::FullT &config, Color *buffer) {
-    ProgressBar prog_bar(stderr, scene->camera->res_h * scene->camera->res_w,
-                         config.verbos.verbosity);
+    kctf::ProgressBar prog_bar(
+        scene->camera->res_h * scene->camera->res_w,
+        config.verbos.verbosity
+    );
 
     prog_bar.start();
     int res_h = scene->camera->res_h;
@@ -165,8 +168,10 @@ void render_into_buffer(Scene *scene, const config::FullT &config, Color *buffer
         logger.error("Zephyr", "no normal_map provided to render_into_buffer, thow you passed something here\n");
     }
 
-    ProgressBar prog_bar(stderr, scene->camera->res_h,
-                         config.verbos.verbosity);
+    kctf::ProgressBar prog_bar(
+        scene->camera->res_h,
+        config.verbos.verbosity
+    );
 
     prog_bar.start();
     int res_h = scene->camera->res_h;

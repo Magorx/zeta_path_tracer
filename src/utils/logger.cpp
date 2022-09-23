@@ -159,17 +159,25 @@ void Logger::print_aligned(Align align, int size, const char *format, ...) {
     }
 }
 
-void Logger::print_log_prefix(const char* code, const char* announcer) {
-    tick();
+void Logger::print_log_prefix(
+    const char* code,
+    const char* announcer,
+    bool to_tick,
+    bool force_code,
+    bool force_announcer
+) {
+    if (to_tick) {
+        tick();
+    }
 
     update_announcer(announcer);
     update_code(code);
 
-    if (to_print_code) {
+    if (to_print_code || force_code) {
         fputc('[', fileptr);
         print_aligned(Align::middle, max_code_len, "%s", code);
         fputc(']', fileptr);
-    } else if (to_print_announcer) {
+    } else if (to_print_announcer || force_announcer) {
         fputc('[', fileptr);
         print_n_spaces(max_code_len);
         fputc(']', fileptr);
@@ -178,7 +186,7 @@ void Logger::print_log_prefix(const char* code, const char* announcer) {
     }
     // print_n_spaces(max_code_len - last_code_len);
 
-    if (to_print_announcer) {
+    if (to_print_announcer || force_announcer) {
         if (!htlm_mode) {
             fputc('<', fileptr);
             print_aligned(Align::middle, max_announcer_len, "%s", announcer);
@@ -190,7 +198,7 @@ void Logger::print_log_prefix(const char* code, const char* announcer) {
             print("&gt;");
             // fprintf(fileptr, "%s", announcer);
         }
-    } else if (to_print_code) {
+    } else if (to_print_code || force_code) {
         fputc('<', fileptr);
         print_n_spaces(max_announcer_len);
         fputc('>', fileptr);
