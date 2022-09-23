@@ -17,17 +17,7 @@ int main(int argc, char* argv[]) {
     Brans::srand_sse(time(nullptr));
     srand(time(nullptr));
 
-    argparse::ArgumentParser program("Zephyr tracer", "0.3");
-    
-    conf::FullT config;
-    
-    config.argparse_args(program);
-    
-    program.parse_args(argc, argv);
-    
-    config.argparse_scan(program);
-
-    std::cout << config.render.screen.width << std::endl;
+    conf::FullT config = conf::from_command_line(argc, argv);
 
     return 0;
 

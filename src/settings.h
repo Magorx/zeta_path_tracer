@@ -1,6 +1,11 @@
 #include <PathTracer.hpp>
 
 
+// meta-info ==================================================================
+
+const std::string PROJECT_NAME = "Zephyr-tracer";
+const std::string PROJECT_VERSION = "0.3";
+
 // settings ===================================================================
 
 const int VERBOSITY = 2; // 2 for detailed log of some things

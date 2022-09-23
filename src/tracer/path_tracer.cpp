@@ -183,9 +183,9 @@ void render_into_buffer(Scene *scene, const config::FullT &config, Color *buffer
 
 void render_from_rtask_file(Scene *scene, const config::FullT &config) {
     RenderTask full_rtask(0, scene->camera->res_w, 0, scene->camera->res_h, 0);
-    if (config.sysinf.rtask_filename) {
-        full_rtask.load(config.sysinf.rtask_filename);
-    }
+    // if (config.sysinf.rtask_filename) {
+    //     full_rtask.load(config.sysinf.rtask_filename);
+    // }
 
     std::vector<Color> image_buffer(full_rtask.width() * full_rtask.height());
 

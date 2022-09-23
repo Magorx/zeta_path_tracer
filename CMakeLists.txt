@@ -11,7 +11,7 @@ set(WARNING_FLAGS "-Wall -Wextra -Wno-multichar -Wno-unused-result")
 include_directories(src)
 
 set(CMAKE_EXE_LINKER_FLAGS "-pthread")
-set(CMAKE_CXX_FLAGS   "-O3 ${WARNING_FLAGS} -fdeclspec -march=native")
+set(CMAKE_CXX_FLAGS   "${WARNING_FLAGS} -fdeclspec -march=native")
 
 # find_package(SFML 2 COMPONENTS system window graphics network audio REQUIRED)
 
@@ -39,7 +39,11 @@ add_executable(zepher
 
         src/tracer/path_tracer.cpp
         src/tracer/render_task.cpp
+        
+        src/tracer/configs/full.cpp
         src/tracer/configs/render.cpp
+        src/tracer/configs/system.cpp
+        src/tracer/configs/verbosity.cpp
 
         # src/sfml_interface/interface.cpp
         src/image/denoiser.cpp

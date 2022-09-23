@@ -1119,6 +1119,16 @@ public:
     return *argument;
   }
 
+  struct ArgumentCut {
+    size_t preceeding_args_cout;
+    std::string text;
+  };
+
+  ArgumentCut &add_optional_args_cut(const std::string text) {
+    m_optional_cut.push_back({m_optional_arguments.size(), text});
+    return m_optional_cut.back();
+  }
+
   // Parameter packed add_parents method
   // Accepts a variadic number of ArgumentParser objects
   template <typename... Targs>
@@ -1248,11 +1258,8 @@ public:
    * @throws std::logic_error in case of an invalid argument name
    */
   Argument &operator[](std::string_view arg_name) const {
-    printf("HELLO\n");
     auto it = m_argument_map.find(arg_name);
     if (it != m_argument_map.end()) {
-      printf("ok\n");
-      // std::cout << it->second->is_positional() << std::endl;
       return *(it->second);
     }
     if (!is_valid_prefix_char(arg_name.front())) {
@@ -1303,9 +1310,19 @@ public:
              << "Optional arguments:\n";
     }
 
+    auto it_cut = parser.m_optional_cut.begin();
+    size_t printed_args_count = 0;
     for (const auto &argument : parser.m_optional_arguments) {
+      if (it_cut != parser.m_optional_cut.end()) { // there are still some cuts
+        if (printed_args_count == it_cut->preceeding_args_cout) {
+          stream << it_cut->text << "\n";
+          ++it_cut;
+        }
+      }
+
       stream.width(static_cast<std::streamsize>(longest_arg_length));
       stream << argument;
+      ++printed_args_count;
     }
 
     if (!parser.m_subparser_map.empty()) {
@@ -1645,6 +1662,7 @@ private:
   bool m_is_parsed = false;
   std::list<Argument> m_positional_arguments;
   std::list<Argument> m_optional_arguments;
+  std::list<ArgumentCut> m_optional_cut;
   std::map<std::string_view, argument_it, std::less<>> m_argument_map;
   std::string m_parser_path;
   std::list<std::reference_wrapper<ArgumentParser>> m_subparsers;
