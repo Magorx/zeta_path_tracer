@@ -8,10 +8,10 @@
 int main(int argc, char* argv[]) {
     Brans::srand_sse(time(nullptr));
     srand(time(nullptr));
-    
-    logger.set_verb_level(Logger::Level::info);
 
     auto config = zephyr::tracer::config::from_command_line(argc, argv);
+
+    logger.set_verb_level((Logger::Level) config.verbos.verbosity);
 
     logger.log(0, "hola", "KCTF", "Welcome to Zephyr ray-tracer, have a nice day");
 

@@ -10,7 +10,7 @@ void VerbosityT::argparse_args(argparse::ArgumentParser &program) {
 
     program.add_argument("-v", "--verbosity")
         .help("The higher verbosity - the more loggs")
-        .default_value(DEFAULT_THREADS_CNT)
+        .default_value(6)
         .scan<'i', int>();
 }
 
