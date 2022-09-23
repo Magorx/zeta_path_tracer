@@ -1,5 +1,4 @@
-#ifndef RAY
-#define RAY
+#pragma once
 
 #include "utils/vec3d.h"
 
@@ -20,5 +19,3 @@ public:
         return result;
     }
 };
-
-#endif // RAY

@@ -1,5 +1,7 @@
 #include "interface.h"
 
+#include "utils/logger.h"
+
 
 SFML_Interface::SFML_Interface(const char *window_name, Scene *scene_, const conf_PathTracer config_, int scr_w_, int scr_h_, int pixel_sampling_per_render_):
 window(sf::VideoMode(scr_w_, scr_h_), window_name),
@@ -28,7 +30,7 @@ average_frame_ms(0),
 average_frame_cnt(0)
 {   
     if (!scene) {
-        fprintf(stderr, "[ERR] scene is nullptr, aborting");
+        logger.error("interface", "[ERR] scene is nullptr, aborting");
     }
 
     image_texture.create(scene->camera->res_w, scene->camera->res_h);
@@ -37,7 +39,7 @@ average_frame_cnt(0)
 
     cur_image = (RGBA*) calloc(pixel_cnt, sizeof(RGBA));
     if (!cur_image) {
-        fprintf(stderr, "[ERR] Can't calloc buffer for current/new image [%dx%d]", img_size.x, img_size.y);
+        logger.error("interface", "[ERR] Can't calloc buffer for current/new image [%dx%d]", img_size.x, img_size.y);
     }
 
     frame = Frame<Color, Vec3d, double>(img_size.x, img_size.y);
@@ -152,7 +154,7 @@ void SFML_Interface::stop() {
 
 void SFML_Interface::screenshot_to_file(const char *filename) {
     if (!filename) {
-        printf("[ERR] can't screenshot to nullptr filename, will save to SCRSHT.png");
+        logger.warning("interface", "[ERR] can't screenshot to nullptr filename, will save to SCRSHT.png");
         filename = "SCRSHT.png";
     }
 
@@ -259,7 +261,6 @@ void SFML_Interface::handle_movement() {
     }
 
     is_moving = moved;
-    // printf("%s\n", is_moving ? "mov" : "not move");
 }
 
 void SFML_Interface::interaction_loop() {

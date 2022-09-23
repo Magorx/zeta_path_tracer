@@ -1,5 +1,4 @@
-#ifndef PROGRESS_BAR
-#define PROGRESS_BAR
+#pragma once
 
 #include <cstdio>
 #include <chrono>
@@ -17,7 +16,7 @@ class ProgressBar {
 
     void on_start() {
         start_timestamp = std::chrono::system_clock::now();
-        fprintf(file_ptr, "[PRG] [>         ] |  0%%| [|]");
+        fprintf(file_ptr, "[prog] [>         ] |  0%%| [|]");
     }
 
     void on_tick() {
@@ -29,7 +28,7 @@ class ProgressBar {
 
         fprintf(file_ptr, "\r"); // \x1b[K - clear
 
-        fprintf(file_ptr, "[PRG] [");
+        fprintf(file_ptr, "[prog] [");
         int i = 0;
         for (; i < 10 && i < ((double) cur_tick / capacity) * 10 - 1; ++i) {
             fprintf(file_ptr, "=");
@@ -48,7 +47,7 @@ class ProgressBar {
     void on_stop() {
         auto now = std::chrono::system_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start_timestamp);
-        fprintf(file_ptr, "\r[PRG] [==========] |100%%| [+] (%ldms)\n",  elapsed.count());
+        fprintf(file_ptr, "\r[prog] [==========] |100%%| [+] (%ldms)\n",  elapsed.count());
     }
 
     void turn_wheele() const {
@@ -95,5 +94,3 @@ public:
         }
     }
 };
-
-#endif // PROGRESS_BAR

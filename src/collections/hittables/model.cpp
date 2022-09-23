@@ -110,15 +110,12 @@ bool Model::load(const char *filename, std::vector<Material*> matrs, const Vec3d
             }
             hittables.push_back(triag);
         } else {
-            // printf("skipped: {");
             int c;
             while ((c = fgetc(fin)) != '\n') {
                 if (c == EOF) {
                     break;
                 }
-                // printf("%c", c);
             }
-            // printf("}\n");
         }
 
     }

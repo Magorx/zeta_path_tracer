@@ -1,11 +1,13 @@
 #include "logger.h"
 
-
-Logger logger;
+namespace kctf {
+    Logger logger;
+}
 
 
 Logger::Logger(FILE *fileptr, int log_level, int reset_max_lens_counter):
 fileptr(fileptr),
+to_close_file(false),
 last_announcer(nullptr),
 last_announcer_len(0),
 last_code(nullptr),
@@ -14,6 +16,7 @@ max_code_len(0),
 max_announcer_len(0),
 to_print_announcer(false),
 to_print_code(true),
+offset(0),
 reset_max_lens_counter(reset_max_lens_counter),
 tick_timer(0),
 log_level(log_level),
@@ -24,9 +27,28 @@ paging_mode(0)
     if (!reset_max_lens_counter) {
         reset_max_lens_counter = 1;
     }
+}
+
+Logger::Logger(const std::string &filename, int log_level, int reset_max_lens_counter):
+Logger(nullptr, log_level, reset_max_lens_counter)
+{
+    if (filename == "" || filename==":stdout:") {
+        fileptr = stdout;
+    } else if (filename == ":stderr:") {
+        fileptr = stderr;
+    } else {
+        fileptr = fopen(filename.c_str(), "w");
+        to_close_file = true;
+    }
 
     if (!fileptr) {
         print_nullptr_passed_error();
+    }
+}
+
+Logger::~Logger() {
+    if (to_close_file) {
+        fclose(fileptr);
     }
 }
 
@@ -93,50 +115,103 @@ void Logger::update_code(const char *code) {
     max_code_len = max_code_len > last_code_len ? max_code_len : last_code_len;
 }
 
-void Logger::print_n_spaces(size_t n) {
+void Logger::print(const char *message, ...) {
+    va_list args;
+    va_start(args, message);
+    vfprintf(fileptr, message, args);
+    va_end(args);
+}
+
+void Logger::print_n_spaces(int n) {
     ++n;
-    while (--n) {
+    while (--n > 0) {
         fputc(' ', fileptr);
     }
 }
 
-void Logger::_log(bool to_ignore_log_level, const char* code, const char* announcer, const char *message, va_list arglist) { // dirty code, I suppose it can be cleaned
-    if (log_level < verb_level && !to_ignore_log_level) return;
+void Logger::print_aligned(Align align, int size, const char *format, ...) {
+    static const int BUFFER_LEN = 256;
+    static char BUFFER[BUFFER_LEN];
 
-    if (!announcer || !code || !message) {
-        print_nullptr_passed_error();
-        return;
+    memset(BUFFER, 0, BUFFER_LEN);
+
+    va_list args;
+    va_start(args, format);
+    vsnprintf(BUFFER, BUFFER_LEN, format, args);
+    va_end(args);
+
+    size_t str_len = strlen(BUFFER);
+    size_t spare_spaces = size - str_len;
+
+    if ((int) align < 0) {
+        print("%s", BUFFER);
+        print_n_spaces(spare_spaces);
+    } else if ((int) align > 0) {
+        print("%s", BUFFER);
+        print_n_spaces(spare_spaces);
+    } else {
+        size_t left_spaces = spare_spaces / 2;
+        size_t right_spaces = spare_spaces - left_spaces;
+
+        print_n_spaces(left_spaces);
+        print("%s", BUFFER);
+        print_n_spaces(right_spaces);
     }
+}
 
+void Logger::print_log_prefix(const char* code, const char* announcer) {
     tick();
 
     update_announcer(announcer);
     update_code(code);
 
     if (to_print_code) {
-        fprintf(fileptr, "[%s]", code);
+        fputc('[', fileptr);
+        print_aligned(Align::middle, max_code_len, "%s", code);
+        fputc(']', fileptr);
     } else if (to_print_announcer) {
         fputc('[', fileptr);
-        print_n_spaces(last_code_len);
+        print_n_spaces(max_code_len);
         fputc(']', fileptr);
     } else {
-        print_n_spaces(last_code_len + 2);
+        print_n_spaces(max_code_len + 2);
     }
-    print_n_spaces(max_code_len - last_code_len);
+    // print_n_spaces(max_code_len - last_code_len);
 
     if (to_print_announcer) {
-        fprintf(fileptr, "<%s>", announcer);
+        if (!htlm_mode) {
+            fputc('<', fileptr);
+            print_aligned(Align::middle, max_announcer_len, "%s", announcer);
+            fputc('>', fileptr);
+            // fprintf(fileptr, "<%s>", announcer);
+        } else {
+            print("&lt;");
+            print_aligned(Align::middle, max_announcer_len, "%s", announcer);
+            print("&gt;");
+            // fprintf(fileptr, "%s", announcer);
+        }
     } else if (to_print_code) {
         fputc('<', fileptr);
-        print_n_spaces(last_announcer_len);
+        print_n_spaces(max_announcer_len);
         fputc('>', fileptr);
     } else {
-        print_n_spaces(last_announcer_len + 2);
+        print_n_spaces(max_announcer_len + 2);
     }
-    print_n_spaces(max_announcer_len - last_announcer_len);
+    // print_n_spaces(max_announcer_len - last_announcer_len);
     
     fprintf(fileptr, " : ");
+    print_n_spaces(offset);
+}
 
+void Logger::_log(bool to_ignore_log_level, const char* code, const char* announcer, const char *message, va_list arglist) { // dirty code, I suppose it can be cleaned
+    if (log_level > verb_level && !to_ignore_log_level) return;
+
+    if (!announcer || !code || !message) {
+        print_nullptr_passed_error();
+        return;
+    }
+
+    print_log_prefix(code, announcer);
     vfprintf(fileptr, message, arglist);
 
     n();
@@ -167,46 +242,82 @@ void Logger::log(int override_log_level, const char* code, const char* announcer
     va_end(args);
 }
 
+void Logger::logv(int override_log_level, const char* code, const char* announcer, const char *message, va_list args) {
+    if (override_log_level < verb_level) return;
+
+    _log(true, code, announcer, message, args);
+}
+
 void Logger::error(const char* announcer, const char *message, ...) {
+    int prev_log_level = log_level;
+    set_log_level(Level::error);
+
     va_list args;
     va_start(args, message);
     _log(false, "ERROR", announcer, message, args);
     va_end(args);
+
+    log_level = prev_log_level;
 }
 
 void Logger::ERROR(const char* announcer, const char *message, ...) {
+    int prev_log_level = log_level;
+    set_log_level(Level::error);
+
     va_list args;
     va_start(args, message);
     _log(false, "!--ERROR--!", announcer, message, args);
     va_end(args);
+
+    log_level = prev_log_level;
 }
 
 void Logger::info(const char* announcer, const char *message, ...) {
+    int prev_log_level = log_level;
+    set_log_level(Level::info);
+
     va_list args;
     va_start(args, message);
-    _log(false, "INFO", announcer, message, args);
+    _log(false, "info", announcer, message, args);
     va_end(args);
+
+    log_level = prev_log_level;
 }
 
 void Logger::warning(const char* announcer, const char *message, ...) {
+    int prev_log_level = log_level;
+    set_log_level(Level::warning);
+
     va_list args;
     va_start(args, message);
     _log(false, "~~~~", announcer, message, args);
     va_end(args);
+
+    log_level = prev_log_level;
 }
 
-void Logger::doubt   (const char* announcer, const char *message, ...) {
+void Logger::doubt(const char* announcer, const char *message, ...) {
+    int prev_log_level = log_level;
+    set_log_level(Level::info);
+
     va_list args;
     va_start(args, message);
     _log(false, "????", announcer, message, args);
     va_end(args);
+
+    log_level = prev_log_level;
 }
 
 void Logger::n() {
     fputc('\n', fileptr);
 }
 
-void Logger::page_cut(const char *page_name, int page_len, char symb) {
+void Logger::page_cut(const char *page_name, Level log_level_, int page_len, char symb) {
+    int prev_log_level = log_level;
+    set_log_level(log_level_);
+
+    if (log_level > verb_level) return;
+
     while (page_len-- > 0) fputc(symb, fileptr);
     
     if (page_name) {
@@ -217,6 +328,7 @@ void Logger::page_cut(const char *page_name, int page_len, char symb) {
     n();
 
     resets();
+    set_log_level(prev_log_level);
 }
 
 int  Logger::get_log_level() const {
@@ -227,6 +339,10 @@ void Logger::set_log_level(int log_level_) {
     log_level = log_level_;
 }
 
+void Logger::set_log_level(Logger::Level log_level_) {
+    log_level = (int) log_level_;
+}
+
 int  Logger::get_verb_level() const {
     return verb_level;
 }
@@ -234,6 +350,19 @@ int  Logger::get_verb_level() const {
 void Logger::set_verb_level(int verb_level_) {
     verb_level = verb_level_;
 }
+
+void Logger::set_verb_level(Logger::Level verb_level_) {
+    verb_level = (int) verb_level_;
+}
+
+void Logger::set_offset(int new_offset) {
+    offset = new_offset;
+}
+
+void Logger::shift_offset(int shift) {
+    set_offset(offset + shift);
+}
+
 
 LogLevel::LogLevel(Logger &logger, int log_level, int verb_level):
 logger(logger),

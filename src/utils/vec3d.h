@@ -1,5 +1,4 @@
-#ifndef GENERAL_VEC3D
-#define GENERAL_VEC3D
+#pragma once
 
 #include <cmath>
 #include <iostream>
@@ -230,5 +229,3 @@ Vec3d refract(const Vec3d vec, const Vec3d &normal, const double eta_from_over_e
 double vec3d_deg_to_rad(const double deg);
 
 double vec3d_rad_to_deg(const double rad);
-
-#endif // GENERAL_VEC3D

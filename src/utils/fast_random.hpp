@@ -1,5 +1,4 @@
-#ifndef FAST_RANDOM_H
-#define FAST_RANDOM_H
+#pragma once
 
 #include <ctime>
 #include <emmintrin.h>
@@ -54,5 +53,3 @@ inline void srand_sse() {
 }
 
 };
-
-#endif // FAST_RANDOM_H

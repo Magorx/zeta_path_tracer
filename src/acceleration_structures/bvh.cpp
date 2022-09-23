@@ -1,5 +1,8 @@
 #include "bvh.h"
 
+#include "utils/logger.h"
+
+
 inline bool bounding_box_compare(const Hittable *a, const Hittable *b, int axis) {
     AABB box_a;
     AABB box_b;
@@ -55,7 +58,7 @@ BVH_Node::BVH_Node(HittableList &hitlist, size_t from, size_t to) {
     size_t objects_cnt = to - from;
 
     if (objects_cnt <= 0) {
-        printf("[ERR] constructing BVH_Node from 0 objects, terminating\n");
+        logger.error("bvh", "constructing BVH_Node from 0 objects, terminating\n");
         exit(0);
     }
 
@@ -81,7 +84,7 @@ BVH_Node::BVH_Node(HittableList &hitlist, size_t from, size_t to) {
     AABB box_left{}, box_right{};
 
     if ((left && !left->bounding_box(box_left)) || (right && !right->bounding_box(box_right))) {
-        printf("[ERR] failed to get a bounding box from Hittable* [%p] or [%p], terminating\n", left, right);
+        logger.error("bvh", "failed to get a bounding box from Hittable* [%p] or [%p], terminating\n", left, right);
         exit(0);
     }
 

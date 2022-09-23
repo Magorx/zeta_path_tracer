@@ -67,7 +67,6 @@ bool inst_RotY::hit(Ray &ray, HitRecord* hit_record) const {
     hit_record->point = p;
     hit_record->normal = normal;
     hit_record->set_normal_orientation(ray.dir);
-    // fprintf(stderr, "dist %lg\normal", hitrec.dist);
 
     return true;
 }

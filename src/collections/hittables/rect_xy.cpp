@@ -19,9 +19,7 @@ bool h_RectXY::hit(Ray &ray, HitRecord* hit_record) const {
 
     double x = ray.orig[0] + t * ray.dir[0];
     double y = ray.orig[1] + t * ray.dir[1];
-    // fprintf(stderr, "t = %lg x = %lg y = %lg\normal", t, x, y);
     if (t < 0 || x < p0[0] || x > p1[0] || y < p0[1] || y > p1[1] || t > hit_record->dist) {
-        // fprintf(stderr, "no\normal");
         return false;
     }
 

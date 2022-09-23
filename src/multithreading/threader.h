@@ -8,6 +8,8 @@
 
 #include "multithreading/semaphore.h"
 
+#include "utils/logger.h"
+
 
 template <typename T>
 class Threader {
@@ -23,8 +25,6 @@ class Threader {
     bool running;
 
     void thread_main_loop(int thread_id) {
-        // printf("%p\n", this);
-        // printf("%p | %p | %p\n", sems_start, sems_stop, tasks);
         while (running) {
             sems_start[thread_id]->wait();
             if (!running) {
@@ -78,13 +78,13 @@ public:
         if (tasks.size() < get_threads_cnt())
             tasks.push_back(task);
         else {
-            printf("[ERR]<threader> adding more tasks will leave them undone, use set_tasks instead\n");
+            logger.error("threader", "adding more tasks will leave them undone, use set_tasks instead\n");
         }
     }
 
     inline void set_task(size_t i, const T &task) {
         if (i > tasks.size()) {
-            printf("[ERR]<threader> task index %lu is far too big (cur: %lu) \n", i, tasks.size());
+            logger.error("threader", "task index %lu is far too big (cur: %lu) \n", i, tasks.size());
             return;
         }
 

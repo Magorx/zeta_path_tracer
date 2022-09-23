@@ -33,8 +33,6 @@ bool m_Dielectric::scatter(const Ray &ray, const HitRecord &hitrec, Color &atten
     double first_random_value  = (double) random_values[0] / (double) UINT32_MAX;
     double second_random_value = (double) random_values[1] / (double) UINT32_MAX;
 
-    // printf("refr %g\n", reflectance(cos_theta, rc));
-
     if (cannot_refract || reflectance(cos_theta, rc) > first_random_value || (roughness > 0 && second_random_value < roughness)) {
         scatter_direction = reflect(ray.dir, -hitrec.normal);
     } else {

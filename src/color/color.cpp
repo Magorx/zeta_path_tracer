@@ -1,5 +1,8 @@
 #include "color.h"
 
+#include "utils/logger.h"
+
+
 const int      i_MAXRGB = 255;
 const double d_MAXRGB = 255.0;
 const int      i_MINRGB = 0;
@@ -55,11 +58,11 @@ void print_rgb(Color color, const double gamma_correction, FILE *file) {
 
 void save_rgb_to_ppm_image(FILE *fout, const Color *image, const size_t width, const size_t height, const double gamma_correction) {
     if (!fout) {
-        fprintf(stderr, "[ERR]<save_rgb_to_ppm_image> fileptr[nullptr]\n");
+        logger.error("color", "save_rgb_to_ppm_image fileptr[nullptr]\n");
         return;
     }
     if (!image) {
-        fprintf(stderr, "[ERR]<save_rgb_to_ppm_image> image[nullptr]\n");
+        logger.error("color", "save_rgb_to_ppm_image image[nullptr]\n");
         return;
     }
 
@@ -74,13 +77,13 @@ void save_rgb_to_ppm_image(FILE *fout, const Color *image, const size_t width, c
 
 void save_rgb_to_ppm_image(const char *filename, const Color *image, const size_t width, const size_t height, const double gamma_correction) {
     if (!filename) {
-        fprintf(stderr, "[ERR]<save_rgb_to_ppm_image> filename[nullptr]\n");
+        logger.error("color", "save_rgb_to_ppm_image filename[nullptr]\n");
         return;
     }
 
     FILE *fout = fopen(filename, "w");
     if (!fout) {
-        fprintf(stderr, "[ERR]<save_rgb_to_ppm_image> can't open file[%s]\n", filename);
+        logger.error("color", "save_rgb_to_ppm_image can't open file[%s]\n", filename);
         return;
     }
 

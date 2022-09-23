@@ -1,5 +1,8 @@
 #include "path_tracer.h"
 
+#include "utils/logger.h"
+
+
 namespace zephyr::tracer {
 
 Vec3d trace_ray(Ray &ray, const Hittable *hittable, const config::FullT &config, const int cur_trace_depth) {
@@ -73,7 +76,7 @@ Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_
         memset(depth, 0, sizeof(Vec3d));
     }
 
-    Vec3d accumulator(0, 0, 0);
+    Vec3d accumulator(config.render.background_color);
     for (int sample_i = 0; sample_i < config.render.pixel_sampling - 1; ++sample_i) {
         Ray sample_ray = camera->get_sample_ray((double) px_x, (double) px_y);
         accumulator += trace_ray(sample_ray, hittable, config, 1);
@@ -103,11 +106,10 @@ void render_image(Scene *scene, const config::FullT &config) {
                          scene->camera->res_h * scene->camera->res_w,
                          config.verbos.verbosity);
 
-    printf("P3 %d %d\n%d\n", config.render.screen.width, config.render.screen.height, i_MAXRGB);
-
-    prog_bar.start();
     int res_h = scene->camera->res_h;
     int res_w = scene->camera->res_w;
+
+    prog_bar.start();
     for (int y = 0; y < res_h; ++y) {
         for (int x = 0; x < res_w; ++x) {
             prog_bar.tick();
@@ -118,7 +120,7 @@ void render_image(Scene *scene, const config::FullT &config) {
 
 void render_rtask(Scene *scene, const config::FullT &config, RenderTask rtask, Color *buffer, const int verbouse) {
     if (!rtask.is_valid()) {
-        fprintf(stderr, "[ERR] RTask is broken\n");
+        logger.error("Zephyr", "[ERR] RTask is broken\n");
         return;
     }
 
@@ -160,7 +162,7 @@ void render_into_buffer(Scene *scene, const config::FullT &config, Color *buffer
 
 void render_into_buffer(Scene *scene, const config::FullT &config, Color *buffer, Vec3d *normal_map, double *depth_map) {
     if (!normal_map) {
-        printf("[ERR] no normal_map provided to render_into_buffer, thow you passed something here\n");
+        logger.error("Zephyr", "no normal_map provided to render_into_buffer, thow you passed something here\n");
     }
 
     ProgressBar prog_bar(stderr, scene->camera->res_h,
@@ -187,7 +189,7 @@ void render_from_rtask_file(Scene *scene, const config::FullT &config) {
     //     full_rtask.load(config.sysinf.rtask_filename);
     // }
 
-    std::vector<Color> image_buffer(full_rtask.width() * full_rtask.height());
+    std::vector<Color> image_buffer(full_rtask.width() * full_rtask.height(), config.render.background_color);
 
     if (config.sysinf.kernel_cnt == 1) {
         render_rtask(scene, config, full_rtask, image_buffer.data());
@@ -210,9 +212,5 @@ void render_from_rtask_file(Scene *scene, const config::FullT &config) {
 
     // free(image_buffer);
 }
-
-// namespace config {
-
-// } // namespace config
 
 } // namespace zephyr::tracer

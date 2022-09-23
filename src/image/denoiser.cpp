@@ -36,7 +36,6 @@ Color get_intelligence_denoised_color(const Frame<Color, Vec3d, double> &frame, 
 
             double weight_depth  = pow(1 - std::abs(depth - cur_depth), 10);
             double weight_normal = pow(std::max(0.0, normal.dot(cur_normal)), 32); // 128
-            // printf("%g %g %g\n", normal.x(), normal.y(), normal.z());
 
             float w = weight_depth * weight_normal;
 

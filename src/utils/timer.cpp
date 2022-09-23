@@ -1,22 +1,29 @@
 #include "timer.h"
 
-Timer::Timer(int id, FILE *fileptr, bool not_to_start):
-is_stopped(false),
-fileptr(fileptr),
-id(id),
-elapsed(0)
-{
-    if (!fileptr) {
-        printf("[ERR] timer started with specified fileptr = nullptr\n");
-        return;
-    }
+namespace kctf {
 
+Timer::Timer(const IdType &id, bool not_to_start, Logger &logger):
+is_stopped(false),
+logger_(logger),
+cur_elapsed(0),
+id(id)
+{
     if (!not_to_start) start_timestamp = std::chrono::system_clock::now();
 }
 
 void Timer::start() {
     is_stopped = false;
     start_timestamp = std::chrono::system_clock::now();
+}
+
+uint64_t Timer::elapsed() {
+    if (is_stopped) {
+        return cur_elapsed;
+    }
+
+    auto cur_timestamp = std::chrono::system_clock::now();
+    cur_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(cur_timestamp - start_timestamp).count();
+    return cur_elapsed;
 }
 
 void Timer::restart() {
@@ -26,30 +33,25 @@ void Timer::restart() {
 
 void Timer::stop() {
     is_stopped = true;
-    stop_timestamp = std::chrono::system_clock::now();
 
     stop_timestamp = std::chrono::system_clock::now();
-    elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(stop_timestamp - start_timestamp).count();
+    cur_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(stop_timestamp - start_timestamp).count();
 }
 
-void Timer::print(bool put_new_line, const char *format) {
-    stop();
-
+void Timer::print(const char *format) {
     if (!format) {
-        if (id) {
-            format = "[TMR]<%d> %ldms";
+        if (id.size()) {
+            format = "timer<%s>, %ldms";
         } else {
-            format = "[TMR] %ldms";
+            format = "timer, %ldms";
         }
     }
 
-    if (id) {
-        fprintf(fileptr, format, id, elapsed);
+    if (id.size()) {
+        logger_.log("time", "timer", format, id.data(), cur_elapsed);
     } else {
-        fprintf(fileptr, format, elapsed);
-    }
-
-    if (put_new_line) {
-        fprintf(fileptr, "\n");
+        logger_.log("time", "timer", format, elapsed());
     }
 }
+
+} // namespace kctf
