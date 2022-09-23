@@ -5,15 +5,13 @@
 
 // ============================================================================
 
-namespace conf = zephyr::tracer::config;
-
 int main(int argc, char* argv[]) {
     Brans::srand_sse(time(nullptr));
     srand(time(nullptr));
     
     logger.set_verb_level(Logger::Level::info);
 
-    conf::FullT config = conf::from_command_line(argc, argv);
+    auto config = zephyr::tracer::config::from_command_line(argc, argv);
 
     logger.log(0, "hola", "KCTF", "Welcome to Zephyr ray-tracer, have a nice day");
 
