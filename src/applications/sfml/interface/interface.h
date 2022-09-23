@@ -10,7 +10,7 @@
 #include "image/frame.h"
 
 #include "utils/timer.h"
-#include "utils/logger.h"
+#include <utils/logger.h>
 
 class SFML_Interface { // a trashcan for everything, should be rewriten
     sf::RenderWindow window;
@@ -18,7 +18,7 @@ class SFML_Interface { // a trashcan for everything, should be rewriten
     sf::Sprite       image_sprite;
 
     Scene *scene;
-    conf_PathTracer config;
+    zephyr::tracer::config::FullT config;
 
     int scr_w;
     int scr_h;
@@ -32,7 +32,7 @@ class SFML_Interface { // a trashcan for everything, should be rewriten
 
     int consecutive_frames_cnt;
 
-    Threader<ThreadRenderTask> render_threader;
+    Threader<zephyr::threading::ThreadRenderTaskT> render_threader;
 
     long average_frame_ms;
     long average_frame_cnt;
@@ -60,7 +60,7 @@ class SFML_Interface { // a trashcan for everything, should be rewriten
 public:
     bool is_run;
 
-    SFML_Interface(const char *window_name, Scene *scene_, const conf_PathTracer config_, int scr_w_, int scr_h_, int pixel_sampling_per_render_=1);
+    SFML_Interface(const char *window_name, Scene *scene_, const zephyr::tracer::config::FullT config_, int scr_w_, int scr_h_, int pixel_sampling_per_render_=1);
 
     void flush_to_window();
 

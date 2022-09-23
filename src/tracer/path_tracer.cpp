@@ -1,6 +1,6 @@
 #include "path_tracer.h"
 
-#include "utils/logger.h"
+#include <utils/logger.h>
 
 
 namespace zephyr::tracer {

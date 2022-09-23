@@ -13,7 +13,6 @@ include_directories(src)
 set(CMAKE_EXE_LINKER_FLAGS "-pthread")
 set(CMAKE_CXX_FLAGS   "${WARNING_FLAGS} -fdeclspec -march=native")
 
-find_package(SFML 2 COMPONENTS system window graphics network audio REQUIRED)
 
 add_executable(zepher
         src/hits/aabb.cpp
@@ -45,8 +44,7 @@ add_executable(zepher
         src/tracer/configs/system.cpp
         src/tracer/configs/verbosity.cpp
 
-        src/applications/sfml/interface/interface.cpp
-
+        # src/sfml_interface/interface.cpp
         src/image/denoiser.cpp
         src/multithreading/mt_path_tracer.cpp
         
@@ -76,9 +74,7 @@ add_executable(zepher
         src/collections/textures/checkered.cpp
 
         src/main.cpp
-        )
-
-target_link_libraries(zepher sfml-graphics sfml-window sfml-system)        
+        )      
 
 add_custom_target(convert
         COMMAND convert image.ppm image.png

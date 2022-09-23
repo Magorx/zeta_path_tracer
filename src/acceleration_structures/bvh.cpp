@@ -1,6 +1,6 @@
 #include "bvh.h"
 
-#include "utils/logger.h"
+#include <utils/logger.h>
 
 
 inline bool bounding_box_compare(const Hittable *a, const Hittable *b, int axis) {

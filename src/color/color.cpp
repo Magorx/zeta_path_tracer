@@ -1,6 +1,6 @@
 #include "color.h"
 
-#include "utils/logger.h"
+#include <utils/logger.h>
 
 
 const int      i_MAXRGB = 255;

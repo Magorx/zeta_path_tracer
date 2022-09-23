@@ -4,7 +4,7 @@
 #include "utils_header.h"
 #include "triangle.h"
 
-#include "utils/logger.h"
+#include <utils/logger.h>
 
 struct Model : public HittableList {
     std::vector<Vec3d> normals;

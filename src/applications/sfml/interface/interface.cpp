@@ -1,9 +1,9 @@
 #include "interface.h"
 
-#include "utils/logger.h"
+#include <utils/logger.h>
 
 
-SFML_Interface::SFML_Interface(const char *window_name, Scene *scene_, const conf_PathTracer config_, int scr_w_, int scr_h_, int pixel_sampling_per_render_):
+SFML_Interface::SFML_Interface(const char *window_name, Scene *scene_, const zephyr::tracer::config::FullT config_, int scr_w_, int scr_h_, int pixel_sampling_per_render_):
 window(sf::VideoMode(scr_w_, scr_h_), window_name),
 image_texture(),
 image_sprite(),
@@ -24,7 +24,7 @@ new_frame(),
 
 consecutive_frames_cnt(0),
 
-render_threader(config_.sysinf.kernel_cnt, render_threaded),
+render_threader(config_.sysinf.kernel_cnt, zephyr::threading::render_threaded),
 
 average_frame_ms(0),
 average_frame_cnt(0)
@@ -52,43 +52,43 @@ average_frame_cnt(0)
 
     int lines_per_thread = frame.size_y / render_threader.get_threads_cnt();
 
-    std::vector<ThreadRenderTask> rtasks;
+    std::vector<zephyr::threading::ThreadRenderTaskT> rtasks;
     for (size_t i = 0; i < render_threader.get_threads_cnt() - 1; ++i) {
         int min_x = 0;
         int max_x = frame.size_x;
         int min_y = i * lines_per_thread;
         int max_y = min_y + lines_per_thread;
-        render_threader.add_task(ThreadRenderTask(*scene, config, {min_x, max_x, min_y, max_y, static_cast<int>(i)}, new_frame));
+        render_threader.add_task(zephyr::threading::ThreadRenderTaskT(*scene, config, {min_x, max_x, min_y, max_y, static_cast<int>(i)}, new_frame));
     }
 
     int min_x = 0;
     int max_x = frame.size_x;
     int min_y = (render_threader.get_threads_cnt() - 1) * lines_per_thread;
     int max_y = frame.size_y;
-    render_threader.add_task(ThreadRenderTask(*scene, config, {min_x, max_x, min_y, max_y, static_cast<int>(10)}, new_frame));
+    render_threader.add_task(zephyr::threading::ThreadRenderTaskT(*scene, config, {min_x, max_x, min_y, max_y, static_cast<int>(10)}, new_frame));
 }
 
 void SFML_Interface::render_frame_threaded() {
-    Timer timer;
+    kctf::Timer timer;
 
     render_threader.perform();
     timer.stop();
 
-    average_frame_ms += timer.elapsed;
+    average_frame_ms += timer.elapsed();
     average_frame_cnt++;
 
-    logger.log("TMR", "timer", "frame[%d] %lldms | mean = %lldms", consecutive_frames_cnt, timer.elapsed, average_frame_ms / average_frame_cnt);
+    logger.log("TMR", "timer", "frame[%d] %lldms | mean = %lldms", consecutive_frames_cnt, timer.elapsed(), average_frame_ms / average_frame_cnt);
 }
 
 void SFML_Interface::render_depth_buffer() {
     new_frame.clear();
-    config.render.PIXEL_SAMPLING = 1;
+    config.render.pixel_sampling = 1;
     render_frame_threaded();
 }
 
 void SFML_Interface::render_frame_portion() {
     new_frame.clear();
-    config.render.PIXEL_SAMPLING = pixel_sampling_per_render;
+    config.render.pixel_sampling = pixel_sampling_per_render;
     render_frame_threaded();
 
     new_frame.set_post_processing(rendered_frame_postproc);
@@ -110,7 +110,7 @@ void SFML_Interface::accumulate_frame_portion() {
 
     frame.set_post_processing(accumulator_frame_postproc);
     frame.postproc(accumulator_frame_postproc_radius);
-    color_to_rgb_buffer(frame.final_image, cur_image, config.render.GAMMA_CORRECTION, pixel_cnt);
+    color_to_rgb_buffer(frame.final_image, cur_image, config.render.gamma_correction, pixel_cnt);
 
     ++consecutive_frames_cnt;
 }
