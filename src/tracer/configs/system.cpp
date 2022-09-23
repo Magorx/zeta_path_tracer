@@ -15,7 +15,7 @@ void SystemT::argparse_args(argparse::ArgumentParser &program) {
     
     program.add_argument("--timestemp")
         .help("Unique number to mark some tmp file")
-        .default_value(vec3d_randlong())
+        .default_value(rand())
         .scan<'i', int>();
 }
 

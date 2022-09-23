@@ -19,36 +19,7 @@ int main(int argc, char* argv[]) {
 
     conf::FullT config = conf::from_command_line(argc, argv);
 
-    return 0;
-
     logger.page_cut();
-
-    // config::RenderT conf_render{
-    //     config::RenderT::ScreenT {
-    //         PIXEL_SCREEN_WIDTH,
-    //         PIXEL_SCREEN_HEIGHT
-    //     },
-    //     MAX_TRACE_DEPTH,
-    //     PIXEL_SAMPLING,
-    //     GAMMA_CORRECTION,
-    //     BACKGROUND_COLOR
-    // };
-
-    // config::SystemT conf_sysinf{
-    //     vec3d_randlong() % 10000,
-    //     DEFAULT_THREADS_CNT,
-    //     nullptr
-    // };
-
-    // config::VerbosityT conf_verbos{
-    //     VERBOSITY
-    // };
-
-    // config::FullT config{
-    //     conf_render,
-    //     conf_verbos,
-    //     conf_sysinf
-    // };
 
     logger.info("Zepher", "process (%d) started", config.sysinf.timestamp);
     logger.info("Zepher", "using (%d) threads", config.sysinf.kernel_cnt);

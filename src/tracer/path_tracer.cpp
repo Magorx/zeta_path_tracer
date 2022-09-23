@@ -196,8 +196,6 @@ void render_from_rtask_file(Scene *scene, const config::FullT &config) {
         int kernel_cnt = config.sysinf.kernel_cnt;
         auto rtasks = full_rtask.linear_split(kernel_cnt);
 
-        if (config.verbos.verbosity >= 2) printf("={ RenderTasks }=====\n");
-
         int task_buffer_offset = rtasks[0].width() * rtasks[0].height();
         std::vector<std::thread> threads;
         for (int i = 0; i < config.sysinf.kernel_cnt; ++i) {
