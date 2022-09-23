@@ -1,8 +1,6 @@
 #ifndef FRAME_H
 #define FRAME_H
 
-#include "image/denoiser.h"
-
 enum class FramePostproc {
     copy,
     normal,

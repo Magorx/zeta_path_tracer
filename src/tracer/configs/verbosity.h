@@ -4,9 +4,7 @@
 namespace zephyr::tracer::config {
 
 struct VerbosityT {
-    int VERBOSITY;
-
-    VerbosityT(const int verbosity);
+    int verbosity;
 };
 
 } // namespace zephyr::tracer::config

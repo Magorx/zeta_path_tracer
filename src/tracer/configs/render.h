@@ -1,24 +1,24 @@
 #pragma once
 
+#include "extern/argparse.h"
 
 #include "utils/vec3d.h"
-
 
 namespace zephyr::tracer::config {
 
 struct RenderT {
-    int SCREEN_WIDTH;
-    int SCREEN_HEIGHT;
-    int MAX_TRACE_DEPTH;
-    int PIXEL_SAMPLING;
-    double GAMMA_CORRECTION;
-    Vec3d BACKGROUND_COLOR;
+    struct ScreenT {
+        int width;
+        int height;
+    } screen;
 
-    RenderT(const int screen_width, const int screen_height,
-            const int max_tracing_depth,
-            const int pixel_sampling,
-            const double gamma_correction,
-            const Vec3d background_color);
+    int max_trace_depth;
+    int pixel_sampling;
+    double gamma_correction;
+    Vec3d background_color;
+    
+    void argparse_args(argparse::ArgumentParser &program);
+    void argparse_scan(argparse::ArgumentParser &program);
 };
 
 } // namespace zephyr::tracer::config

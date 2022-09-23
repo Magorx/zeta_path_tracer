@@ -38,8 +38,8 @@ add_executable(zepher
         src/utils/logger.cpp
 
         src/tracer/path_tracer.cpp
-
         src/tracer/render_task.cpp
+        src/tracer/configs/render.cpp
 
         # src/sfml_interface/interface.cpp
         src/image/denoiser.cpp

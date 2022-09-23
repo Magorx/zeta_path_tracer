@@ -114,6 +114,10 @@ struct Vec3d {
     inline double x() const { return content[0]; }
     inline double y() const { return content[1]; }
     inline double z() const { return content[2]; }
+
+    inline void _x(double val) { content[0] = val; }
+    inline void _y(double val) { content[1] = val; }
+    inline void _z(double val) { content[2] = val; }
 };
 
 extern const Vec3d VEC3D_ZERO;

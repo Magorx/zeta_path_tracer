@@ -5,13 +5,13 @@ namespace zephyr::tracer {
 Vec3d trace_ray(Ray &ray, const Hittable *hittable, const config::FullT &config, const int cur_trace_depth) {
     ray.orig += ray.dir * VEC3_EPS;
     HitRecord hitrec;
-    hitrec.dist = INFINITY;
+    hitrec.dist = (double) INT64_MAX;
     hittable->hit(ray, &hitrec);
 
-    if (hitrec.dist == INFINITY || hitrec.dist < 0) {
-        return config.render.BACKGROUND_COLOR;
+    if (hitrec.dist == (double) INT64_MAX || hitrec.dist < 0) {
+        return config.render.background_color;
     } else {
-        if (cur_trace_depth == config.render.MAX_TRACE_DEPTH) {
+        if (cur_trace_depth == config.render.max_trace_depth) {
             return {0, 0, 0};
         }
 
@@ -32,14 +32,14 @@ Vec3d trace_ray(Ray &ray, const Hittable *hittable, const config::FullT &config,
                Vec3d *normal_vec, double *depth) {
     ray.orig += ray.dir * VEC3_EPS;
     HitRecord hitrec;
-    hitrec.dist = INFINITY;
+    hitrec.dist = (double) INT64_MAX;
     hittable->hit(ray, &hitrec);
     hitrec.normal.normalize();
 
-    if (hitrec.dist == INFINITY || hitrec.dist < 0) {
-        return config.render.BACKGROUND_COLOR;
+    if (hitrec.dist == (double) INT64_MAX || hitrec.dist < 0) {
+        return config.render.background_color;
     } else {
-        if (cur_trace_depth == config.render.MAX_TRACE_DEPTH) {
+        if (cur_trace_depth == config.render.max_trace_depth) {
             return {0, 0, 0};
         }
 
@@ -74,13 +74,13 @@ Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_
     }
 
     Vec3d accumulator(0, 0, 0);
-    for (int sample_i = 0; sample_i < config.render.PIXEL_SAMPLING - 1; ++sample_i) {
+    for (int sample_i = 0; sample_i < config.render.pixel_sampling - 1; ++sample_i) {
         Ray sample_ray = camera->get_sample_ray((double) px_x, (double) px_y);
         accumulator += trace_ray(sample_ray, hittable, config, 1);
     }
 
     Ray central_ray;
-    if (config.render.PIXEL_SAMPLING == 1) {
+    if (config.render.pixel_sampling == 1) {
         central_ray = camera->get_sample_ray((double) px_x, (double) px_y);
     } else {
         central_ray = camera->get_ray((double) px_x, (double) px_y);
@@ -88,22 +88,22 @@ Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_
     accumulator += trace_ray(central_ray, hittable, config, 1, normal, depth);
 
     if (normal) {
-        *normal /= (double) config.render.PIXEL_SAMPLING;
+        *normal /= (double) config.render.pixel_sampling;
         normal->normalize();
     }
     if (depth) {
-        *depth /= (double) config.render.PIXEL_SAMPLING;
+        *depth /= (double) config.render.pixel_sampling;
     }
 
-    return accumulator / config.render.PIXEL_SAMPLING;
+    return accumulator / config.render.pixel_sampling;
 }
 
 void render_image(Scene *scene, const config::FullT &config) {
     ProgressBar prog_bar(stderr, 
                          scene->camera->res_h * scene->camera->res_w,
-                         config.verbos.VERBOSITY);
+                         config.verbos.verbosity);
 
-    printf("P3 %d %d\n%d\n", config.render.SCREEN_WIDTH, config.render.SCREEN_HEIGHT, i_MAXRGB);
+    printf("P3 %d %d\n%d\n", config.render.screen.width, config.render.screen.height, i_MAXRGB);
 
     prog_bar.start();
     int res_h = scene->camera->res_h;
@@ -111,7 +111,7 @@ void render_image(Scene *scene, const config::FullT &config) {
     for (int y = 0; y < res_h; ++y) {
         for (int x = 0; x < res_w; ++x) {
             prog_bar.tick();
-            print_rgb(accumulate_pixel_color(scene->camera, x, y, scene->objects, config), config.render.GAMMA_CORRECTION);
+            print_rgb(accumulate_pixel_color(scene->camera, x, y, scene->objects, config), config.render.gamma_correction);
         }
     }
 }
@@ -125,7 +125,7 @@ void render_rtask(Scene *scene, const config::FullT &config, RenderTask rtask, C
     int height = rtask.height();
     int width  = rtask.width();
 
-    ProgressBar prog_bar(stderr, height * width, config.verbos.VERBOSITY && verbouse);
+    ProgressBar prog_bar(stderr, height * width, config.verbos.verbosity && verbouse);
 
     int min_x = std::max(rtask.min_x, 0);
     int min_y = std::max(rtask.min_y, 0);
@@ -144,7 +144,7 @@ void render_rtask(Scene *scene, const config::FullT &config, RenderTask rtask, C
 
 void render_into_buffer(Scene *scene, const config::FullT &config, Color *buffer) {
     ProgressBar prog_bar(stderr, scene->camera->res_h * scene->camera->res_w,
-                         config.verbos.VERBOSITY);
+                         config.verbos.verbosity);
 
     prog_bar.start();
     int res_h = scene->camera->res_h;
@@ -164,7 +164,7 @@ void render_into_buffer(Scene *scene, const config::FullT &config, Color *buffer
     }
 
     ProgressBar prog_bar(stderr, scene->camera->res_h,
-                         config.verbos.VERBOSITY);
+                         config.verbos.verbosity);
 
     prog_bar.start();
     int res_h = scene->camera->res_h;
@@ -191,12 +191,12 @@ void render_from_rtask_file(Scene *scene, const config::FullT &config) {
 
     if (config.sysinf.kernel_cnt == 1) {
         render_rtask(scene, config, full_rtask, image_buffer.data());
-        save_rgb_to_ppm_image("image.ppm", image_buffer.data(), full_rtask.width(), full_rtask.height(), config.render.GAMMA_CORRECTION);
+        save_rgb_to_ppm_image("image.ppm", image_buffer.data(), full_rtask.width(), full_rtask.height(), config.render.gamma_correction);
     } else {
         int kernel_cnt = config.sysinf.kernel_cnt;
         auto rtasks = full_rtask.linear_split(kernel_cnt);
 
-        if (config.verbos.VERBOSITY >= 2) printf("={ RenderTasks }=====\n");
+        if (config.verbos.verbosity >= 2) printf("={ RenderTasks }=====\n");
 
         int task_buffer_offset = rtasks[0].width() * rtasks[0].height();
         std::vector<std::thread> threads;
@@ -207,46 +207,14 @@ void render_from_rtask_file(Scene *scene, const config::FullT &config) {
             threads[i].join();
         }
 
-        save_rgb_to_ppm_image("image.ppm", image_buffer.data(), full_rtask.width(), full_rtask.height(), config.render.GAMMA_CORRECTION);
+        save_rgb_to_ppm_image("image.ppm", image_buffer.data(), full_rtask.width(), full_rtask.height(), config.render.gamma_correction);
     }
 
     // free(image_buffer);
 }
 
-namespace config {
+// namespace config {
 
-RenderT::RenderT(const int screen_width, const int screen_height,
-                 const int max_tracing_depth,
-                 const int pixel_sampling,
-                 const double gamma_correction,
-                 const Vec3d background_color):
-SCREEN_WIDTH(screen_width),
-SCREEN_HEIGHT(screen_height),
-MAX_TRACE_DEPTH(max_tracing_depth),
-PIXEL_SAMPLING(pixel_sampling),
-GAMMA_CORRECTION(gamma_correction),
-BACKGROUND_COLOR(background_color)
-{}
-
-VerbosityT::VerbosityT(const int verbosity):
-VERBOSITY(verbosity)
-{}
-
-SystemT::SystemT(const int timestamp_, const int kernel_cnt_, const char *rtask_filename_, const bool to_rewrire_rtask_file_):
-timestamp(timestamp_),
-kernel_cnt(kernel_cnt_),
-rtask_filename(rtask_filename_),
-to_rewrire_rtask_file(to_rewrire_rtask_file_)
-{}
-
-FullT::FullT(const RenderT    &render_config,
-             const VerbosityT &verbos_config,
-             const SystemT    &sysinf_config):
-render(render_config),
-verbos(verbos_config),
-sysinf(sysinf_config)
-{}
-
-} // namespace config
+// } // namespace config
 
 } // namespace zephyr::tracer

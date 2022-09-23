@@ -9,7 +9,7 @@ const int WINDOW_WIDTH  = 1000;
 const int WINDOW_HEIGHT = 1000;
 
 const int PIXEL_SCREEN_WIDTH  = 200;
-// const int PIXEL_SCREEN_HEIGHT = 1000;
+const int PIXEL_SCREEN_HEIGHT = 200;
 
 const int      PIXEL_SAMPLING   = 10;
 const int      MAX_TRACE_DEPTH  = 10;

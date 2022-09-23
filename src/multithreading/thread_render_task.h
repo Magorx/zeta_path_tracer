@@ -1,6 +1,7 @@
 #pragma once
 
-#include "PathTracer.hpp"
+#include "tracer/path_tracer.h"
+#include "image/frame.h"
 
 namespace zephyr::threading {
 
