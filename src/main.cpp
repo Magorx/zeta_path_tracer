@@ -2,6 +2,17 @@
 #include "scenes/cornell_box.h"
 
 #include <utils/logger.h>
+#include <utils/timer.h>
+
+struct A {
+    virtual void func() = 0;
+};
+
+struct B : public A {
+    void func() override {
+        printf("AHAHA\n");
+    }
+};
 
 // ============================================================================
 
@@ -18,12 +29,17 @@ int main(int argc, char* argv[]) {
     logger.info("Zepher", "process (%d) started", config.sysinf.timestamp);
     logger.info("Zepher", "using (%d) threads"  , config.sysinf.kernel_cnt);
 
-    Scene *scene = cornell_box_scene();
+    Scene *scene = cornell_box_scene(config);
     logger.info("Zepher", "scene prepared");
+
+    kctf::Timer timer;
 
     logger.info("Zepher", "rendering...");
     zephyr::tracer::render_from_rtask_file(scene, config);
     logger.info("Zepher", "done...");
+
+    timer.stop();
+    timer.print();
 
     logger.page_cut();
 

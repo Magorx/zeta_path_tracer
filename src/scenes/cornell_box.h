@@ -26,6 +26,17 @@ HittableList *cornell_box_objects() {
     m_rect_light->set_emitter(l_rect_light);
     m_rect_light->to_affect_emitter = 0;
 
+    Material *m_checkered = new m_Lambertian(new t_Checkered(
+        new t_SolidColor({255, 0, 0}),
+        new t_Checkered(
+            {0, 255, 0},
+            {0, 0, 255},
+            VEC3D_ONE / 4
+        ),
+        VEC3D_ONE * 2
+    ));
+    m_checkered->set_emitter(l_rect_light);
+
     const double heigh = 100;
     const double width = 100;
     const double depth = 100;
@@ -43,8 +54,17 @@ HittableList *cornell_box_objects() {
     Hittable *rect_rwall = new h_RectXZ({    0,     0,    -1}, {depth,     0, heigh + 1}, m_red  );
     Hittable *rect_lwall = new h_RectXZ({    -100, width,     0}, {depth, width, heigh}, m_green);
      
-    Hittable *rect_light = new h_RectXY({depth / 2 - l_d / 2, width / 2 - l_w / 2, l_h}, {depth / 2 + l_d / 2, width / 2 + l_w / 2, l_h}, m_rect_light);
-    Hittable *rect_light_floor = new h_RectXY({depth / 2 - l_d / 2, width / 2 - l_w / 2, -10}, {depth / 2 + l_d / 2, width / 2 + l_w / 2, l_h}, m_rect_light);
+    Hittable *rect_light = new h_RectXY(
+        {depth / 2 - l_d / 2, width / 2 - l_w / 2, l_h},
+        {depth / 2 + l_d / 2, width / 2 + l_w / 2, l_h},
+        m_rect_light
+    );
+
+    Hittable *rect_light_floor = new h_RectXY(
+        {depth / 2 - l_d / 2, width / 2 - l_w / 2, -10},
+        {depth / 2 + l_d / 2, width / 2 + l_w / 2, l_h},
+        m_rect_light
+    );
 
     Hittable *box_1 = new h_Box({ depth * box_coef,  width * box_coef, 0},
                                 {-depth * box_coef, -width * box_coef, heigh * 0.75},
@@ -88,9 +108,9 @@ HittableList *cornell_box_objects() {
 
     Material *m_model = new m_Lambertian({255, 255, 30});    
 
-    Hittable *model = new Model("../models/whip.obj", {m_model}, {0, 0, 0}, 10, false); // remove ../ if you build tracer NOT in build dir
-    model = new inst_RotZ(new inst_RotX(model, -Pi/2), Pi/2);
-    model = new inst_Translate(model, {10, 50, 0});
+    // Hittable *model = new Model("../models/whip.obj", {m_model}, {0, 0, 0}, 10, false); // remove ../ if you build tracer NOT in build dir
+    // model = new inst_RotZ(new inst_RotX(model, -Pi/2), Pi/2);
+    // model = new inst_Translate(model, {10, 50, 0});
     
     // scene->insert(model);
 
@@ -112,18 +132,18 @@ HittableList *cornell_box_objects() {
     if (1) { // so not to see "unused" warnings
         scene->insert(rot_box_1);
         scene->insert(rot_box_2);
-        scene->insert(rot_box_3);
+        // scene->insert(rot_box_3);
         // scene->insert(rect_light_floor);
     }
 
     return scene;
 }
 
-Scene *cornell_box_scene() {
+Scene *cornell_box_scene(const zephyr::tracer::config::FullT &conf) {
     Camera *camera = new Camera(CAMERA_POS, CAMERA_HORIZONTAL_ROT, CAMERA_VERTICAL_ROT, 
                                 CAMERA_DIST,
                                 REAL_SCREEN_WIDTH, REAL_SCREEN_HEIGHT,
-                                RESOLUTION_COEF);
+                                (double) conf.render.screen.width / (double)  REAL_SCREEN_WIDTH);
     HittableList *objects = cornell_box_objects();
 
     auto tree = objects->get_bvh_tree();

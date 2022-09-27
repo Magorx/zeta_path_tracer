@@ -4,14 +4,13 @@ project(zeta_path_tracer LANGUAGES CXX)
 set(CMAKE_CXX_COMPILER clang++)
 
 set(CMAKE_CXX_STANDARD 20)
-set(SFML_BUILD_GRAPHICS true)
 
 set(WARNING_FLAGS "-Wall -Wextra -Wno-multichar -Wno-unused-result")
 
 include_directories(src)
 
 set(CMAKE_EXE_LINKER_FLAGS "-pthread")
-set(CMAKE_CXX_FLAGS   "${WARNING_FLAGS} -fdeclspec -march=native")
+set(CMAKE_CXX_FLAGS   "-O3 ${WARNING_FLAGS} -fdeclspec -march=native")
 
 add_executable(zepher
         src/hits/aabb.cpp
@@ -80,5 +79,5 @@ add_custom_target(convert
         )
 
 add_custom_target(view
-        COMMAND eog -f image.png
+        COMMAND eog -f image.ppm
         )

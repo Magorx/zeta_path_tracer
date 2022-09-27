@@ -16,7 +16,7 @@ const int WINDOW_HEIGHT = 1000;
 const int PIXEL_SCREEN_WIDTH  = 200;
 const int PIXEL_SCREEN_HEIGHT = 200;
 
-const int      PIXEL_SAMPLING   = 10;
+const int      PIXEL_SAMPLING   = 100;
 const int      MAX_TRACE_DEPTH  = 10;
 
 const double GAMMA_CORRECTION = 0.36;
