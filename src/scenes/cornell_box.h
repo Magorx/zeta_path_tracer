@@ -17,9 +17,6 @@ HittableList *cornell_box_objects() {
     Material *m_glass  = new m_Dielectric({255, 255, 255}, 2);
     Material *m_glass2  = new m_Dielectric({130, 130, 255}, 2.4);
 
-    // Material *m_box_1 = new m_Lambertian({255, 255, 255}); ^^^^^^^^^^^^^
-    // Material *m_box_2 = new m_Lambertian({255, 255, 255});
-
     Light *l_rect_light = new l_Diffuse({255, 255, 255});
 
     m_Lambertian *m_rect_light = new m_Lambertian(Vec3d(255, 255, 255));
@@ -42,7 +39,7 @@ HittableList *cornell_box_objects() {
     const double depth = 100;
 
     const double light_size_coef = 0.32;
-    const double box_coef = 0.1;
+    const double box_coef = 0.15;
 
     const double l_h = heigh - VEC3_EPS;
     const double l_w = width * light_size_coef;
@@ -52,10 +49,10 @@ HittableList *cornell_box_objects() {
     Hittable *rect_floor = new h_RectXY({    0,     0,     0}, {depth, width, heigh}, m_white);
     Hittable *rect_fwall = new h_RectYZ({depth,     0,     0}, {depth, width, heigh}, m_white);
     Hittable *rect_rwall = new h_RectXZ({    0,     0,    -1}, {depth,     0, heigh + 1}, m_red  );
-    Hittable *rect_lwall = new h_RectXZ({    -100, width,     0}, {depth, width, heigh}, m_green);
+    Hittable *rect_lwall = new h_RectXZ({    0, width,     0}, {depth, width, heigh}, m_green);
      
     Hittable *rect_light = new h_RectXY(
-        {depth / 2 - l_d / 2, width / 2 - l_w / 2, l_h},
+        {0, width / 2 - l_w / 2, l_h},
         {depth / 2 + l_d / 2, width / 2 + l_w / 2, l_h},
         m_rect_light
     );
@@ -66,13 +63,20 @@ HittableList *cornell_box_objects() {
         m_rect_light
     );
 
+    t_Marble *marble = new t_Marble({0, 0, 0}, {255, 255, 255}, VEC3D_ONE / 6, 1);
+    // Material *m_marble = new m_Lambertian(marble);
+    Material *m_marble = new m_Metal(marble, 0.15);
+
+    t_Marble *t_marble = new t_Marble({0, 0, 0}, {255, 255, 255}, VEC3D_ONE / 4, 1);
+    Material *m_white_marble = new m_Lambertian(t_marble);
+
     Hittable *box_1 = new h_Box({ depth * box_coef,  width * box_coef, 0},
                                 {-depth * box_coef, -width * box_coef, heigh * 0.75},
-                                m_white);
+                                m_marble);
 
     Hittable *box_2 = new h_Box({ depth * box_coef,  width * box_coef, 0},
                                 {-depth * box_coef, -width * box_coef, heigh * 0.25},
-                                m_white);
+                                m_white_marble);
 
     Hittable *box_3 = new h_Box({ depth * 3 * box_coef,  width * 2.5 *  box_coef, 0},
                                 {-depth * 3 *  box_coef, -width *  2.5 * box_coef, heigh * 0.03},
@@ -96,6 +100,9 @@ HittableList *cornell_box_objects() {
     // Material *m_cenzure = new m_Dielectric({255, 255, 255}, 1, -1, 0.2);
     // Hittable *rect_cenze1 = new h_RectYZ({50, 44, 58}, {50, 56, 64}, m_cenzure);
     // scene->insert(rect_cenze1);
+
+    // add big sphere at the middle of the scene
+    // scene->insert(new h_Sphere({40, 50, 50}, 26, m_marble));
 
     scene->insert(rect_ceil );
     scene->insert(rect_floor);

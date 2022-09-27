@@ -3,5 +3,6 @@
 
 #include "solid_color.h"
 #include "checkered.h"
+#include "marble.h"
 
 #endif // TEXTURES_EVERYTHING_H
