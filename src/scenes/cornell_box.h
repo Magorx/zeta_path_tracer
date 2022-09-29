@@ -52,8 +52,8 @@ HittableList *cornell_box_objects() {
     Hittable *rect_lwall = new h_RectXZ({    0, width,     0}, {depth, width, heigh}, m_green);
      
     Hittable *rect_light = new h_RectXY(
-        {0, width / 2 - l_w / 2, l_h},
-        {depth / 2 + l_d / 2, width / 2 + l_w / 2, l_h},
+        {depth / 2 - l_d * 2, width / 2 - l_w / 2, l_h},
+        {depth / 2 + l_d * 2, width / 2 + l_w / 2, l_h},
         m_rect_light
     );
 
@@ -112,14 +112,42 @@ HittableList *cornell_box_objects() {
 
     scene->insert(rect_light);
 
+    // add cow marble texture
+    Texture *t_cow = new t_Marble({
+        new t_Checkered(
+            new t_SolidColor({255, 0, 0}),
+            new t_Checkered(
+                {0, 255, 0},
+                {0, 0, 255},
+                VEC3D_ONE / 4
+            ),
+            VEC3D_ONE * 2
+        ),
+        new t_Checkered(
+            new t_SolidColor({200, 125, 75}),
+            new t_Checkered(
+                {75, 200, 125},
+                {125, 75, 200},
+                VEC3D_ONE / 4
+            ),
+            VEC3D_ONE * 2
+        ),
+        VEC3D_ONE / 5.5, 1
+    });
 
-    Material *m_model = new m_Lambertian({255, 255, 30});    
+    Material *m_model = new m_Lambertian(t_cow);
 
-    // Hittable *model = new Model("../models/whip.obj", {m_model}, {0, 0, 0}, 10, false); // remove ../ if you build tracer NOT in build dir
-    // model = new inst_RotZ(new inst_RotX(model, -Pi/2), Pi/2);
-    // model = new inst_Translate(model, {10, 50, 0});
+    Hittable *model = new Model("../models/cow.obj", {m_model}, {0, 0, 0}, 3.3, true); // remove ../ if you build tracer NOT in build dir
+    model = new inst_RotZ(new inst_RotX(model, -Pi/2), Pi/6);
+    model = new inst_Translate(model, {35, 50, 0});
     
-    // scene->insert(model);
+    scene->insert(model);
+
+    Material *m_helmet = new m_Dielectric({125, 125, 255}, 2.42, -1, 0.05);
+    
+    // add spehere to the center right of the scene
+    scene->insert(new h_Sphere({depth / 4, width / 4, 40}, 20, m_helmet));
+
 
     // Hittable *sp = new h_Sphere({95, 25, 75}, 15, m_model);
     // scene->insert(sp);
@@ -137,8 +165,8 @@ HittableList *cornell_box_objects() {
     // scene->insert(sphere);
 
     if (1) { // so not to see "unused" warnings
-        scene->insert(rot_box_1);
-        scene->insert(rot_box_2);
+        // scene->insert(rot_box_1);
+        // scene->insert(rot_box_2);
         // scene->insert(rot_box_3);
         // scene->insert(rect_light_floor);
     }
