@@ -51,8 +51,8 @@ bool Triangle::hit(Ray &ray, HitRecord* hit_record) const {
         hit_record->normal = to_phong_normals ? calc_normal(u, v) : edge1.cross(edge2).normal();
         hit_record->set_normal_orientation(ray.dir);
         hit_record->front_hit = true;
-        hit_record->surf_x = 0;
-        hit_record->surf_y = 0;
+        hit_record->surf_x = u;
+        hit_record->surf_y = v;
         return true;
     }
     else // This means that there is a line intersection but not a ray intersection.

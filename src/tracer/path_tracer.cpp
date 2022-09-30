@@ -15,7 +15,7 @@ Vec3d trace_ray(Ray &ray, const Hittable *hittable, const config::FullT &config,
         return config.render.background_color;
     } else {
         if (cur_trace_depth == config.render.max_trace_depth) {
-            return {0, 0, 0};
+            return config.render.background_color;
         }
 
         Ray scattered_ray;
@@ -43,7 +43,7 @@ Vec3d trace_ray(Ray &ray, const Hittable *hittable, const config::FullT &config,
         return config.render.background_color;
     } else {
         if (cur_trace_depth == config.render.max_trace_depth) {
-            return {0, 0, 0};
+            return config.render.background_color;
         }
 
         if (normal_vec) {

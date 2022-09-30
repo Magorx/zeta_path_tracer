@@ -71,6 +71,7 @@ add_executable(zepher
         src/collections/textures/solid_color.cpp
         src/collections/textures/checkered.cpp
         src/collections/textures/marble.cpp
+        src/collections/textures/image.cpp
 
         src/main.cpp
         )   

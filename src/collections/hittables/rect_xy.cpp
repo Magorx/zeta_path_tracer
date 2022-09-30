@@ -40,6 +40,6 @@ bool h_RectXY::bounding_box(AABB &box) const {
 
 bool h_RectXY::get_surface_coords(const Vec3d &point, double &sx, double &sy) const {
     sx = (point[0]-p0[0]) / (p1[0]-p0[0]);
-    sy = (point[1]-p0[1]) / (p1[1]-p1[1]);
+    sy = (point[1]-p0[1]) / (p1[1]-p0[1]);
     return true;
 }

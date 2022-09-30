@@ -57,9 +57,9 @@ void RenderT::argparse_scan(argparse::ArgumentParser &program) {
     pixel_sampling = program.get<int>("--sampling");
     gamma_correction = program.get<double>("--gamma");
 
-    background_color._x(((double) program.get<int>("--background_r")) / 255.0);
-    background_color._y(((double) program.get<int>("--background_g")) / 255.0);
-    background_color._z(((double) program.get<int>("--background_b")) / 255.0);
+    background_color._x(((double) program.get<int>("--background_r")));
+    background_color._y(((double) program.get<int>("--background_g")));
+    background_color._z(((double) program.get<int>("--background_b")));
 }
 
 } // namespace zephyr::tracer::config

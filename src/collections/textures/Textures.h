@@ -4,5 +4,6 @@
 #include "solid_color.h"
 #include "checkered.h"
 #include "marble.h"
+#include "image.h"
 
 #endif // TEXTURES_EVERYTHING_H

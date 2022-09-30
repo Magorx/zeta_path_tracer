@@ -4,16 +4,6 @@
 #include <utils/logger.h>
 #include <utils/timer.h>
 
-struct A {
-    virtual void func() = 0;
-};
-
-struct B : public A {
-    void func() override {
-        printf("AHAHA\n");
-    }
-};
-
 // ============================================================================
 
 int main(int argc, char* argv[]) {
