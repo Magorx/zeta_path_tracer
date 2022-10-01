@@ -1,7 +1,13 @@
 #pragma once
 
 #include <ctime>
-#include <emmintrin.h>
+// #include <emmintrin.h>
+
+#ifdef __x86_64__
+ #include <immintrin.h>
+#else   
+ #include <extern/sse2neon.h>
+#endif
 
 namespace Brans {
 __declspec(align(16)) static __m128i cur_seed;

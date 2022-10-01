@@ -10,7 +10,15 @@ set(WARNING_FLAGS "-Wall -Wextra -Wno-multichar -Wno-unused-result")
 include_directories(src)
 
 set(CMAKE_EXE_LINKER_FLAGS "-pthread")
-set(CMAKE_CXX_FLAGS   "-O3 ${WARNING_FLAGS} -fdeclspec -march=native")
+
+set(CMAKE_CXX_FLAGS   "-O3 ${WARNING_FLAGS} -fdeclspec")
+
+include(CheckCXXSourceCompiles)
+check_cxx_source_compiles("-march=native" COMPILER_SUPPORTS_MARCH_NATIVE)
+
+if(COMPILER_SUPPORTS_MARCH_NATIVE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+endif()
 
 add_executable(zepher
         src/hits/aabb.cpp
