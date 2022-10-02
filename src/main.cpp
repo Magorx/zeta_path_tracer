@@ -19,6 +19,7 @@ int main(int argc, char* argv[]) {
     logger.info("Zepher", "process (%d) started", config.sysinf.timestamp);
     logger.info("Zepher", "using (%d) threads"  , config.sysinf.kernel_cnt);
 
+    logger.info("Zepher", "building scene and BVH");
     Scene *scene = cornell_box_scene(config);
     logger.info("Zepher", "scene prepared");
 

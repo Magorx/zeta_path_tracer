@@ -53,7 +53,7 @@ HittableList *cornell_box_objects() {
     Hittable *rect_lwall = new h_RectXZ({    0, width,     0}, {depth, width, heigh}, m_green);
      
     Hittable *rect_light = new h_RectXY(
-        {depth / 2 - l_d * 2, width / 2 - l_w / 2, l_h},
+        {depth / 2 - l_d / 2, width / 2 - l_w / 2, l_h},
         {depth / 2 + l_d * 2, width / 2 + l_w / 2, l_h},
         m_rect_light
     );
@@ -136,30 +136,30 @@ HittableList *cornell_box_objects() {
         VEC3D_ONE / 5.5, 1
     });
 
-    Material *m_model = new m_Lambertian(t_cow);
+    Material *m_model = new m_Dielectric(t_cow, 1.2, -1, 0.1);
 
-    Hittable *model = new Model("../models/cow.obj", {m_model}, {0, 0, 0}, 3.3, true); // remove ../ if you build tracer NOT in build dir
-    model = new inst_RotZ(new inst_RotX(model, -Pi/2), Pi/6);
+    Hittable *model = new Model("../models/stanford-dragon.obj", {m_model}, {0, 0, 0}, 6, true); // remove ../ if you build tracer NOT in build dir
+    model = new inst_RotZ(new inst_RotX(model, -Pi/2), Pi * 0.35);
     model = new inst_Translate(model, {35, 50, 0});
 
     scene->insert(model);
 
     // image texture with boyar file
-    Texture *t_boyar = new t_Image("../models/boyar.png");
-    Material *m_helmet = new m_Lambertian(t_boyar);
+    // Texture *t_boyar = new t_Image("../models/boyar.png");
+    // Material *m_helmet = new m_Lambertian(t_boyar);
 
     // add triangle to scene
     // scene->insert(new Triangle({50, 0, 0}, {50, 100, 000}, {50, 0, 100}, m_helmet));
 
     // add spehere to the center right of the scene
-    Hittable *helmet = new h_Box({ depth * box_coef / 1.3,  width * box_coef / 1.3, 0},
-                                 {-depth * box_coef / 1.3, -width * box_coef / 1.3, heigh * 0.25},
-                                 m_helmet);
+    // Hittable *helmet = new h_Box({ depth * box_coef / 1.3,  width * box_coef / 1.3, 0},
+    //                              {-depth * box_coef / 1.3, -width * box_coef / 1.3, heigh * 0.25},
+    //                              m_helmet);
 
     // helmet = new inst_RotX(helmet, -Pi/2);
-    helmet = new inst_Translate(helmet, {depth / 4, width / 4, 30});
+    // helmet = new inst_Translate(helmet, {depth / 4, width / 4, 30});
 
-    scene->insert(helmet);
+    // scene->insert(helmet);
 
 
     // Hittable *sp = new h_Sphere({95, 25, 75}, 15, m_model);
