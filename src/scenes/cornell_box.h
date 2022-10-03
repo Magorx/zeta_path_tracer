@@ -136,10 +136,10 @@ HittableList *cornell_box_objects() {
         VEC3D_ONE / 5.5, 1
     });
 
-    Material *m_model = new m_Dielectric(t_cow, 1.2, -1, 0.1);
+    Material *m_model = new m_Dielectric({120, 175, 240}, 1.7, 0.05, 0.01);
 
-    Hittable *model = new Model("../models/stanford-dragon.obj", {m_model}, {0, 0, 0}, 6, true); // remove ../ if you build tracer NOT in build dir
-    model = new inst_RotZ(new inst_RotX(model, -Pi/2), Pi * 0.35);
+    Hittable *model = new Model("../models/teapot.obj", {m_model}, {0, 0, 0}, 15, true); // remove ../ if you build tracer NOT in build dir
+    model = new inst_RotZ(new inst_RotX(model, -Pi/2), Pi * 0.45);
     model = new inst_Translate(model, {35, 50, 0});
 
     scene->insert(model);
