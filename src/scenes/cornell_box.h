@@ -136,12 +136,20 @@ HittableList *cornell_box_objects() {
         VEC3D_ONE / 5.5, 1
     });
 
-    Material *m_model = new m_Dielectric({120, 175, 240}, 1.7, 0.05, 0.01);
+    Color col = {120, 175, 240};
 
-    Hittable *model = new Model("../models/teapot.obj", {m_model}, {0, 0, 0}, 15, true); // remove ../ if you build tracer NOT in build dir
+    Material *m_model_dio  = new m_Dielectric(col, 1.7, 0.05, 0.01);
+    Material *m_model_lamb = new m_Lambertian(col);
+
+    Hittable *model_1 = new Model("../models/big-big-teapot.obj", {m_model_dio}, {0, 0, 0}, 15, true); // remove ../ if you build tracer NOT in build dir
+    model_1 = new inst_RotZ(new inst_RotX(model_1, -Pi/2), Pi * 0.45);
+    model_1 = new inst_Translate(model_1, {35, 50, 0});
+
+    Hittable *model = new Model("../models/big-teapot.obj", {m_model_lamb}, {0, 0, 0}, 15, true); // remove ../ if you build tracer NOT in build dir
     model = new inst_RotZ(new inst_RotX(model, -Pi/2), Pi * 0.45);
     model = new inst_Translate(model, {35, 50, 0});
 
+    scene->insert(model_1);
     scene->insert(model);
 
     // image texture with boyar file
