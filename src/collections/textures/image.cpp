@@ -1,6 +1,7 @@
 #include "image.h"
 
 
+#include <algorithm>
 #define STB_IMAGE_IMPLEMENTATION
 #include <extern/stb_image.h>
 
