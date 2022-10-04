@@ -22,7 +22,7 @@ inline void rand_sse(unsigned int* result) {
     __declspec(align(16)) __m128i multiplier;
     __declspec(align(16)) __m128i adder;
     __declspec(align(16)) __m128i mod_mask;
-    __declspec(align(16)) __m128i sra_mask;
+    // __declspec(align(16)) __m128i sra_mask;
 
     __declspec(align(16)) static const unsigned int mult[4] = { 214013, 17405, 214013, 69069 };
     __declspec(align(16)) static const unsigned int gadd[4] = { 2531011, 10395331, 13737667, 1 };
@@ -32,7 +32,7 @@ inline void rand_sse(unsigned int* result) {
     adder = _mm_load_si128((__m128i*) gadd);
     multiplier = _mm_load_si128((__m128i*) mult);
     mod_mask = _mm_load_si128((__m128i*) mask);
-    sra_mask = _mm_load_si128((__m128i*) masklo);
+    // sra_mask = _mm_load_si128((__m128i*) masklo);
     cur_seed_split = _mm_shuffle_epi32(cur_seed, _MM_SHUFFLE(2, 3, 0, 1));
 
     cur_seed = _mm_mul_epu32(cur_seed, multiplier);

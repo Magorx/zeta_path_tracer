@@ -20,6 +20,8 @@ private:
     double perlin(const Vec3d &p) const;
     int hash(const int &x, const int &y, const int &z) const;
 
+    double turb(const Vec3d& p, int depth=7) const;
+
 public:
     t_Marble(Texture *first_=nullptr, Texture *second_=nullptr, const Vec3d &freq_=VEC3D_ONE, double scale_=1);
     t_Marble(const Color &first_, const Color &second_, const Vec3d &freq_, double scale_);

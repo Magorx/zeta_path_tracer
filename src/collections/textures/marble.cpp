@@ -44,8 +44,43 @@ t_Marble::t_Marble(const Color &first_, const Color &second_, const Vec3d &freq_
     ) {
 }
 
+double t_Marble::turb(const Vec3d& p, int depth) const {
+    auto accum = 0.0;
+    auto temp_p = p;
+    auto weight = 1.0;
+
+    for (int i = 0; i < depth; i++) {
+        accum += weight * perlin(temp_p);
+        weight *= 0.5;
+        temp_p *= 2;
+    }
+
+    return fabs(accum);
+}
+
 Color t_Marble::value(double sx, double sy, const Vec3d &point) const {
-    double noise = (perlin(point * freq) + 0.5) * scale;
+    double noise1 = (1 + sin(point.z() * freq.x() + 1 / freq.x() * turb(point * freq))) * 0.5;
+    double noise2 = (1 + sin(point.y() * freq.x() + 2 / freq.x() * turb(point * freq))) * 0.5;
+
+    std::vector<double> noises {
+        noise1,
+        noise2
+    };
+    double noise = 1;
+    for (auto x : noises) {
+        noise = std::min(noise, x);
+    }
+
+    if (noise > 0.5) {
+        noise = 1;
+    } else {
+        noise = 0;
+    }
+    // noise /= noises.size();
+
+    // if (noise > 1) {
+        // printf("wtf %g\n", noise);
+    // }
     
     return first->value(sx, sy, point) * (1 - noise) + second->value(sx, sy, point) * noise;
 }
@@ -115,5 +150,5 @@ double t_Marble::perlin(const Vec3d &p) const {
     float e = lerp(a, b, v);
     float f = lerp(c, d, v);
 
-    return lerp(e, f, w);
+    return lerp(e, f, w) + 0.5;
 }

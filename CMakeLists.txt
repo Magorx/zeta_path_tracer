@@ -3,7 +3,7 @@ project(zeta_path_tracer LANGUAGES CXX)
 
 set(CMAKE_CXX_COMPILER clang++)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 
 set(WARNING_FLAGS "-Wall -Wextra -Wno-multichar -Wno-unused-result")
 
@@ -13,18 +13,8 @@ set(CMAKE_EXE_LINKER_FLAGS "-pthread")
 
 set(CMAKE_CXX_FLAGS   "-O3 ${WARNING_FLAGS} -fdeclspec")
 
-include(CheckCXXSourceCompiles)
-check_cxx_source_compiles("-march=native" COMPILER_SUPPORTS_MARCH_NATIVE)
-
-check_cxx_source_compiles("--gcc-toolchain=/home/pd2022/pd2022065/repos/compiler_pack/gcc-8.1.0/" RUN_ON_MIPT_CUDA)
-
-if(COMPILER_SUPPORTS_MARCH_NATIVE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
-endif()
-
-if(RUN_ON_MIPT_CUDA)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --gcc-toolchain=/home/pd2022/pd2022065/repos/compiler_pack/gcc-8.1.0/")
-endif()
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --gcc-toolchain=/home/pd2022/pd2022065/repos/compiler_pack/gcc-8.1.0/")
 
 add_executable(zepher
         src/hits/aabb.cpp
