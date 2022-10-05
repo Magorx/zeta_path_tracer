@@ -13,8 +13,8 @@ set(CMAKE_EXE_LINKER_FLAGS "-pthread")
 
 set(CMAKE_CXX_FLAGS   "-O3 ${WARNING_FLAGS} -fdeclspec")
 
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --gcc-toolchain=/home/pd2022/pd2022065/repos/compiler_pack/gcc-8.1.0/")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --gcc-toolchain=/home/pd2022/pd2022065/repos/compiler_pack/gcc-8.1.0/")
 
 add_executable(zepher
         src/hits/aabb.cpp
@@ -69,6 +69,7 @@ add_executable(zepher
         src/collections/materials/lambertian.cpp
         src/collections/materials/metal.cpp
         src/collections/materials/dielectric.cpp
+        src/collections/materials/marble.cpp
 
         src/collections/lights/diffuse.cpp
 
@@ -76,6 +77,8 @@ add_executable(zepher
         src/collections/textures/checkered.cpp
         src/collections/textures/marble.cpp
         src/collections/textures/image.cpp
+
+        src/collections/noises/perlin.cpp
 
         src/main.cpp
         )   

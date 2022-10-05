@@ -64,11 +64,11 @@ HittableList *cornell_box_objects() {
         m_rect_light
     );
 
-    t_Marble *marble = new t_Marble({0, 0, 0}, {255, 255, 255}, VEC3D_ONE / 6, 1);
+    t_Marble *marble = new t_Marble({0, 0, 0}, {255, 255, 255}, VEC3D_ONE / 6);
     // Material *m_marble = new m_Lambertian(marble);
     Material *m_marble = new m_Metal(marble, 0.15);
 
-    t_Marble *t_marble = new t_Marble({0, 0, 0}, {255, 255, 255}, VEC3D_ONE / 4, 1);
+    t_Marble *t_marble = new t_Marble({0, 0, 0}, {255, 255, 255}, VEC3D_ONE / 4);
     Material *m_white_marble = new m_Lambertian(t_marble);
 
     Hittable *box_1 = new h_Box({ depth * box_coef,  width * box_coef, 0},
@@ -111,7 +111,7 @@ HittableList *cornell_box_objects() {
     scene->insert(rect_lwall);
     scene->insert(rect_rwall);
 
-    scene->insert(rect_light);
+    // scene->insert(rect_light);
 
     // add cow marble texture
     Texture *t_cow = new t_Marble({
@@ -133,7 +133,7 @@ HittableList *cornell_box_objects() {
             ),
             VEC3D_ONE * 2
         ),
-        VEC3D_ONE / 5.5, 1
+        VEC3D_ONE / 5.5
     });
 
     // Texture *t_new_marble = new t_Marble(
@@ -145,24 +145,27 @@ HittableList *cornell_box_objects() {
     // Material *m_new_marble = new m_Lambertian(t_new_marble);
 
     Color col1 = {231, 189, 66};
+    col1 *= 0.85;
     Color col2 = {15, 65, 230};
 
     Texture *t_new_marble = new t_Marble(
         col1,
         col2,
-        0.1,
-        1
+        0.1
     );
     Material *m_new_marble = new m_Lambertian(t_new_marble);
 
-    Material *m_model_dio  = new m_Dielectric(col1, 1.2, 0.075, 0.1);
-    Material *m_model_lamb = new m_Lambertian(col1);
+    Material *m_marb_first = new m_Lambertian({15, 65, 230});
+    Material *m_marb_second = new m_Lambertian(col1);
 
-    Material *m_model_metal = new m_Metal(
-        t_new_marble,
-        0.35
+    m_marb_first->set_emitter(new l_Diffuse({50, 50, 200}));
+
+    Material *m_model_metal = new m_Marble(
+        m_marb_first,
+        m_marb_second,
+        0.1
     );
-
+    
     // Hittable *model_1 = new Model("../models/big-stanford-dragon.obj", {m_model_dio}, {0, 0, 0}, 6.37, true); // remove ../ if you build tracer NOT in build dir
     // model_1 = new inst_RotZ(new inst_RotX(model_1, -Pi/2), Pi * 0.35);
     // model_1 = new inst_Translate(model_1, {35, 50, 0});
@@ -177,7 +180,7 @@ HittableList *cornell_box_objects() {
     Hittable *marble_box = new h_Sphere(0, 30, m_model_metal);
     
     marble_box = new inst_RotX(marble_box, -Pi/2);
-    marble_box = new inst_Translate(marble_box, {depth / 2, width / 2, 30});
+    marble_box = new inst_Translate(marble_box, {depth / 2, width / 2, 60});
 
     // scene->insert(marble_box);
 
