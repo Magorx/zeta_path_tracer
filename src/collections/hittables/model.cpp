@@ -58,17 +58,17 @@ int read_vertex(char **buffer, size_t &v, size_t &vn, size_t &vt) {
 
 bool Model::load(const char *filename, std::vector<Material*> matrs, const Vec3d &offset, const Vec3d &scale, bool to_smooth) {
     if (!filename) {
-        logger.error("model", "trying to load filename[nullptr]");
+        logger.error("model") << "trying to load filename[nullptr]";
         return false;
     }
     
     FILE *fin = fopen(filename, "r");
     if (!fin) {
-        logger.error("model", "failed to load (%s)", filename);
+        logger.error("model") << "failed to load (" << filename << ")";
         return false;
     }
 
-    logger.info("model", "loading (%s)", filename);
+    logger.info("model") << "loading (" << filename << ")";
 
     std::vector<Vec3d> points;
     char line_type[5];
@@ -91,15 +91,15 @@ bool Model::load(const char *filename, std::vector<Material*> matrs, const Vec3d
             size_t xn, yn, zn;
 
             fgets(buffer, 99, fin);
-            if (!read_vertex(&buffer, x, xt, xn)) logger.error("model", "failed to load face\n");
-            if (!read_vertex(&buffer, y, yt, yn)) logger.error("model", "failed to load face\n");
-            if (!read_vertex(&buffer, z, zt, zn)) logger.error("model", "failed to load face\n");
+            if (!read_vertex(&buffer, x, xt, xn)) logger.error("model") << "failed to load face";
+            if (!read_vertex(&buffer, y, yt, yn)) logger.error("model") << "failed to load face";
+            if (!read_vertex(&buffer, z, zt, zn)) logger.error("model") << "failed to load face";
             buffer = buffer_alloc;
 
             // fscanf(fin, "%lu/%lu/%lu %lu/%lu/%lu %lu/%lu/%lu", &x, &xt, &xn, &y, &yt, &yn, &z, &zt, &zn);
             --x, --y, --z;
             if (x >= points.size() || y >= points.size() || z >= points.size()) {
-                logger.error("model", "load point index overflow");
+                logger.error("model") << "load point index overflow";
                 return false;
             }
 
@@ -121,7 +121,7 @@ bool Model::load(const char *filename, std::vector<Material*> matrs, const Vec3d
     }
     free(buffer_alloc);
     
-    logger.info("model", "(%zu) verticies, (%zu) triangles", points.size(), hittables.size());
+    logger.info("model") << points.size() << " verticies, " << hittables.size() << " triangles";
 
     fclose(fin);
     return true;

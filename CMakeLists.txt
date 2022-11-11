@@ -2,14 +2,15 @@ cmake_minimum_required(VERSION 3.10)
 project(zeta_path_tracer LANGUAGES CXX)
 
 set(CMAKE_CXX_COMPILER clang++)
-
 set(CMAKE_CXX_STANDARD 20)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 set(WARNING_FLAGS "-Wall -Wextra -Wno-multichar -Wno-unused-result")
 
 include_directories(
         src
-        # src/utils
+        src/extern
 )
 
 set(CMAKE_EXE_LINKER_FLAGS "-pthread")
@@ -84,7 +85,14 @@ add_executable(zepher
         src/collections/noises/perlin.cpp
 
         src/main.cpp
-        )   
+        )
+
+add_subdirectory(src/jobber)
+
+target_link_libraries(
+        zepher
+        jobber
+)
 
 add_custom_target(convert
         COMMAND convert image.ppm image.png

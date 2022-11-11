@@ -78,13 +78,13 @@ public:
         if (tasks.size() < get_threads_cnt())
             tasks.push_back(task);
         else {
-            logger.error("threader", "adding more tasks will leave them undone, use set_tasks instead\n");
+            logger.error("threader") << "adding more tasks will leave them undone, use set_tasks instead";
         }
     }
 
     inline void set_task(size_t i, const T &task) {
         if (i > tasks.size()) {
-            logger.error("threader", "task index %lu is far too big (cur: %lu) \n", i, tasks.size());
+            logger.error("threader") << "task index" << i << "is far too big (cur: " << tasks.size() << ")";
             return;
         }
 

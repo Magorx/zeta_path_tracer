@@ -1,387 +1,291 @@
 #include "logger.h"
 
+
 namespace kctf {
-    Logger logger;
+
+void LoggerT::LoggerStreamT::set_parentheses(const std::vector<ParenthesisT> &parentheses) {
+    parentheses_ = parentheses;
 }
 
-
-Logger::Logger(FILE *fileptr, int log_level, int reset_max_lens_counter):
-fileptr(fileptr),
-to_close_file(false),
-last_announcer(nullptr),
-last_announcer_len(0),
-last_code(nullptr),
-last_code_len(0),
-max_code_len(0),
-max_announcer_len(0),
-to_print_announcer(false),
-to_print_code(true),
-offset(0),
-reset_max_lens_counter(reset_max_lens_counter),
-tick_timer(0),
-log_level(log_level),
-verb_level(5),
-page_cnt(0),
-paging_mode(0)
-{
-    if (!reset_max_lens_counter) {
-        reset_max_lens_counter = 1;
-    }
+void LoggerT::LoggerStreamT::set_split(const StringT &split) {
+    split_ = split;
 }
 
-Logger::Logger(const std::string &filename, int log_level, int reset_max_lens_counter):
-Logger(nullptr, log_level, reset_max_lens_counter)
-{
-    if (filename == "" || filename==":stdout:") {
-        fileptr = stdout;
-    } else if (filename == ":stderr:") {
-        fileptr = stderr;
-    } else {
-        fileptr = fopen(filename.c_str(), "w");
-        to_close_file = true;
-    }
-
-    if (!fileptr) {
-        print_nullptr_passed_error();
-    }
+void LoggerT::LoggerStreamT::set_end(const StringT &end) {
+    end_ = end;
 }
 
-Logger::~Logger() {
-    if (to_close_file) {
-        fclose(fileptr);
-    }
+void LoggerT::LoggerStreamT::set_to_ignore_prefix(bool to_ignore_prefix) {
+    to_ignore_prefix_ = to_ignore_prefix;
 }
 
-void Logger::print_nullptr_passed_error() const {
-    fprintf(stdout, "[ERR] logger called with something == nullptr, it will crush your programm\n");
-    fprintf(stderr, "[ERR] logger called with something == nullptr, it will crush your programm\n");
+LoggerT::StringT LoggerT::LoggerStreamT::get_split() const {
+    return split_;
 }
 
-void Logger::reset_max_lens() {
-    max_code_len = 0;
-    max_announcer_len = 0;
+LoggerT::StringT LoggerT::LoggerStreamT::get_end() const {
+    return end_;
 }
 
-void Logger::tick() {
-    ++tick_timer;
-    if ((tick_timer % reset_max_lens_counter) == 0) {
-        reset_max_lens();
-
-        reset_lasts();
-    }
+bool LoggerT::LoggerStreamT::get_to_ignore_prefix() const {
+    return to_ignore_prefix_;
 }
 
-void Logger::reset_lasts() {
-    if (last_announcer) {
-        free(last_announcer);
-        last_announcer = nullptr;
+bool LoggerT::used_code_fully_mathches(const std::vector<CodeT> &codes, const std::vector<ParenthesisT> &parenthesis) const {
+    if (used_codes_.size() < codes.size()) {
+        return false;
     }
 
-    if (last_code) {
-        free(last_code);
-        last_code = nullptr;
-    }
-}
-
-void Logger::update_announcer(const char* announcer) {
-    if (announcer && (!last_announcer || strcmp(announcer, last_announcer))) {
-        to_print_announcer = true;
-        // to_print_code = true;
-
-        if (last_announcer) free(last_announcer);
-
-        last_announcer = strdup(announcer);
-        last_announcer_len = strlen(last_announcer);
-    } else {
-        to_print_announcer = false;
-    }
-
-    max_announcer_len = max_announcer_len > last_announcer_len ? max_announcer_len : last_announcer_len;
-}
-
-void Logger::update_code(const char *code) {
-    if (code && (!last_code || strcmp(code, last_code))) {
-        // to_print_announcer = true;
-        to_print_code = true;
-
-        if (last_code) free(last_code);
-
-        last_code = strdup(code);
-        last_code_len = strlen(last_code);
-    } else {
-        to_print_code = false;
-    }
-
-    max_code_len = max_code_len > last_code_len ? max_code_len : last_code_len;
-}
-
-void Logger::print(const char *message, ...) {
-    va_list args;
-    va_start(args, message);
-    vfprintf(fileptr, message, args);
-    va_end(args);
-}
-
-void Logger::print_n_spaces(int n) {
-    ++n;
-    while (--n > 0) {
-        fputc(' ', fileptr);
-    }
-}
-
-void Logger::print_aligned(Align align, int size, const char *format, ...) {
-    static const int BUFFER_LEN = 256;
-    static char BUFFER[BUFFER_LEN];
-
-    memset(BUFFER, 0, BUFFER_LEN);
-
-    va_list args;
-    va_start(args, format);
-    vsnprintf(BUFFER, BUFFER_LEN, format, args);
-    va_end(args);
-
-    size_t str_len = strlen(BUFFER);
-    size_t spare_spaces = size - str_len;
-
-    if ((int) align < 0) {
-        print("%s", BUFFER);
-        print_n_spaces(spare_spaces);
-    } else if ((int) align > 0) {
-        print("%s", BUFFER);
-        print_n_spaces(spare_spaces);
-    } else {
-        size_t left_spaces = spare_spaces / 2;
-        size_t right_spaces = spare_spaces - left_spaces;
-
-        print_n_spaces(left_spaces);
-        print("%s", BUFFER);
-        print_n_spaces(right_spaces);
-    }
-}
-
-void Logger::print_log_prefix(
-    const char* code,
-    const char* announcer,
-    bool to_tick,
-    bool force_code,
-    bool force_announcer
-) {
-    if (to_tick) {
-        tick();
-    }
-
-    update_announcer(announcer);
-    update_code(code);
-
-    if (to_print_code || force_code) {
-        fputc('[', fileptr);
-        print_aligned(Align::middle, max_code_len, "%s", code);
-        fputc(']', fileptr);
-    } else if (to_print_announcer || force_announcer) {
-        fputc('[', fileptr);
-        print_n_spaces(max_code_len);
-        fputc(']', fileptr);
-    } else {
-        print_n_spaces(max_code_len + 2);
-    }
-    // print_n_spaces(max_code_len - last_code_len);
-
-    if (to_print_announcer || force_announcer) {
-        if (!htlm_mode) {
-            fputc('<', fileptr);
-            print_aligned(Align::middle, max_announcer_len, "%s", announcer);
-            fputc('>', fileptr);
-            // fprintf(fileptr, "<%s>", announcer);
-        } else {
-            print("&lt;");
-            print_aligned(Align::middle, max_announcer_len, "%s", announcer);
-            print("&gt;");
-            // fprintf(fileptr, "%s", announcer);
+    for (size_t i = 0; i < codes.size(); ++i) {
+        if (used_codes_[i].code_ != codes[i] || used_codes_[i].parentheses_ != parenthesis[i]) {
+            return false;
         }
-    } else if (to_print_code || force_code) {
-        fputc('<', fileptr);
-        print_n_spaces(max_announcer_len);
-        fputc('>', fileptr);
-    } else {
-        print_n_spaces(max_announcer_len + 2);
     }
-    // print_n_spaces(max_announcer_len - last_announcer_len);
-    
-    fprintf(fileptr, " : ");
-    print_n_spaces(offset);
+
+    return true;
 }
 
-void Logger::_log(bool to_ignore_log_level, const char* code, const char* announcer, const char *message, va_list arglist) { // dirty code, I suppose it can be cleaned
-    if (log_level > verb_level && !to_ignore_log_level) return;
-
-    if (!announcer || !code || !message) {
-        print_nullptr_passed_error();
+void LoggerT::print_aligned(const StringT &str, Align align, size_t width) {
+    if (width < str.size()) {
+        stream_ << str;
         return;
     }
 
-    print_log_prefix(code, announcer);
-    vfprintf(fileptr, message, arglist);
-
-    n();
-}
-
-void Logger::log(const char* code, const char* announcer, const char *message, ...) {
-    va_list args;
-    va_start(args, message);
-    _log(false, code, announcer, message, args);
-    va_end(args);
-}
-
-void Logger::logr(const char* code, const char* announcer, const char *message, ...) {
-    va_list args;
-    va_start(args, message);
-    _log(false, code, announcer, message, args);
-    va_end(args);
-
-    resets();
-}
-
-void Logger::log(int override_log_level, const char* code, const char* announcer, const char *message, ...) {
-    if (override_log_level < verb_level) return;
-
-    va_list args;
-    va_start(args, message);
-    _log(true, code, announcer, message, args);
-    va_end(args);
-}
-
-void Logger::logv(int override_log_level, const char* code, const char* announcer, const char *message, va_list args) {
-    if (override_log_level < verb_level) return;
-
-    _log(true, code, announcer, message, args);
-}
-
-void Logger::error(const char* announcer, const char *message, ...) {
-    int prev_log_level = log_level;
-    set_log_level(Level::error);
-
-    va_list args;
-    va_start(args, message);
-    _log(false, "ERROR", announcer, message, args);
-    va_end(args);
-
-    log_level = prev_log_level;
-}
-
-void Logger::ERROR(const char* announcer, const char *message, ...) {
-    int prev_log_level = log_level;
-    set_log_level(Level::error);
-
-    va_list args;
-    va_start(args, message);
-    _log(false, "!--ERROR--!", announcer, message, args);
-    va_end(args);
-
-    log_level = prev_log_level;
-}
-
-void Logger::info(const char* announcer, const char *message, ...) {
-    int prev_log_level = log_level;
-    set_log_level(Level::info);
-
-    va_list args;
-    va_start(args, message);
-    _log(false, "info", announcer, message, args);
-    va_end(args);
-
-    log_level = prev_log_level;
-}
-
-void Logger::warning(const char* announcer, const char *message, ...) {
-    int prev_log_level = log_level;
-    set_log_level(Level::warning);
-
-    va_list args;
-    va_start(args, message);
-    _log(false, "~~~~", announcer, message, args);
-    va_end(args);
-
-    log_level = prev_log_level;
-}
-
-void Logger::doubt(const char* announcer, const char *message, ...) {
-    int prev_log_level = log_level;
-    set_log_level(Level::info);
-
-    va_list args;
-    va_start(args, message);
-    _log(false, "????", announcer, message, args);
-    va_end(args);
-
-    log_level = prev_log_level;
-}
-
-void Logger::n() {
-    fputc('\n', fileptr);
-}
-
-void Logger::page_cut(const char *page_name, Level log_level_, int page_len, char symb) {
-    int prev_log_level = log_level;
-    set_log_level(log_level_);
-
-    if (log_level > verb_level) return;
-
-    while (page_len-- > 0) fputc(symb, fileptr);
-    
-    if (page_name) {
-        fprintf(fileptr, " [%d] %s", page_cnt++, page_name);
-    } else if (paging_mode) {
-        fprintf(fileptr, " [%d]", page_cnt++);
+    if (align == Align::middle) {
+        size_t left_padding = (width - str.size()) / 2;
+        size_t right_padding = width - str.size() - left_padding;
+        stream_ << StringT(left_padding, ' ') << str << StringT(right_padding, ' ');
+    } else if (align == Align::left) {
+        stream_ << str << StringT(width - str.size(), ' ');
+    } else if (align == Align::right) {
+        stream_ << StringT(width - str.size(), ' ') << str;
     }
-    n();
-
-    resets();
-    set_log_level(prev_log_level);
 }
 
-int  Logger::get_log_level() const {
-    return log_level;
+void LoggerT::print_code(
+    size_t code_index,
+    const CodeT &code,
+    const ParenthesisT &parentheses,
+    bool to_print_parentheses_anyway,
+    bool to_print_codes_anyway
+) {
+    if (code_index >= used_codes_.size()) {
+        used_codes_.resize(code_index + 1);
+    }
+
+    if (used_codes_[code_index].code_ != code || used_codes_[code_index].parentheses_ != parentheses) {
+        used_codes_[code_index].code_        = code;
+        used_codes_[code_index].parentheses_ = parentheses;
+
+        used_codes_[code_index].max_code_length_     = std::max(used_codes_[code_index].max_code_length_,     code.size());
+        used_codes_[code_index].max_par_length_left  = std::max(used_codes_[code_index].max_par_length_left,  parentheses.left_.size());
+        used_codes_[code_index].max_par_length_right = std::max(used_codes_[code_index].max_par_length_right, parentheses.right_.size());
+
+        print_aligned(parentheses.left_, Align::left, used_codes_[code_index].max_par_length_left);
+        print_aligned(code, Align::middle, used_codes_[code_index].max_code_length_);
+        print_aligned(parentheses.right_, Align::right, used_codes_[code_index].max_par_length_right);
+    } else {
+        if (to_print_parentheses_anyway) {
+            print_aligned(parentheses.left_, Align::left, used_codes_[code_index].max_par_length_left);
+            if (to_print_codes_anyway) {
+                print_aligned(code, Align::middle, used_codes_[code_index].max_code_length_);
+            } else {
+                stream_ << std::string(code.size(), ' ');
+            }
+            print_aligned(parentheses.right_, Align::right, used_codes_[code_index].max_par_length_right);
+        } else {
+            stream_ << std::string(
+                + used_codes_[code_index].max_par_length_left
+                + used_codes_[code_index].max_code_length_
+                + used_codes_[code_index].max_par_length_right,
+                ' '
+            );
+        }
+    }
 }
 
-void Logger::set_log_level(int log_level_) {
-    log_level = log_level_;
+void LoggerT::print(
+        Level level,
+        const std::vector<CodeT> &codes,
+        const StringT &message,
+        const StringT &split,
+        const StringT &end,
+        bool to_ignore_prefix,
+        const std::vector<ParenthesisT> &parentheses,
+        bool to_print_codes_anyway
+) {
+    if (level > log_level_) {
+        return;
+    }
+    std::lock_guard<std::mutex> lock(mutex_);
+
+    if (to_ignore_prefix) {
+        stream_ << message << end;
+        return;
+    }
+
+    if (parentheses.size() == 0 && codes.size() != 0) {
+        throw std::runtime_error("Parentheses must not be empty");
+    }
+
+    bool to_print_parentheses_anyway = !used_code_fully_mathches(codes, parentheses);
+    for (size_t i = 0; i < codes.size(); ++i) {
+        print_code(i, codes[i], parentheses[i % parentheses.size()], to_print_parentheses_anyway, to_print_codes_anyway);
+    }
+
+    for (size_t i = codes.size(); i < used_codes_.size(); ++i) {
+        print_code(i, used_codes_[i].code_, used_codes_[i].parentheses_, false, to_print_codes_anyway);
+    }
+
+    stream_ << split;
+
+    stream_ << message << end;
 }
 
-void Logger::set_log_level(Logger::Level log_level_) {
-    log_level = (int) log_level_;
+void LoggerT::set_log_level(Level level) {
+    log_level_ = level;
 }
 
-int  Logger::get_verb_level() const {
-    return verb_level;
+void LoggerT::flush() {
+    stream_.flush();
 }
 
-void Logger::set_verb_level(int verb_level_) {
-    verb_level = verb_level_;
+LoggerT::LoggerStreamT::LoggerStreamT(
+    LoggerT &logger,
+    Level log_level,
+    const std::vector<CodeT> &codes,
+    const std::vector<ParenthesisT> &parentheses,
+    const StringT &split,
+    const StringT &end,
+    bool to_ignore_prefix,
+    bool to_print_codes_anyway
+)
+    : logger_(logger)
+    , log_level_(log_level)
+    , codes_(std::move(codes))
+    , parentheses_(parentheses)
+    , split_(split)
+    , end_(end)
+    , to_ignore_prefix_(to_ignore_prefix)
+    , to_print_codes_anyway_(to_print_codes_anyway)
+{}
+
+LoggerT::LoggerStreamT::AdditionalCodeProxyT LoggerT::LoggerStreamT::operator()(const CodeT &code) {
+    return AdditionalCodeProxyT{*this, std::vector<CodeT>{code}};
 }
 
-void Logger::set_verb_level(Logger::Level verb_level_) {
-    verb_level = (int) verb_level_;
+LoggerT::LoggerStreamT::AdditionalCodeProxyT LoggerT::LoggerStreamT::AdditionalCodeProxyT::operator()(const CodeT &code) {
+    additional_codes_.push_back(code);
+    return *this;
 }
 
-void Logger::set_offset(int new_offset) {
-    offset = new_offset;
+LoggerT::LoggerStreamT::AdditionalCodeProxyT::AdditionalCodeProxyT(LoggerStreamT &logger_stream, const std::vector<CodeT> &additional_codes)
+    : logger_stream_(logger_stream)
+    , additional_codes_(additional_codes)
+{}
+
+LoggerT::LoggerStreamT::ProxyT::ProxyT(LoggerStreamT &logger_stream, const std::vector<CodeT> &additional_codes)
+    : logger_stream_(logger_stream)
+    , ss_()
+    , additional_codes_(additional_codes)
+{}
+
+LoggerT::LoggerStreamT::ProxyT::~ProxyT() {
+    std::vector<CodeT> codes;
+    
+    if (logger_stream_.to_replace_codes_) {
+        codes = std::move(additional_codes_);
+    } else {
+        codes = logger_stream_.codes_;
+        codes.insert(codes.end(), additional_codes_.begin(), additional_codes_.end());
+    }
+
+    logger_stream_.logger_.print(
+        logger_stream_.log_level_,
+        codes,
+        ss_.str(),
+        logger_stream_.split_,
+        logger_stream_.end_,
+        logger_stream_.to_ignore_prefix_,
+        logger_stream_.parentheses_,
+        logger_stream_.to_print_codes_anyway_
+    );
 }
 
-void Logger::shift_offset(int shift) {
-    set_offset(offset + shift);
+LoggerT::LoggerStreamT::ProxyT::ProxyT(ProxyT &other)
+    : logger_stream_(other.logger_stream_)
+    , ss_(std::move(other.ss_))
+{}
+
+LoggerT::LoggerStreamT::ProxyT::ProxyT(ProxyT &&other)
+    : logger_stream_(other.logger_stream_)
+    , ss_(std::move(other.ss_))
+{}
+
+void LoggerT::LoggerStreamT::flush() {
+    logger_.flush();
 }
 
-
-LogLevel::LogLevel(Logger &logger, int log_level, int verb_level):
-logger(logger),
-prev_log_level(logger.get_log_level()),
-prev_verb_level(logger.get_verb_level())
-{   
-    if (log_level  > 0) logger.set_log_level(log_level);
-    if (verb_level > 0) logger.set_verb_level(verb_level);
+void LoggerT::LoggerStreamT::n() {
+    logger_.print(
+        log_level_,
+        {},
+        "",
+        "",
+        "\n",
+        to_ignore_prefix_,
+        {},
+        false
+    );
 }
 
-LogLevel::~LogLevel() {
-    logger.set_log_level(prev_log_level);
-    logger.set_verb_level(prev_verb_level);
+bool LoggerT::LoggerStreamT::is_tty() const {
+    return logger_.is_tty();
 }
+
+LoggerT::LoggerT(Level log_level, OutputStreamT &stream, bool is_tty)
+    : stream_(stream)
+    , log_level_(log_level)
+    , is_tty_(is_tty)
+
+    , error(*this, Level::error, {"!!!!"})
+    , warning(*this, Level::warning, {"~~~~"})
+    , info(*this, Level::info, {"info"})
+    , debug(*this, Level::debug, {"debg"})
+    , trace(*this, Level::trace, {"trce"})
+
+    , nc_error(*this, Level::error, {"!!!!"})
+    , nc_warning(*this, Level::warning, {"~~~~"})
+    , nc_info(*this, Level::info, {"info"})
+    , nc_debug(*this, Level::debug, {"debg"})
+    , nc_trace(*this, Level::trace, {"trce"})
+{
+    nc_error.to_replace_codes_   = true;
+    nc_warning.to_replace_codes_ = true;
+    nc_info.to_replace_codes_    = true;
+    nc_debug.to_replace_codes_   = true;
+    nc_trace.to_replace_codes_   = true;
+}
+
+bool LoggerT::is_tty() const {
+    return is_tty_;
+}
+
+void LoggerT::set_tty(bool is_tty) {
+    is_tty_ = is_tty;
+}
+
+LoggerT::OutputStreamT &LoggerT::get_stream() {
+    return stream_;
+}
+
+const std::vector<LoggerT::ParenthesisT> LoggerT::default_parentheses_ {
+    {"[", "]"},
+    {"<", ">"},
+    {"{", "}"},
+    {"(", ")"}
+};
+
+LoggerT logger(LoggerT::Level::info, std::cout);
+
+} // namespace kctf

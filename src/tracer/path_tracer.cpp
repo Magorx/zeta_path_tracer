@@ -104,7 +104,7 @@ Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_
 void render_image(Scene *scene, const config::FullT &config) {
     kctf::ProgressBar prog_bar( 
         scene->camera->res_h * scene->camera->res_w,
-        config.verbos.verbosity
+        "rendering image"
     );
 
     int res_h = scene->camera->res_h;
@@ -121,14 +121,16 @@ void render_image(Scene *scene, const config::FullT &config) {
 
 void render_rtask(Scene *scene, const config::FullT &config, RenderTask rtask, Color *buffer, const int verbouse) {
     if (!rtask.is_valid()) {
-        logger.error("Zephyr", "[ERR] RTask is broken\n");
+        logger.error("Zephyr") <<  "[ERR] RTask is broken";
         return;
     }
 
     int height = rtask.height();
     int width  = rtask.width();
 
-    kctf::ProgressBar prog_bar(height * width, config.verbos.verbosity && verbouse);
+    auto &stream = verbouse ? logger.nc_info : logger.nc_trace;
+
+    kctf::ProgressBar prog_bar(height * width, "rendering image", stream);
 
     int min_x = std::max(rtask.min_x, 0);
     int min_y = std::max(rtask.min_y, 0);
@@ -148,7 +150,7 @@ void render_rtask(Scene *scene, const config::FullT &config, RenderTask rtask, C
 void render_into_buffer(Scene *scene, const config::FullT &config, Color *buffer) {
     kctf::ProgressBar prog_bar(
         scene->camera->res_h * scene->camera->res_w,
-        config.verbos.verbosity
+        "rendering image"
     );
 
     prog_bar.start();
@@ -165,12 +167,12 @@ void render_into_buffer(Scene *scene, const config::FullT &config, Color *buffer
 
 void render_into_buffer(Scene *scene, const config::FullT &config, Color *buffer, Vec3d *normal_map, double *depth_map) {
     if (!normal_map) {
-        logger.error("Zephyr", "no normal_map provided to render_into_buffer, thow you passed something here\n");
+        logger.error("Zephyr") << "no normal_map provided to render_into_buffer, thow you passed something here";
     }
 
     kctf::ProgressBar prog_bar(
         scene->camera->res_h,
-        config.verbos.verbosity
+        "rendering image"
     );
 
     prog_bar.start();

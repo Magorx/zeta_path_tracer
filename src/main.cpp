@@ -12,29 +12,29 @@ int main(int argc, char* argv[]) {
 
     auto config = zephyr::tracer::config::from_command_line(argc, argv);
 
-    logger.set_verb_level((Logger::Level) config.verbos.verbosity);
+    logger.set_log_level(kctf::LoggerT::Level::info);
 
-    logger.log(0, "hola", "KCTF", "Welcome to Zephyr ray-tracer, have a nice day");
+    logger.nc_info("hola")("KCTF") << "Welcome to Zephyr ray-tracer, have a nice day";
 
-    logger.info("Zepher", "process (%d) started", config.sysinf.timestamp);
-    logger.info("Zepher", "using (%d) threads"  , config.sysinf.kernel_cnt);
+    logger.info("Zepher") << "process (" << config.sysinf.timestamp << ") started";
+    logger.info("Zepher") << "using (" << config.sysinf.kernel_cnt << ") workers";
 
-    logger.info("Zepher", "building scene and BVH");
+    logger.info("Zepher") << "building scene and BVH";
     Scene *scene = cornell_box_scene(config);
-    logger.info("Zepher", "scene prepared");
+    logger.info("Zepher") << "scene prepared";
 
     kctf::Timer timer;
 
-    logger.info("Zepher", "rendering...");
+    logger.info("Zepher") << "rendering...";
     zephyr::tracer::render_from_rtask_file(scene, config);
-    logger.info("Zepher", "done...");
+    logger.info("Zepher") << "done...";
 
     timer.stop();
     timer.print();
 
-    logger.page_cut();
+    // logger.page_cut();
 
-    logger.info("Zepher", "process [%d] finished", config.sysinf.timestamp);
+    logger.info("Zepher") << "process [" << config.sysinf.timestamp << "] finished";
 
     return 0;
 }

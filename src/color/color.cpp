@@ -58,11 +58,11 @@ void print_rgb(Color color, const double gamma_correction, FILE *file) {
 
 void save_rgb_to_ppm_image(FILE *fout, const Color *image, const size_t width, const size_t height, const double gamma_correction) {
     if (!fout) {
-        logger.error("color", "save_rgb_to_ppm_image fileptr[nullptr]\n");
+        logger.error("color") << "save_rgb_to_ppm_image fileptr[nullptr]";
         return;
     }
     if (!image) {
-        logger.error("color", "save_rgb_to_ppm_image image[nullptr]\n");
+        logger.error("color") << "save_rgb_to_ppm_image image[nullptr]";
         return;
     }
 
@@ -77,13 +77,13 @@ void save_rgb_to_ppm_image(FILE *fout, const Color *image, const size_t width, c
 
 void save_rgb_to_ppm_image(const char *filename, const Color *image, const size_t width, const size_t height, const double gamma_correction) {
     if (!filename) {
-        logger.error("color", "save_rgb_to_ppm_image filename[nullptr]\n");
+        logger.error("color") << "save_rgb_to_ppm_image filename[nullptr]";
         return;
     }
 
     FILE *fout = fopen(filename, "w");
     if (!fout) {
-        logger.error("color", "save_rgb_to_ppm_image can't open file[%s]\n", filename);
+        logger.error("color") << "save_rgb_to_ppm_image can't open file[" << filename << "]";
         return;
     }
 

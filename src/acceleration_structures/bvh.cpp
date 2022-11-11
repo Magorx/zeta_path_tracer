@@ -58,7 +58,7 @@ BVH_Node::BVH_Node(HittableList &hitlist, size_t from, size_t to) {
     size_t objects_cnt = to - from;
 
     if (objects_cnt <= 0) {
-        logger.error("bvh", "constructing BVH_Node from 0 objects, terminating\n");
+        logger.error("bvh") << "constructing BVH_Node from 0 objects, terminating";
         exit(0);
     }
 
@@ -84,7 +84,7 @@ BVH_Node::BVH_Node(HittableList &hitlist, size_t from, size_t to) {
     AABB box_left{}, box_right{};
 
     if ((left && !left->bounding_box(box_left)) || (right && !right->bounding_box(box_right))) {
-        logger.error("bvh", "failed to get a bounding box from Hittable* [%p] or [%p], terminating\n", left, right);
+        logger.error("bvh") << "failed to get a bounding box from Hittable* [" << left << "] or [" << right << "], terminating";
         exit(0);
     }
 

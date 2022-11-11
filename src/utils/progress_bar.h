@@ -11,9 +11,14 @@ class ProgressBar {
     int cur_tick;
     int capacity;
     int cur_step;
-    int verbosity;
+    bool stopped_;
+
+    int non_tty_progress_counter = 0;
+
     std::chrono::time_point<std::chrono::system_clock> start_timestamp;
-    Logger &logger_;
+    
+    LoggerT::LoggerStreamT &stream_;
+    std::string id_;
 
     static constexpr const char* wheel_chars = "|/-\\";
     static constexpr const int wheel_chars_len = 4;
@@ -27,11 +32,12 @@ class ProgressBar {
     void turn_wheele() const;
 
 public:
-    ProgressBar(int capacity_=100, int verbosity_=1, Logger &logger=kctf::logger);
+    ProgressBar(int capacity_=100, std::string id="", LoggerT::LoggerStreamT &stream=kctf::logger.nc_info);
 
     bool start(int new_capacity=-1);
 
-    bool tick(const int tick_step = 1);
+    bool tick(int tick_step = 1);
+    bool update(double frac);
 };
 
 } // namespace kctf
