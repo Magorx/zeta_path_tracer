@@ -18,12 +18,13 @@ private:
 
 public:
     enum class Level {
-        none = 0,
+        everything = 0,
         error = 2,
         warning = 4,
         info = 6,
         debug = 10,
-        trace = 20
+        trace = 20,
+        none = 100
     };
 
     enum class Align {
@@ -183,6 +184,8 @@ public:
     LoggerStreamT nc_info;
     LoggerStreamT nc_debug;
     LoggerStreamT nc_trace;
+
+    LoggerStreamT none;
 
 public:
     LoggerT(Level log_level=Level::info, OutputStreamT &stream=std::cout, bool is_tty=true);

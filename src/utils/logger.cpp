@@ -259,6 +259,8 @@ LoggerT::LoggerT(Level log_level, OutputStreamT &stream, bool is_tty)
     , nc_info(*this, Level::info, {"info"})
     , nc_debug(*this, Level::debug, {"debg"})
     , nc_trace(*this, Level::trace, {"trce"})
+
+    , none(*this, Level::none, {"YOU CANT SEE THIS"})
 {
     nc_error.to_replace_codes_   = true;
     nc_warning.to_replace_codes_ = true;

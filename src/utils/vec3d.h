@@ -119,6 +119,11 @@ struct Vec3d {
     inline void _z(double val) { content[2] = val; }
 };
 
+inline std::ostream &operator<<(std::ostream &stream, const Vec3d &vec) {
+    stream << "(" << vec.x() << ", " << vec.y() << ", " << vec.z() << ")";
+    return stream;
+}
+
 extern const Vec3d VEC3D_ZERO;
 extern const Vec3d VEC3D_ONE;
 

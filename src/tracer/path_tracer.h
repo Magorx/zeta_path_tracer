@@ -35,7 +35,7 @@ Vec3d accumulate_pixel_color(const Camera *camera, const int px_x, const int px_
 
 void render_image       (Scene *scene, const config::FullT &config);
 
-void render_into_buffer (Scene *scene, const config::FullT &config, Color *buffer);
+void render_into_buffer (Scene *scene, const config::FullT &config, Color *buffer, RenderTask rtask, kctf::LoggerT::LoggerStreamT &logger=kctf::logger.nc_info);
 void render_into_buffer (Scene *scene, const config::FullT &config, Color *buffer, Vec3d *normal_map, double *depth_map);
 
 void render_rtask          (Scene *scene, const config::FullT &config, const RenderTask rtask, Color *buffer, const int verbouse = 1);

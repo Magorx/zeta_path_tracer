@@ -51,7 +51,7 @@ private:
             log << "task exec";
             current_result_ = current_task_.run();
 
-            if constexpr (true) {
+            if constexpr (std::is_convertible_v<ResultT, std::string>) {
                 log << "task done | result = " << current_result_;
             } else {
                 log << "task done";

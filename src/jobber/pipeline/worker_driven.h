@@ -172,9 +172,10 @@ public:
     ResultT await() {
         status_.tasks_available_ = true;
 
-        kctf::ProgressBar progress_bar(100, "Awaiting results");
-
         size_t tasks_to_complete = storage_.size();
+        logger.info << "tasks to complete: " << tasks_to_complete;
+
+        kctf::ProgressBar progress_bar(100, "Awaiting results");
 
         while (has_to_await()) {
             logger.trace << "tasks: " << storage_.size() << ", await_in_progress: " << await_in_progress;

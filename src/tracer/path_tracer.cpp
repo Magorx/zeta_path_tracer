@@ -147,20 +147,28 @@ void render_rtask(Scene *scene, const config::FullT &config, RenderTask rtask, C
     }
 }
 
-void render_into_buffer(Scene *scene, const config::FullT &config, Color *buffer) {
+void render_into_buffer(Scene *scene, const config::FullT &config, Color *buffer, RenderTask rtask, kctf::LoggerT::LoggerStreamT &logger) {
     kctf::ProgressBar prog_bar(
         scene->camera->res_h * scene->camera->res_w,
-        "rendering image"
+        "rendering image",
+        logger
     );
+
+    int min_x = std::max(rtask.min_x, 0);
+    int min_y = std::max(rtask.min_y, 0);
+    int max_y = std::min(rtask.max_y, scene->camera->res_h);
+    int max_x = std::min(rtask.max_x, scene->camera->res_w);
+    int buffer_width = rtask.width();
+    int buffer_height = rtask.height();
 
     prog_bar.start();
     int res_h = scene->camera->res_h;
     int res_w = scene->camera->res_w;
-    for (int y = 0; y < res_h; ++y) {
-        for (int x = 0; x < res_w; ++x) {
+    for (int y = min_y; y < max_y; ++y) {
+        for (int x = min_x; x < max_x; ++x) {
             prog_bar.tick();
             Color px_color = accumulate_pixel_color(scene->camera, x, y, scene->objects, config);
-            buffer[res_w * y + x] = px_color;
+            buffer[(x - min_x) + (y - min_y) * buffer_width] = px_color;
         }
     }
 }
