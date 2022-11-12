@@ -10,7 +10,7 @@
 ### How to use
 0. Change settings and scenery in main.cpp
 1. ```make``` to build
-2. ```./zepher``` to run
+2. ```./zephyr``` to run
 3. Observe
 
 # Some results

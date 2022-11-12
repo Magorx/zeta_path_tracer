@@ -4,7 +4,7 @@
 #include <utils/vec3d.h>
 
 
-namespace zepher::collection::noise {
+namespace zephyr::collection::noise {
 
 class Perlin {
     Vec3d scale;
@@ -28,4 +28,4 @@ public:
     }
 };
 
-}; // namespace zepher::collection::noise
+}; // namespace zephyr::collection::noise

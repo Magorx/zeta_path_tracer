@@ -18,26 +18,25 @@ int main(int argc, char* argv[]) {
     logger.set_log_level(kctf::LoggerT::Level::info);
 
     logger.nc_info("hola")("KCTF") << "Welcome to Zephyr ray-tracer, have a nice day";
+    logger.nc_info.n();
 
-    logger.info("Zepher") << "process (" << config.sysinf.timestamp << ") started";
-    logger.info("Zepher") << "using (" << config.sysinf.kernel_cnt << ") workers";
+    logger.info("Zephyr") << "process (" << config.sysinf.timestamp << ") started";
+    logger.info("Zephyr") << "using (" << config.sysinf.kernel_cnt << ") workers";
+    logger.info("Zephyr") << "resolution " << config.render.screen.width << "x" << config.render.screen.height;
+    logger.info.n();
 
-    logger.info("Zepher") << "building scene and BVH";
+    logger.info("Zephyr") << "building scene and BVH";
     Scene *scene = cornell_box_scene(config);
-    logger.info("Zepher") << "scene prepared";
-    logger.info("Zepher") << "image " << scene->camera->res_w << "x" << scene->camera->res_h;
+    logger.info("Zephyr") << "scene prepared";
+    logger.info.n();
 
     kctf::Timer timer;
-
-    // logger.info("Zepher") << "rendering...";
-    // zephyr::tracer::render_from_rtask_file(scene, config);
-    // logger.info("Zepher") << "done...";
 
     jobber::storage::ComplexityCappedT<
         zephyr::TaskT, 
         jobber::splitter::LinearBisecting<zephyr::TaskT>
     > capped_storage(
-       jobber::splitter::LinearBisecting<zephyr::TaskT>{64*64}
+       jobber::splitter::LinearBisecting<zephyr::TaskT>{config.sysinf.max_task_complexity}
     );
 
     jobber::pipeline::WorkerThreadedT<
@@ -71,7 +70,9 @@ int main(int argc, char* argv[]) {
 
     // logger.page_cut();
 
-    logger.info("Zepher") << "process [" << config.sysinf.timestamp << "] finished";
+    logger.info("Zephyr") << "process [" << config.sysinf.timestamp << "] finished";
+
+    logger.warning("Zephyr") << "you should press ctrl+c to exit now, jobber is lagging";
 
     return 0;
 }

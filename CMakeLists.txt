@@ -20,7 +20,7 @@ set(CMAKE_CXX_FLAGS   "-O3 ${WARNING_FLAGS} -fdeclspec")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --gcc-toolchain=/home/pd2022/pd2022065/repos/compiler_pack/gcc-8.1.0/")
 
-add_executable(zepher
+add_executable(zephyr
         src/hits/aabb.cpp
         src/acceleration_structures/bvh.cpp
 
@@ -90,7 +90,7 @@ add_executable(zepher
 add_subdirectory(src/jobber)
 
 target_link_libraries(
-        zepher
+        zephyr
         jobber
 )
 

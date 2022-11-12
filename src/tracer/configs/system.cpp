@@ -13,8 +13,13 @@ void SystemT::argparse_args(argparse::ArgumentParser &program) {
         .default_value(DEFAULT_THREADS_CNT)
         .scan<'i', int>();
     
+    program.add_argument("-c", "--complexity")
+        .help("max task complexity to be used in jobber")
+        .default_value(32*32)
+        .scan<'i', int>();
+    
     program.add_argument("--timestemp")
-        .help("Unique number to mark some tmp file")
+        .help("Unique number to mark some tmp files")
         .default_value(rand())
         .scan<'i', int>();
 }
@@ -22,6 +27,7 @@ void SystemT::argparse_args(argparse::ArgumentParser &program) {
 void SystemT::argparse_scan(argparse::ArgumentParser &program) {
     kernel_cnt = program.get<int>("--threads");
     timestamp  = program.get<int>("--timestemp");
+    max_task_complexity = program.get<int>("--complexity");
 }
 
 } // namespace zephyr::tracer::config

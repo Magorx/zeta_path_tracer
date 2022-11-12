@@ -11,7 +11,7 @@ private:
     Texture *first;
     Texture *second;
 
-    zepher::collection::noise::Perlin noise;
+    zephyr::collection::noise::Perlin noise;
 
 public:
     t_Marble(Texture *first_=nullptr, Texture *second_=nullptr, const Vec3d &scale_=1);

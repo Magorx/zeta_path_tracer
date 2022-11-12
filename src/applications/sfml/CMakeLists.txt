@@ -15,7 +15,7 @@ set(CMAKE_CXX_FLAGS   "${WARNING_FLAGS} -fdeclspec -march=native")
 
 find_package(SFML 2 COMPONENTS system window graphics network audio REQUIRED)
 
-add_executable(zepher
+add_executable(zephyr
         src/hits/aabb.cpp
         src/acceleration_structures/bvh.cpp
 
@@ -78,7 +78,7 @@ add_executable(zepher
         src/main.cpp
         )
 
-target_link_libraries(zepher sfml-graphics sfml-window sfml-system)        
+target_link_libraries(zephyr sfml-graphics sfml-window sfml-system)        
 
 add_custom_target(convert
         COMMAND convert image.ppm image.png

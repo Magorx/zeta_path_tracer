@@ -14,7 +14,7 @@ set(CMAKE_EXE_LINKER_FLAGS "-pthread")
 set(CMAKE_CXX_FLAGS   "${WARNING_FLAGS} -fdeclspec -march=native")
 
 
-add_executable(zepher
+add_executable(zephyr
         src/hits/aabb.cpp
         src/acceleration_structures/bvh.cpp
 

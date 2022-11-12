@@ -11,7 +11,7 @@ private:
     Material *first;
     Material *second;
 
-    zepher::collection::noise::Perlin noise;
+    zephyr::collection::noise::Perlin noise;
 
     double get_noise(const Vec3d &point) const;
 

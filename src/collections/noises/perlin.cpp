@@ -5,7 +5,7 @@
 #include <random>
 
 
-namespace zepher::collection::noise {
+namespace zephyr::collection::noise {
 
 Perlin::Perlin(const Vec3d &scale_)
     : scale(scale_)
@@ -115,4 +115,4 @@ double Perlin::value(const Vec3d &p) const {
     return lerp(e, f, w) + 0.5;
 }
 
-} // namespace zepher::collection::noise
+} // namespace zephyr::collection::noise
