@@ -23,20 +23,20 @@ struct Image {
         return x_size == other.x_size && y_size == other.y_size;
     }
 
-    T &operator[](size_t i) {
-        return *(data + i * y_size);
+    T &operator[](size_t y) {
+        return *(data + y * x_size);
     }
     
-    const T &operator[](size_t i) const {
-        return *(data + i * y_size);
+    const T &operator[](size_t y) const {
+        return *(data + y * x_size);
     }
 
-    T &operator()(size_t i, size_t j) {
-        return *(data + i * y_size + j);
+    T &operator()(size_t x, size_t y) {
+        return *(data + y * x_size + x);
     }
     
-    const T &operator()(size_t i, size_t j) const {
-        return *(data + i * y_size + j);
+    const T &operator()(size_t x, size_t y) const {
+        return *(data + y * x_size + x);
     }
 
     inline size_t width() const {

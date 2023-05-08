@@ -128,7 +128,7 @@ public:
             for (size_t y = 0; y < result.image.height(); ++y) {
                 for (size_t x = 0; x < result.image.width(); ++x) {
                     final_result.image(
-                        result.x + x, 
+                        result.x + x,
                         result.y + y
                     ) = result.image(x, y);
                 }
